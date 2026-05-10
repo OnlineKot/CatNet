@@ -1,1 +1,430 @@
-<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>CatNet</title><meta property="og:title" content="CatNet"><meta property="og:image" content="https://onlinekot.github.io/CatNet/CatNet.PNG"><meta property="og:type" content="website"><link rel="icon" href="https://onlinekot.github.io/CatNet/CatNet.PNG" type="image/png"><script>!(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","p16c87o6as");</script><style>body{background:#000;color:#fff;font-family:sans-serif;margin:0;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:40px 0;overflow-x:hidden}.header{font-size:80px;font-weight:900;letter-spacing:-5px;text-transform:uppercase;margin-bottom:20px}#cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;width:90%;max-width:800px;margin-bottom:30px}.cat-card{width:100%;height:300px;object-fit:cover;border:2px solid #fff}.btn-refresh{background:#000;color:#fff;border:3px solid #fff;padding:15px 40px;font-size:18px;font-weight:900;text-transform:uppercase;cursor:pointer;letter-spacing:2px;transition:all .2s ease-in-out;margin-bottom:60px}.btn-refresh:hover{background:#fff;color:#000}.scam-container{position:relative;margin-top:20px;text-align:center;background:#111;padding:30px;border:1px solid #333;border-radius:15px;box-shadow:0 0 20px rgba(255,0,0,.1)}.real-counter{font-size:20px;font-weight:900;color:#fc0;margin-bottom:25px;text-transform:uppercase;letter-spacing:1px}.counter-number{background:#222;padding:5px 15px;border-radius:5px;border:1px solid #fc0;color:#fff;font-size:26px}.notification-badge{position:absolute;top:-15px;right:-15px;background:#f00;color:#fff;font-weight:700;font-size:16px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 15px #f00;animation:pulse-red 1.5s infinite;z-index:10}.rainbow-btn{background:linear-gradient(124deg,#ff2400,#e81d1d,#e8b71d,#e3e81d,#1de840,#1ddde8,#2b1de8,#dd00f3,#dd00f3);background-size:1800% 1800%;animation:rainbow 3s ease infinite;color:#fff;border:none;padding:20px 50px;font-size:24px;font-weight:900;text-transform:uppercase;cursor:pointer;border-radius:10px;text-shadow:2px 2px 4px rgba(0,0,0,.5);box-shadow:0 10px 20px rgba(0,0,0,.5);transform:scale(1);transition:transform .1s}.rainbow-btn:active{transform:scale(.95)}.timer-text{margin-top:25px;font-size:16px;color:#f33;font-weight:700;animation:blink 1s infinite}@keyframes rainbow{0%,100%{background-position:0 82%}50%{background-position:100% 19%}}@keyframes pulse-red{0%,100%{transform:scale(1);box-shadow:0 0 0 0 transparent}70%{transform:scale(1.1);box-shadow:0 0 0 15px transparent}}@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}@media(max-width:768px){#cat-grid{grid-template-columns:1fr}.header{font-size:60px}.rainbow-btn{font-size:18px;padding:15px 30px}}</style></head><body><div class="header">CATNET</div><div id="cat-grid"></div><button class="btn-refresh" onclick="y()">INNE KOTY</button><div class="scam-container"><div class="real-counter">ŁĄCZNIE WIZYT: <span class="counter-number" id="real-viewers">...</span></div><div class="notification-badge">1</div><button class="rainbow-btn" onclick="v()">ODBLOKUJ VIP KOTA</button><div class="timer-text">OFERTA WYGASA ZA: <span id="countdown">05:00</span></div></div><script>const k="Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT",g=document.getElementById('cat-grid');async function x(){try{const r=await fetch('https://api.thecatapi.com/v1/images/search?limit=2',{headers:{'x-api-key':k}}),d=await r.json();d.forEach(c=>{const i=document.createElement('img');i.src=c.url;i.className='cat-card';g.appendChild(i)})}catch(e){}}function y(){g.innerHTML='';x()}async function z(){try{const r=await fetch('https://api.counterapi.dev/v1/onlinekot-github-io/catnet/up'),d=await r.json();document.getElementById('real-viewers').innerText=d.count}catch(e){document.getElementById('real-viewers').innerText="ERR"}}function w(d,p){let t=d,m,s;setInterval(()=>{m=parseInt(t/60,10);s=parseInt(t%60,10);m=m<10?"0"+m:m;s=s<10?"0"+s:s;p.textContent=m+":"+s;if(--t<0)t=d},1000)}function v(){alert("Trwa łączenie z serwerem VIP... Wróć jutro, aby odebrać nagrodę!")}window.onload=()=>{x();z();w(300,document.querySelector('#countdown'))};</script></body></html>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CatNet</title>
+<meta property="og:title" content="CatNet">
+<meta property="og:image" content="https://onlinekot.github.io/CatNet/CatNet.PNG">
+<meta property="og:type" content="website">
+<link rel="icon" href="https://onlinekot.github.io/CatNet/CatNet.PNG" type="image/png">
+
+<script>
+!(function(c,l,a,r,i,t,y){
+c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window,document,"clarity","script","p16c87o6as");
+</script>
+
+<style>
+body {
+    background: #050505;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 0;
+    overflow-x: hidden;
+}
+
+/* Potężne RGB na całe tło z płynącym gradientem */
+@keyframes rgbFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.header {
+    font-size: 80px;
+    font-weight: 900;
+    letter-spacing: -5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+/* Narzędzia (np. zmiana układu) */
+.tools {
+    width: 90%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.tool-btn {
+    background: #111;
+    color: #888;
+    border: 1px solid #333;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.tool-btn:hover {
+    background: #222;
+    color: #fff;
+    border-color: #555;
+}
+
+/* Siatka z kotami */
+#cat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    width: 90%;
+    max-width: 1000px;
+    margin-bottom: 40px;
+    transition: all 0.5s ease;
+}
+
+/* Klasa do widoku jednokolumnowego */
+#cat-grid.column-view {
+    flex-direction: column;
+    align-items: center;
+}
+
+#cat-grid.column-view .cat-card {
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+}
+
+.cat-card {
+    flex: 1 1 calc(33.333% - 20px);
+    min-width: 280px;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #222;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.cat-card:hover {
+    transform: translateY(-5px);
+    border-color: #444;
+}
+
+/* Tryb VIP dla kotów */
+body.vip-mode .cat-card {
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+}
+
+/* Pełne przyciski RGB */
+.rgb-button {
+    background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000);
+    background-size: 300% 300%;
+    animation: rgbFlow 6s linear infinite;
+    color: #fff;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    transition: transform 0.2s;
+    margin-bottom: 20px;
+}
+
+.rgb-button:active {
+    transform: scale(0.95);
+}
+
+/* Kontener oferty VIP (żeby podpiąć powiadomienie) */
+.vip-offer-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 40px;
+}
+
+.badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ff0000;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+    border: 2px solid #000;
+    animation: pulseBadge 1.5s infinite alternate;
+    z-index: 20;
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2); box-shadow: 0 0 25px rgba(255, 0, 0, 1); }
+}
+
+.vip-message-box {
+    display: none;
+    background: #111;
+    border: 1px solid #333;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-align: center;
+    color: #aaa;
+    font-weight: bold;
+    margin-bottom: 40px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+}
+
+.vip-message-box span {
+    color: #fff;
+    font-size: 1.2em;
+    display: block;
+    margin-top: 5px;
+}
+
+.real-counter {
+    background: #111;
+    padding: 15px 30px;
+    border-radius: 8px;
+    border: 1px solid #222;
+    font-size: 14px;
+    font-weight: 900;
+    color: #777;
+    margin-top: 20px;
+    letter-spacing: 1px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.counter-number {
+    color: #0f0;
+    font-size: 16px;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+/* Ukryte Menu TEO */
+#adm {
+    display: none;
+    background: #050505;
+    border: 1px solid #0f0;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    margin-bottom: 20px;
+    color: #0f0;
+    font-family: monospace;
+    text-align: center;
+}
+#adm input { width: 60px; background: #111; color: #0f0; border: 1px solid #0f0; padding: 5px; text-align: center; }
+#adm button { background: #0f0; color: #000; border: none; padding: 5px 15px; font-weight: bold; cursor: pointer; margin: 5px; }
+
+/* Status VIP na górze */
+.vip-active-label {
+    display: none;
+    color: #fff;
+    background: linear-gradient(90deg, #ff0000, #0000ff);
+    padding: 5px 20px;
+    border-radius: 20px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 5px #000;
+}
+body.vip-mode .vip-active-label { display: block; }
+</style>
+</head>
+<body>
+
+<div class="header">CATNE<span onclick="q()" style="cursor:default">T</span></div>
+<div class="vip-active-label">SESJA VIP AKTYWNA</div>
+
+<div id="adm">
+    <div>[ ROOT ACCESS: TEO ]</div><br>
+    LIMIT: <input type="number" id="lmt" value="5"> <button onclick="u()">SET</button><br><br>
+    <button style="background:#f00;color:#fff;" onclick="fV()">FORCE VIP</button> 
+    <button style="background:#333;color:#fff;" onclick="document.getElementById('adm').style.display='none'">[X]</button>
+</div>
+
+<div class="tools">
+    <button class="tool-btn" onclick="toggleLayout()">UKŁAD: SIATKA / KOLUMNA</button>
+</div>
+
+<div id="cat-grid"></div>
+
+<button class="rgb-button" onclick="loadNextCats()">NASTĘPNE KOTY</button>
+
+<div class="vip-offer-wrapper" id="vipBtnContainer">
+    <span class="badge">1</span>
+    <button class="rgb-button" style="padding: 20px 50px; font-size: 22px;" onclick="requestVip()">OFERTA VIP</button>
+</div>
+
+<div class="vip-message-box" id="vipMessageContainer">
+    AUTORYZACJA W TOKU... WRÓĆ JUTRO:
+    <span id="vipTimer">--:--:--</span>
+</div>
+
+<div class="real-counter">GLOBALNE POŁĄCZENIA Z SIECIĄ: <span class="counter-number" id="rv">...</span></div>
+
+<script>
+const apiKey = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
+const grid = document.getElementById('cat-grid');
+let limit = 5;
+let clickTimer;
+
+// Pobieranie kotów
+async function fetchCats(amount, isVip = false) {
+    try {
+        const response = await fetch(`https://api.thecatapi.com/v1/images/search?limit=${amount}`, {
+            headers: { 'x-api-key': apiKey }
+        });
+        const data = await response.json();
+        data.forEach(cat => {
+            const img = document.createElement('img');
+            img.src = cat.url;
+            img.className = 'cat-card';
+            grid.appendChild(img);
+        });
+    } catch (error) {
+        console.error("Błąd sieci");
+    }
+}
+
+// Licznik sesji
+async function updateCounter() {
+    try {
+        const res = await fetch('https://api.counterapi.dev/v1/onlinekot-github-io/catnet/up');
+        const data = await res.json();
+        document.getElementById('rv').innerText = data.count;
+    } catch(e) {}
+}
+
+// Guzik nastepne koty
+function loadNextCats() {
+    grid.innerHTML = '';
+    fetchCats(limit);
+}
+
+// Zmiana układu strony
+function toggleLayout() {
+    grid.classList.toggle('column-view');
+}
+
+// Logika VIP (Czekanie do jutra)
+function requestVip() {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Reset na północ następnego dnia
+
+    const savedDateStr = localStorage.getItem('vipReqDate');
+
+    if (!savedDateStr) {
+        // Pierwsze kliknięcie
+        localStorage.setItem('vipReqDate', tomorrow.toISOString());
+        checkVipStatus();
+        alert("ROZPOCZĘTO PROCES. WRÓĆ PO PÓŁNOCY.");
+    } else {
+        const unlockDate = new Date(savedDateStr);
+        if (today >= unlockDate) {
+            // Wpuszczamy
+            if(prompt("WPROWADŹ KLUCZ DOSTĘPU:") !== null) {
+                sessionStorage.setItem('vipActive', 'true');
+                activateVipMode();
+            }
+        } else {
+            alert("DOSTĘP ZABLOKOWANY. CZEKAJ DO JUTRA.");
+        }
+    }
+}
+
+function checkVipStatus() {
+    const savedDateStr = localStorage.getItem('vipReqDate');
+    const btnContainer = document.getElementById('vipBtnContainer');
+    const msgContainer = document.getElementById('vipMessageContainer');
+
+    if (savedDateStr) {
+        const unlockDate = new Date(savedDateStr);
+        const now = new Date();
+
+        if (now < unlockDate) {
+            // Czeka na jutro - ukryj guzik, pokaż timer
+            btnContainer.style.display = 'none';
+            msgContainer.style.display = 'block';
+
+            clearInterval(clickTimer);
+            clickTimer = setInterval(() => {
+                const diff = unlockDate - new Date();
+                if (diff <= 0) {
+                    clearInterval(clickTimer);
+                    btnContainer.style.display = 'inline-block';
+                    msgContainer.style.display = 'none';
+                } else {
+                    const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                    const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                    const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                    document.getElementById('vipTimer').innerText = `${h}:${m}:${s}`;
+                }
+            }, 1000);
+        } else {
+            // Odblokowane
+            btnContainer.style.display = 'inline-block';
+            msgContainer.style.display = 'none';
+        }
+    }
+}
+
+function activateVipMode() {
+    document.body.classList.add('vip-mode');
+    document.getElementById('vipBtnContainer').style.display = 'none';
+    document.getElementById('vipMessageContainer').style.display = 'none';
+    grid.innerHTML = '';
+    fetchCats(3, true);
+}
+
+// Funkcje menu TEO
+let tClick = 0;
+function q() {
+    tClick++;
+    if(tClick === 17) {
+        document.getElementById('adm').style.display = 'block';
+        tClick = 0;
+    }
+}
+function u() {
+    limit = document.getElementById('lmt').value;
+    loadNextCats();
+}
+function fV() {
+    document.getElementById('adm').style.display = 'none';
+    sessionStorage.setItem('vipActive', 'true');
+    activateVipMode();
+}
+
+window.onload = () => {
+    updateCounter();
+    
+    // Sprawdź czy VIP był odpalony w tej sesji
+    if(sessionStorage.getItem('vipActive') === 'true') {
+        activateVipMode();
+    } else {
+        fetchCats(limit);
+        checkVipStatus();
+    }
+};
+</script>
+</body>
+</html>
