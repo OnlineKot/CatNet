@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CatNet</title>
 
-    <!-- Meta Tagi dla iMessage / WhatsApp - zaciągną Twój plik z GitHuba -->
     <meta property="og:title" content="CatNet">
-    <meta property="og:description" content="System Verified">
     <meta property="og:image" content="logo.png">
     <meta property="og:type" content="website">
 
-    <!-- Skrypt Clarity z Twoim ID -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -45,7 +42,7 @@
         .dots {
             display: flex;
             gap: 25px;
-            margin: 35px 0;
+            margin-top: 35px;
         }
 
         .dot {
@@ -55,19 +52,12 @@
             border-radius: 50%;
         }
 
-        .status-container {
-            font-weight: 700;
-            font-size: 16px;
-            letter-spacing: 4px;
-            border: 5px solid #fff;
-            padding: 15px 45px;
-            text-transform: uppercase;
-        }
-
         .cat-image {
-            margin-top: 40px;
-            max-width: 400px; /* Dopasuj pod swój rysunek */
+            margin-top: 50px;
+            max-width: 90%;
             height: auto;
+            /* Usunięcie ramki, jeśli obrazek się nie ładuje */
+            border: none;
         }
     </style>
 </head>
@@ -81,11 +71,6 @@
         <div class="dot"></div>
     </div>
 
-    <div class="status-container">
-        Microsoft Verified
-    </div>
-
-    <!-- Wyświetla obrazek logo.png z Twojego repozytorium GitHub -->
     <img src="logo.png" alt="" class="cat-image">
 
 </body>
