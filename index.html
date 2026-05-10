@@ -33,28 +33,15 @@
         }
 
         .header {
-            font-size: 85px;
+            font-size: 100px;
             font-weight: 900;
-            letter-spacing: -4px;
+            letter-spacing: -5px;
             margin: 0;
             text-transform: uppercase;
         }
 
-        .dots {
-            display: flex;
-            gap: 25px;
-            margin-top: 35px;
-        }
-
-        .dot {
-            width: 18px;
-            height: 18px;
-            background-color: #fff;
-            border-radius: 50%;
-        }
-
         .cat-image {
-            margin-top: 50px;
+            margin-top: 40px;
             max-width: 90%;
             height: auto;
             border: none;
@@ -65,18 +52,12 @@
 
     <div class="header">CATNET</div>
 
-    <div class="dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-    </div>
-
-    <img src="logo.png" alt="" class="cat-image">
+    <img src="logo.png" class="cat-image" onerror="this.style.display='none'">
 
     <script>
         // Twoje Cat API
         const CAT_API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
-        console.log("CatNet Engine: Connected via API");
+        console.log("CatNet Engine: Online");
     </script>
 
 </body>
