@@ -21,7 +21,7 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 body {
     background: #050505;
     color: #fff;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Courier New', Courier, monospace; /* Zmiana na terminalowy font */
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -31,6 +31,7 @@ body {
 }
 
 .header {
+    font-family: 'Segoe UI', sans-serif;
     font-size: 85px;
     font-weight: 900;
     letter-spacing: -5px;
@@ -54,16 +55,23 @@ body {
     min-width: 280px;
     height: 350px;
     object-fit: cover;
-    border-radius: 15px;
-    border: 2px solid #1a1a1a;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    border-radius: 8px;
+    border: 2px solid #222;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    transition: transform 0.3s, border-color 0.3s;
+}
+
+.cat-card:hover {
+    border-color: #555;
+    transform: translateY(-5px);
 }
 
 /* Świecące przyciski RGB */
 .rgb-btn {
+    font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000);
     background-size: 400% 400%;
-    animation: flow 8s linear infinite;
+    animation: flow 6s linear infinite;
     color: #fff;
     border: none;
     padding: 18px 45px;
@@ -72,10 +80,10 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 5px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     margin: 10px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, filter 0.3s;
 }
 
 @keyframes flow {
@@ -85,17 +93,20 @@ body {
 }
 
 .rgb-btn:active { transform: scale(0.95); }
+.rgb-btn:disabled { filter: grayscale(100%) opacity(0.5); cursor: not-allowed; animation: none; }
 
 /* Kontener VIP z powiadomieniem */
 .vip-wrap {
     position: relative;
-    display: inline-block;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
 }
 
 .badge {
     position: absolute;
-    top: -5px;
+    top: -10px;
     right: -5px;
     background: #ff0000;
     color: #fff;
@@ -107,73 +118,115 @@ body {
     justify-content: center;
     font-size: 15px;
     font-weight: 900;
+    font-family: sans-serif;
     box-shadow: 0 0 15px #ff0000;
     border: 2px solid #000;
-    animation: pulse 1.5s infinite alternate;
+    animation: pulse 1s infinite alternate;
     z-index: 5;
 }
 
 @keyframes pulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.25); }
+    from { transform: scale(1); box-shadow: 0 0 10px #ff0000; }
+    to { transform: scale(1.3); box-shadow: 0 0 25px #ff0000; }
+}
+
+/* Terminalowe odliczanie VIP */
+#timer-display {
+    display: none;
+    background: #111;
+    border: 1px solid #f00;
+    padding: 15px 25px;
+    font-size: 16px;
+    color: #f00;
+    margin-top: 15px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    box-shadow: 0 0 15px rgba(255,0,0,0.2);
+    border-radius: 4px;
+}
+
+/* System powiadomień (Toasty) */
+.sys-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #111;
+    border-left: 4px solid #0f0;
+    color: #0f0;
+    padding: 15px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(0,255,0,0.1);
+    z-index: 9999;
+    transform: translateX(-150%);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sys-toast.show {
+    transform: translateX(0);
 }
 
 /* Licznik wizyt */
 .stats {
-    background: #111;
+    background: #0a0a0a;
     padding: 15px 30px;
-    border-radius: 10px;
-    border: 1px solid #222;
+    border: 1px solid #333;
     font-size: 14px;
-    font-weight: 900;
-    color: #555;
+    font-weight: bold;
+    color: #777;
     margin-top: 50px;
     letter-spacing: 2px;
 }
-
-.stats span { color: #0f0; text-shadow: 0 0 5px #0f0; }
+.stats span { color: #fff; text-shadow: 0 0 8px #fff; }
 
 /* Ukryte Menu T */
 #adm {
     display: none;
     background: #000;
-    border: 1px solid #0f0;
+    border: 1px dashed #0f0;
     padding: 20px;
     margin-bottom: 20px;
     color: #0f0;
-    font-family: monospace;
 }
 
 /* Luksusowy efekt VIP */
 body.vip-mode {
-    animation: rgbBorder 10s linear infinite;
+    animation: rgbBorder 8s linear infinite;
 }
 
 @keyframes rgbBorder {
-    0% { box-shadow: inset 0 0 40px rgba(255,0,0,0.5); }
-    33% { box-shadow: inset 0 0 40px rgba(0,255,0,0.5); }
-    66% { box-shadow: inset 0 0 40px rgba(0,0,255,0.5); }
-    100% { box-shadow: inset 0 0 40px rgba(255,0,0,0.5); }
+    0% { box-shadow: inset 0 0 50px rgba(255,0,0,0.4); }
+    33% { box-shadow: inset 0 0 50px rgba(0,255,0,0.4); }
+    66% { box-shadow: inset 0 0 50px rgba(0,0,255,0.4); }
+    100% { box-shadow: inset 0 0 50px rgba(255,0,0,0.4); }
+}
+
+body.vip-mode .cat-card {
+    border: 1px solid #333;
 }
 </style>
 </head>
 <body>
 
+<div class="sys-toast" id="toast">[ SYS ] Oczekuję na instrukcje...</div>
+
 <div class="header">CATNE<span onclick="q()" style="cursor:default">T</span></div>
 
 <div id="adm">
-    [ ROOT ] <input type="number" id="lmt" value="5" style="width:50px"> 
-    <button onclick="u()">SET</button> | 
-    <button onclick="fV()">FORCE VIP</button>
+    [ ROOT_ACCESS ] LIMIT: <input type="number" id="lmt" value="5" style="width:50px; background:#111; color:#0f0; border:1px solid #0f0;"> 
+    <button onclick="u()" style="background:#0f0; color:#000; border:none; padding:3px 10px; cursor:pointer; font-weight:bold;">ZATWIERDŹ</button> | 
+    <button onclick="fV()" style="background:#f00; color:#fff; border:none; padding:3px 10px; cursor:pointer; font-weight:bold;">FORCE VIP</button>
 </div>
 
 <div id="grid"></div>
 
-<button class="rgb-btn" onclick="next()">NEXT</button>
+<button class="rgb-btn" onclick="next()">>> NASTĘPNE <<</button>
 
 <div class="vip-wrap">
-    <div class="badge">1</div>
-    <button class="rgb-btn" style="padding: 25px 60px;" onclick="req()">OFERTA VIP</button>
+    <div class="badge" id="vip-badge">1</div>
+    <button class="rgb-btn" id="vip-btn" style="padding: 25px 60px; font-size: 22px;" onclick="req()">OFERTA VIP</button>
+    <div id="timer-display"></div>
 </div>
 
 <div class="stats">AKTYWNE POŁĄCZENIA Z SIECIĄ: <span id="counter">...</span></div>
@@ -182,6 +235,21 @@ body.vip-mode {
 const key = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
 const g = document.getElementById('grid');
 let lim = 5;
+let timerInterval;
+
+// Funkcja do powiadomień
+function showToast(msg, color = '#0f0') {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.style.borderLeftColor = color;
+    toast.style.color = color;
+    toast.classList.add('show');
+    
+    // Ukryj po 4 sekundach
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 4000);
+}
 
 async function load(n) {
     try {
@@ -206,45 +274,117 @@ async function cnt() {
     } catch(e) {}
 }
 
-function next() { g.innerHTML = ''; load(lim); }
+function next() { 
+    showToast("[ SYS ] Nawiązywanie połączenia z nowymi węzłami...");
+    g.innerHTML = ''; 
+    load(lim); 
+}
 
 function req() {
-    let now = new Date();
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0,0,0,0);
-
-    let s = localStorage.getItem('v_date');
+    let now = new Date().getTime();
+    let s = localStorage.getItem('v_unlock_time');
+    
     if (!s) {
-        localStorage.setItem('v_date', tomorrow.toISOString());
-        alert("WERYFIKACJA ROZPOCZĘTA. WRÓĆ JUTRO.");
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        
+        localStorage.setItem('v_unlock_time', tomorrow.getTime());
+        showToast("[ BŁĄD ] Odmowa dostępu. Aktywowano blokadę czasową.", "#f00");
+        startCountdown(tomorrow.getTime());
     } else {
-        if (now >= new Date(s)) {
-            if(prompt("PODAJ KLUCZ:") !== null) {
+        let unlockTime = parseInt(s);
+        if (now >= unlockTime) {
+            if(prompt("WPROWADŹ KLUCZ DESZYFRUJĄCY:") !== null) {
                 sessionStorage.setItem('va', '1');
                 goVip();
+            } else {
+                showToast("[ SYS ] Przerwano proces autoryzacji.", "#f00");
             }
         } else {
-            alert("DOSTĘP ZABLOKOWANY. PROCES W TOKU.");
+            showToast("[ SEC ] Weryfikacja tożsamości nadal trwa.", "#f00");
         }
     }
 }
 
+function checkVipStatus() {
+    let s = localStorage.getItem('v_unlock_time');
+    if (s) {
+        let unlockTime = parseInt(s);
+        let now = new Date().getTime();
+        
+        if (now < unlockTime) {
+            startCountdown(unlockTime);
+        } else {
+            document.getElementById('vip-badge').style.display = 'flex';
+            document.getElementById('vip-btn').innerText = "AUTORYZUJ VIP";
+        }
+    }
+}
+
+function startCountdown(unlockTime) {
+    const btn = document.getElementById('vip-btn');
+    const display = document.getElementById('timer-display');
+    const badge = document.getElementById('vip-badge');
+    
+    badge.style.display = 'none';
+    btn.disabled = true;
+    btn.innerText = "WERYFIKACJA W TOKU...";
+    display.style.display = 'block';
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        let now = new Date().getTime();
+        let distance = unlockTime - now;
+
+        if (distance <= 0) {
+            clearInterval(timerInterval);
+            btn.disabled = false;
+            btn.innerText = "AUTORYZUJ VIP";
+            display.style.display = 'none';
+            badge.style.display = 'flex';
+            showToast("[ SYS ] Węzeł VIP odblokowany. Wymagany klucz.", "#0f0");
+        } else {
+            let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            let s = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            h = (h < 10) ? "0" + h : h;
+            m = (m < 10) ? "0" + m : m;
+            s = (s < 10) ? "0" + s : s;
+            
+            display.innerText = `> SYS_LOCK: ${h}:${m}:${s}`;
+        }
+    }, 1000);
+}
+
 function goVip() {
+    showToast("[ SEC ] Sesja VIP autoryzowana. Szyfrowanie RGB aktywne.", "#d4af37");
     document.body.classList.add('vip-mode');
     document.querySelector('.vip-wrap').style.display = 'none';
     g.innerHTML = '';
     load(3);
 }
 
+// Menu TEO
 let tc = 0;
-function q() { if(++tc === 17) { document.getElementById('adm').style.display='block'; tc=0; } }
+function q() { if(++tc === 17) { document.getElementById('adm').style.display='block'; showToast("[ ROOT ] Uzyskano dostęp administracyjny.", "#0f0"); tc=0; } }
 function u() { lim = document.getElementById('lmt').value; next(); }
 function fV() { sessionStorage.setItem('va','1'); goVip(); document.getElementById('adm').style.display='none'; }
 
 window.onload = () => {
     cnt();
-    if(sessionStorage.getItem('va') === '1') goVip(); else load(lim);
+    // Powitanie systemowe
+    setTimeout(() => {
+        showToast("[ SYS ] Inicjalizacja CatNet... Połączenie anonimowe.");
+    }, 500);
+
+    if(sessionStorage.getItem('va') === '1') {
+        goVip();
+    } else {
+        load(lim);
+        checkVipStatus();
+    }
 };
 </script>
 </body>
