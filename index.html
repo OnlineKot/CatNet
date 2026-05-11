@@ -9,9 +9,20 @@
     <meta property="og:image" content="https://onlinekot.github.io/CatNet/CatNet.PNG">
     <meta property="og:type" content="website">
 
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "p16c87o6as");
+    </script>
+
     <style>
+        /* Tło na pełnym RGB */
         body {
-            background-color: #050505;
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 400%;
+            animation: fullRgbFlow 15s ease infinite;
             color: #fff;
             font-family: sans-serif;
             margin: 0;
@@ -23,36 +34,10 @@
             overflow-x: hidden;
         }
 
-        /* --- BLOKADA ADBLOCK --- */
-        #adblock-wall {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            z-index: 999999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        #adblock-wall h1 {
-            color: #ff3b30;
-            font-size: 50px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(255, 59, 48, 0.8);
-            margin-bottom: 10px;
-        }
-
-        #adblock-wall p {
-            color: #aaa;
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 1px;
+        @keyframes fullRgbFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .header {
@@ -62,7 +47,7 @@
             text-transform: uppercase;
             margin-bottom: 20px;
             color: #fff;
-            text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
         }
 
         /* Siatka kotów */
@@ -81,21 +66,25 @@
             height: auto;
             aspect-ratio: 4/3;
             object-fit: cover;
-            border: 2px solid #333;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
         }
 
         /* Tryb VIP dla kart */
         body.vip-mode .cat-card {
-            border: 2px solid #ff3b30;
-            box-shadow: 0 0 20px rgba(255, 59, 48, 0.4);
+            border: 3px solid #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
         }
 
-        /* Przycisk NASTĘPNE KOTY */
+        /* Przycisk NASTĘPNE KOTY w stylu Glass */
         .btn-refresh {
-            background-color: #111;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
             color: #fff;
-            border: 1px solid #555;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 15px 40px;
             font-size: 16px;
             font-weight: 900;
@@ -103,47 +92,76 @@
             cursor: pointer;
             letter-spacing: 2px;
             margin-bottom: 40px;
+            border-radius: 8px;
             transition: 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
 
         .btn-refresh:hover {
-            background-color: #222;
+            background-color: rgba(255, 255, 255, 0.2);
             border-color: #fff;
         }
 
-        /* --- STREFA VIP --- */
-        .vip-box {
-            background-color: #0a0a0a;
+        /* --- STREFA VIP (Bait Box w stylu Glassmorphism) --- */
+        .scam-container {
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(15px);
             padding: 25px;
-            border: 2px solid #222;
-            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
             width: 85%;
             max-width: 450px;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(255, 0, 0, 0.15);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            background-color: #ff3b30;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(255, 59, 48, 0.8);
+            animation: pulseBadge 1s infinite alternate;
+        }
+
+        @keyframes pulseBadge {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 59, 48, 1); }
         }
 
         .real-counter {
             font-size: 14px;
             font-weight: 900;
-            color: #aaa;
+            color: #ddd;
             margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         .counter-number {
             display: inline-block;
-            background-color: #111;
+            background-color: rgba(0, 0, 0, 0.5);
             padding: 4px 10px;
             border: 1px solid #ff3b30;
+            border-radius: 6px;
             color: #ff3b30;
             font-size: 18px;
             margin-left: 5px;
-            text-shadow: 0 0 5px rgba(255, 59, 48, 0.5);
+            text-shadow: 0 0 10px rgba(255, 59, 48, 0.8);
         }
 
-        /* Świecący przycisk RGB */
+        /* Świecący przycisk RGB na ciemnym tle kontenera */
         .rgb-btn {
             background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000);
             background-size: 300% 300%;
@@ -155,15 +173,18 @@
             font-weight: 900;
             text-transform: uppercase;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 6px;
             width: 100%;
             text-shadow: 0 2px 5px rgba(0,0,0,0.9);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
             transition: transform 0.2s;
         }
 
-        .rgb-btn:active {
-            transform: scale(0.95);
+        .rgb-btn:disabled {
+            filter: grayscale(100%);
+            animation: none;
+            cursor: not-allowed;
+            opacity: 0.5;
         }
 
         @keyframes rgbFlow {
@@ -172,43 +193,43 @@
             100% { background-position: 0% 50%; }
         }
 
+        .timer-text {
+            display: none;
+            font-size: 14px;
+            color: #ff3b30;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        #countdown {
+            display: block;
+            font-size: 24px;
+            color: #fff;
+            margin-top: 5px;
+            text-shadow: 0 0 10px rgba(255,0,0,0.8);
+        }
+
         /* Ukryty Panel Admina (T) */
         #adm-panel {
             display: none;
-            background: #000;
+            background: rgba(0, 0, 0, 0.9);
             border: 1px solid #0f0;
             padding: 20px;
+            border-radius: 12px;
             margin-bottom: 20px;
             text-align: center;
             color: #0f0;
             font-family: monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
-        #adm-panel input { width: 50px; background: #111; color: #0f0; border: 1px solid #0f0; text-align: center; }
-        #adm-panel button { background: #0f0; color: #000; border: none; padding: 5px 10px; cursor: pointer; font-weight: bold; margin: 5px;}
+        #adm-panel input { width: 50px; background: #111; color: #0f0; border: 1px solid #0f0; text-align: center; border-radius: 4px;}
+        #adm-panel button { background: #0f0; color: #000; border: none; padding: 5px 10px; cursor: pointer; font-weight: bold; margin: 5px; border-radius: 4px;}
     </style>
-
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            
-            // Jeśli AdBlock ubije skrypt Clarity, odpalamy twardą blokadę strony
-            t.onerror = function() {
-                document.getElementById('adblock-wall').style.display = 'flex';
-                document.body.style.overflow = 'hidden'; // Blokujemy scrollowanie
-            };
-            
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "wokscheu8p");
-    </script>
 </head>
 <body>
-
-    <div id="adblock-wall">
-        <h1>ODMOWA DOSTĘPU</h1>
-        <p>Wykryto aktywnego AdBlockera.</p>
-        <p>Wyłącz blokowanie skryptów, aby uzyskać dostęp do CatNet.</p>
-    </div>
 
     <div class="header">CATNE<span onclick="triggerAdmin()" style="cursor:default">T</span></div>
 
@@ -223,18 +244,26 @@
 
     <button class="btn-refresh" onclick="refreshCats()">NASTĘPNE KOTY</button>
 
-    <div class="vip-box" id="vip-box">
+    <div class="scam-container" id="vip-box">
+        <div class="notification-badge" id="vip-badge">1</div>
+        
         <div class="real-counter">
             OSÓB, KTÓRE ODEBRAŁY VIP: <span class="counter-number" id="real-viewers">...</span>
         </div>
 
-        <button class="rgb-btn" onclick="requestVip()">ODBLOKUJ TRYB VIP</button>
+        <button class="rgb-btn" id="vip-btn" onclick="requestVip()">ODBLOKUJ TRYB VIP</button>
+        
+        <div class="timer-text" id="timer-container">
+            OFERTA VIP ODNAWIA SIĘ ZA:
+            <span id="countdown">00:00:00</span>
+        </div>
     </div>
 
     <script>
         const API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
         const grid = document.getElementById('cat-grid');
         let currentLimit = 2;
+        let timerInterval;
 
         // Awaryjne koty
         const fallbackImages = [
@@ -259,6 +288,7 @@
                     createCatElement(cat.url);
                 });
             } catch (err) {
+                console.error("Zabezpieczenie aktywne: TheCatAPI nie odpowiada, ładuję rezerwę.", err);
                 for(let i=0; i<limit; i++) {
                     createCatElement(fallbackImages[i % fallbackImages.length]);
                 }
@@ -292,13 +322,79 @@
             }
         }
 
-        // Prosta logika VIP
+        // Logika VIP 
         function requestVip() {
-            const key = prompt("Podaj klucz deszyfrujący VIP:");
-            if (key) {
-                sessionStorage.setItem('catnet_rgb_active', 'true');
-                activateVipMode();
+            const now = new Date().getTime();
+            const savedTime = localStorage.getItem('catnet_rgb_unlock');
+            
+            if (!savedTime) {
+                let tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(0, 0, 0, 0);
+                
+                localStorage.setItem('catnet_rgb_unlock', tomorrow.getTime());
+                alert("CatNet VIP jest całkowicie za darmo! Ze względu na ogromne zainteresowanie, darmowe wejściówki odnawiają się codziennie o północy. Poczekaj do jutra i odbierz swój dostęp!");
+                startCountdown(tomorrow.getTime());
+            } else {
+                const unlockTime = parseInt(savedTime);
+                if (now >= unlockTime) {
+                    const key = prompt("Podaj klucz deszyfrujący VIP:");
+                    if (key) {
+                        sessionStorage.setItem('catnet_rgb_active', 'true');
+                        activateVipMode();
+                    }
+                }
             }
+        }
+
+        function checkVipStatus() {
+            const savedTime = localStorage.getItem('catnet_rgb_unlock');
+            if (savedTime) {
+                const unlockTime = parseInt(savedTime);
+                const now = new Date().getTime();
+                
+                if (now < unlockTime) {
+                    startCountdown(unlockTime);
+                } else {
+                    document.getElementById('vip-btn').innerText = "WPROWADŹ KLUCZ VIP";
+                }
+            }
+        }
+
+        function startCountdown(unlockTime) {
+            const btn = document.getElementById('vip-btn');
+            const timerBox = document.getElementById('timer-container');
+            const countdownDisplay = document.getElementById('countdown');
+            const badge = document.getElementById('vip-badge');
+            
+            btn.disabled = true;
+            btn.innerText = "WERYFIKACJA W TOKU...";
+            badge.style.display = 'none';
+            timerBox.style.display = 'block';
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const diff = unlockTime - now;
+
+                if (diff <= 0) {
+                    clearInterval(timerInterval);
+                    btn.disabled = false;
+                    btn.innerText = "WPROWADŹ KLUCZ VIP";
+                    badge.style.display = 'flex';
+                    timerBox.style.display = 'none';
+                } else {
+                    let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    let s = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    h = h < 10 ? "0" + h : h;
+                    m = m < 10 ? "0" + m : m;
+                    s = s < 10 ? "0" + s : s;
+                    
+                    countdownDisplay.innerText = `${h}:${m}:${s}`;
+                }
+            }, 1000);
         }
 
         function activateVipMode() {
@@ -335,6 +431,7 @@
                 activateVipMode();
             } else {
                 loadCats();
+                checkVipStatus();
             }
         };
     </script>
