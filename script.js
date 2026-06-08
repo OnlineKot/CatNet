@@ -268,6 +268,9 @@ const catFacts = [
     "Koty potrafią nauczyć się prostych sztuczek za pomocą nagród.",
     "Przyjaźń z kotem buduje się powoli, ale jest wyjątkowo trwała.",
     "Kot potrafi rozpoznać, kiedy jesteś smutny, i przychodzi się przytulić.",
+    "Freud to oficjalnie najsłodszy kot na świecie — i nikt nie ma odwagi się z tym kłócić. 🐱",
+    "Ulubione zajęcia Freuda: drzemka w plamie słońca i patrzenie przez okno.",
+    "Kiedy Freud mruczy, cały dzień od razu robi się lepszy.",
     "A Freud — kot, którego właśnie oglądasz — jest po prostu najsłodszym kotem na świecie. 🐱💖"
 ];
 
@@ -371,6 +374,9 @@ const catFactsEn = [
     "Cats can learn simple tricks with the help of rewards.",
     "Friendship with a cat builds slowly, but it's exceptionally lasting.",
     "A cat can sense when you're sad and come over for a cuddle.",
+    "Freud is officially the cutest cat in the world — and nobody dares to argue. 🐱",
+    "Freud's favourite things: napping in a sunbeam and staring out the window.",
+    "When Freud purrs, the whole day instantly gets better.",
     "And Freud — the cat you're looking at right now — is simply the cutest cat in the world. 🐱💖"
 ];
 
@@ -518,7 +524,7 @@ const translations = {
         "trust.private": "Ulubione tylko w Twojej przeglądarce", "trust.openApi": "Otwarte API",
         "trust.openSource": "Z pasji, nie dla zysku 💚",
         "foss.title": "Zrobione z pasji 💚",
-        "foss.note": "Cześć! 👋 CatNet to mój prywatny projekt, robiony po prostu dla zabawy i z miłości do kotów — w duchu open source: otwarcie i przejrzyście. Bez reklam, bez kont, a ulubione i historia są zapisywane tylko w Twojej przeglądarce. Niczego złego, obiecuję. 🐾",
+        "foss.note": "Cześć! 👋 CatNet to mój projekt po godzinach — robię go po prostu dla zabawy i z miłości do kotów, w duchu open source: otwarcie i przejrzyście. Bez reklam, bez kont, a ulubione i historia są zapisywane tylko w Twojej przeglądarce. Po prostu koty i dobry humor. 🐾",
         "trusted.title": "Zaufali nam ❤️",
         "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
         "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
@@ -608,7 +614,7 @@ const translations = {
         "trust.private": "Favorites stay in your browser", "trust.openApi": "Open API",
         "trust.openSource": "Out of passion, not for profit 💚",
         "foss.title": "Made with passion 💚",
-        "foss.note": "Hi! 👋 CatNet is my personal little project — built just for fun and out of love for cats, in an open-source spirit: open and transparent. No ads, no accounts, and your favorites and history are stored only in your browser. Nothing shady, promise. 🐾",
+        "foss.note": "Hi! 👋 CatNet is my after-hours project — built just for fun and out of love for cats, in an open-source spirit: open and transparent. No ads, no accounts, and your favorites and history are stored only in your browser. Just cats and good vibes. 🐾",
         "footer.github": "Code on GitHub",
         "trusted.title": "Trusted by cat lovers ❤️",
         "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
