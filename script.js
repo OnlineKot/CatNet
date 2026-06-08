@@ -40,6 +40,7 @@ function toggleFavorite(url) {
     }
     localStorage.setItem("catnet_favorites", JSON.stringify(favs));
     updateFavCounter();
+    if (idx === -1) recordFavorite();
     return idx === -1; // true jeśli właśnie dodano
 }
 
@@ -76,6 +77,7 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
 
 function createCatElement(grid, url) {
     addToHistory(url);
+    if (grid && grid.id === "cat-grid") recordCatViewed();
     const card = document.createElement("div");
     card.className = "cat-card";
 
@@ -371,6 +373,7 @@ function showRandomFact(elId = "cat-fact") {
         el.style.transition = "opacity 0.3s ease";
         el.style.opacity = "1";
     }, 120);
+    recordFactViewed();
 }
 
 /* Najsłodszy kot na świecie (sekcja na stronie Fakty) */
@@ -980,18 +983,350 @@ function unblockIP() {
 }
 
 /* ===========================================================
+   GRYWALIZACJA: passa 🔥, XP, poziomy, cel dzienny, odznaki
+   =========================================================== */
+const GAME_KEY = "catnet_game";
+const defaultGame = {
+    xp: 0,
+    streak: 0,
+    lastVisit: null,
+    todayDate: null,
+    todayCount: 0,
+    dailyGoal: 10,
+    dailyBonusGiven: false,
+    totalViewed: 0,
+    factsViewed: 0,
+    achievements: [],
+    seenOnboarding: false
+};
+
+function getGame() {
+    try {
+        return { ...defaultGame, ...JSON.parse(localStorage.getItem(GAME_KEY) || "{}") };
+    } catch {
+        return { ...defaultGame };
+    }
+}
+function saveGame(g) {
+    localStorage.setItem(GAME_KEY, JSON.stringify(g));
+}
+function dateStr(d = new Date()) {
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+}
+
+function levelInfo(xp) {
+    let level = 1, need = 100, acc = 0;
+    while (xp >= acc + need) {
+        acc += need;
+        level++;
+        need = Math.round(need * 1.35);
+    }
+    return { level, into: xp - acc, need, progress: Math.round(((xp - acc) / need) * 100) };
+}
+
+const ACHIEVEMENTS = [
+    { id: "first_cat", ico: "🐱", nm: "Pierwszy kot", test: (g) => g.totalViewed >= 1 },
+    { id: "cats_50", ico: "😻", nm: "Kociarz", test: (g) => g.totalViewed >= 50 },
+    { id: "cats_200", ico: "🐯", nm: "Łowca kotów", test: (g) => g.totalViewed >= 200 },
+    { id: "first_fav", ico: "❤️", nm: "Pierwsze serce", test: () => getFavorites().length >= 1 },
+    { id: "collector", ico: "🏵️", nm: "Kolekcjoner", test: () => getFavorites().length >= 10 },
+    { id: "streak_3", ico: "🔥", nm: "Passa 3 dni", test: (g) => g.streak >= 3 },
+    { id: "streak_7", ico: "🚀", nm: "Passa 7 dni", test: (g) => g.streak >= 7 },
+    { id: "level_5", ico: "⭐", nm: "Poziom 5", test: (g) => levelInfo(g.xp).level >= 5 },
+    { id: "curious", ico: "🧠", nm: "Ciekawski", test: (g) => g.factsViewed >= 20 },
+    { id: "goal_done", ico: "🎯", nm: "Cel dnia", test: (g) => g.dailyBonusGiven }
+];
+
+function awardXp(amount) {
+    const g = getGame();
+    const before = levelInfo(g.xp).level;
+    g.xp += amount;
+    const after = levelInfo(g.xp).level;
+    saveGame(g);
+    if (after > before) setTimeout(() => showToast(`🎉 Poziom ${after}! Tak trzymaj!`), 400);
+    checkAchievements();
+    updateGameUI();
+}
+
+function checkAchievements() {
+    const g = getGame();
+    let changed = false;
+    ACHIEVEMENTS.forEach((a) => {
+        if (!g.achievements.includes(a.id) && a.test(g)) {
+            g.achievements.push(a.id);
+            changed = true;
+            setTimeout(() => showToast(`🏆 Odznaka: ${a.nm}!`), 700);
+        }
+    });
+    if (changed) {
+        saveGame(g);
+        updateGameUI();
+    }
+}
+
+function recordCatViewed() {
+    const g = getGame();
+    g.totalViewed += 1;
+    g.todayCount += 1;
+    let bonus = false;
+    if (!g.dailyBonusGiven && g.todayCount >= g.dailyGoal) {
+        g.dailyBonusGiven = true;
+        bonus = true;
+    }
+    saveGame(g);
+    awardXp(2 + (bonus ? 50 : 0));
+    if (bonus) setTimeout(() => showToast("🎯 Cel dzienny osiągnięty! +50 XP 🎉"), 300);
+}
+function recordFavorite() {
+    awardXp(10);
+}
+function recordFactViewed() {
+    const g = getGame();
+    g.factsViewed += 1;
+    saveGame(g);
+    awardXp(3);
+}
+
+function initGamification() {
+    const g = getGame();
+    const today = dateStr();
+    if (g.todayDate !== today) {
+        g.todayDate = today;
+        g.todayCount = 0;
+        g.dailyBonusGiven = false;
+    }
+    if (g.lastVisit !== today) {
+        const y = dateStr(new Date(Date.now() - 86400000));
+        g.streak = g.lastVisit === y ? (g.streak || 0) + 1 : 1;
+        g.lastVisit = today;
+        saveGame(g);
+        const s = g.streak;
+        setTimeout(() => showToast(`🔥 Passa: ${s} ${s === 1 ? "dzień" : "dni"}! +15 XP`), 900);
+        awardXp(15);
+    } else {
+        saveGame(g);
+    }
+    checkAchievements();
+    updateGameUI();
+    if (!g.seenOnboarding) setTimeout(showOnboarding, 600);
+}
+
+function updateGameUI() {
+    const g = getGame();
+    const li = levelInfo(g.xp);
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+    set("hud-streak", g.streak);
+    set("hud-level", li.level);
+    set("pg-level", li.level);
+    set("pg-xp", `${li.into} / ${li.need} XP`);
+    set("pg-streak", g.streak);
+    const bar = document.getElementById("pg-xpbar");
+    if (bar) bar.style.width = li.progress + "%";
+    const ring = document.getElementById("pg-ring");
+    if (ring) {
+        const pct = Math.min(100, Math.round((g.todayCount / g.dailyGoal) * 100));
+        ring.style.setProperty("--p", pct);
+        set("pg-ring-count", `${Math.min(g.todayCount, g.dailyGoal)}/${g.dailyGoal}`);
+    }
+    document.querySelectorAll(".ach").forEach((el) =>
+        el.classList.toggle("unlocked", g.achievements.includes(el.dataset.id))
+    );
+}
+
+/* ---------- Pasek nawigacji: HUD + hamburger ---------- */
+function buildNavExtras() {
+    document.querySelectorAll(".nav-tools").forEach((tools) => {
+        if (tools.querySelector(".hud")) return;
+        const nav = tools.querySelector(".nav-links");
+
+        const hud = document.createElement("button");
+        hud.className = "hud";
+        hud.title = "Twoje postępy";
+        hud.innerHTML =
+            `<span class="hud-chip streak">🔥<b id="hud-streak">0</b></span>` +
+            `<span class="hud-chip level">⭐<b id="hud-level">1</b></span>`;
+        hud.addEventListener("click", openProgress);
+        tools.insertBefore(hud, nav);
+
+        const burger = document.createElement("button");
+        burger.className = "icon-btn hamburger";
+        burger.title = "Menu";
+        burger.innerHTML = "☰";
+        burger.addEventListener("click", () => nav.classList.toggle("open"));
+        tools.appendChild(burger);
+    });
+}
+
+/* ---------- Szuflada postępów ---------- */
+function buildProgressDrawer() {
+    if (document.getElementById("progress-drawer")) return;
+    const overlay = document.createElement("div");
+    overlay.className = "drawer-overlay";
+    overlay.id = "progress-overlay";
+    overlay.addEventListener("click", closeProgress);
+
+    const achHtml = ACHIEVEMENTS.map(
+        (a) => `<div class="ach" data-id="${a.id}"><div class="ico">${a.ico}</div><div class="nm">${a.nm}</div></div>`
+    ).join("");
+
+    const drawer = document.createElement("aside");
+    drawer.className = "drawer left";
+    drawer.id = "progress-drawer";
+    drawer.innerHTML = `
+        <div class="drawer-head">
+            <h3>🐾 Twoje postępy</h3>
+            <button class="icon-btn" onclick="closeProgress()">✕</button>
+        </div>
+        <div class="level-card">
+            <div class="level-top">
+                <span class="lv">Poziom <span id="pg-level">1</span></span>
+                <span class="xp" id="pg-xp">0 / 100 XP</span>
+            </div>
+            <div class="xp-bar"><i id="pg-xpbar"></i></div>
+        </div>
+        <div class="streak-card">
+            <span class="flame">🔥</span>
+            <div>
+                <div class="big"><span id="pg-streak">0</span> dni</div>
+                <div class="lbl">Twoja passa — wróć jutro, by ją przedłużyć!</div>
+            </div>
+        </div>
+        <div class="setting-group">
+            <label>Cel dzienny</label>
+            <div class="goal-ring" id="pg-ring">
+                <div class="ring-inner">
+                    <div class="rc" id="pg-ring-count">0/10</div>
+                    <div class="rl">kotów dziś</div>
+                </div>
+            </div>
+        </div>
+        <div class="setting-group">
+            <label>Odznaki</label>
+            <div class="ach-grid">${achHtml}</div>
+        </div>
+        <button class="btn btn-ghost btn-block" onclick="showOnboarding()">▶️ Pokaż samouczek</button>
+    `;
+    document.body.appendChild(overlay);
+    document.body.appendChild(drawer);
+}
+function openProgress() {
+    updateGameUI();
+    document.getElementById("progress-overlay")?.classList.add("open");
+    document.getElementById("progress-drawer")?.classList.add("open");
+}
+function closeProgress() {
+    document.getElementById("progress-overlay")?.classList.remove("open");
+    document.getElementById("progress-drawer")?.classList.remove("open");
+}
+
+/* ===========================================================
+   ONBOARDING (jak w Duolingo)
+   =========================================================== */
+const onbSlides = [
+    { m: "🐱", h: "Witaj w CatNet!", p: "Najsłodsze koty w sieci już czekają. Pokażemy Ci w kilka sekund, jak to działa." },
+    { m: "🔄", h: "Odkrywaj koty", p: "Odświeżaj galerię i oglądaj nowe koty bez końca — każdy klik to nowa porcja mruczenia." },
+    { m: "❤️", h: "Zbieraj ulubione", p: "Kliknij serduszko na zdjęciu, aby zapisać najsłodsze koty do swojej kolekcji." },
+    { m: "🔥", h: "Buduj passę", p: "Wracaj codziennie, zdobywaj XP, podbijaj poziomy i odblokowuj odznaki!" },
+    { m: "🎯", h: "Twój cel dzienny", p: "Ile kotów chcesz oglądać każdego dnia?", goal: true }
+];
+let onbIndex = 0;
+let onbGoal = 10;
+
+function buildOnboarding() {
+    if (document.getElementById("onboarding")) return;
+    const ov = document.createElement("div");
+    ov.className = "onb-overlay";
+    ov.id = "onboarding";
+    ov.innerHTML = `<div class="onb-card" id="onb-card"></div>`;
+    document.body.appendChild(ov);
+}
+function renderOnb() {
+    const s = onbSlides[onbIndex];
+    const dots = onbSlides.map((_, i) => `<i class="${i === onbIndex ? "on" : ""}"></i>`).join("");
+    const last = onbIndex === onbSlides.length - 1;
+    let goalHtml = "";
+    if (s.goal) {
+        const opts = [
+            { v: 3, n: "Spokojnie", d: "3 koty dziennie" },
+            { v: 10, n: "Standard", d: "10 kotów dziennie" },
+            { v: 20, n: "Hardcore", d: "20 kotów dziennie" }
+        ];
+        goalHtml =
+            `<div class="goal-options">` +
+            opts.map((o) => `<button class="goal-opt ${o.v === onbGoal ? "sel" : ""}" onclick="setOnbGoal(${o.v})">${o.n} <small>${o.d}</small></button>`).join("") +
+            `</div>`;
+    }
+    document.getElementById("onb-card").innerHTML = `
+        <div class="onb-mascot">${s.m}</div>
+        <h2>${s.h}</h2>
+        <p>${s.p}</p>
+        ${goalHtml}
+        <div class="onb-dots">${dots}</div>
+        <div class="onb-actions">
+            ${onbIndex > 0 ? `<button class="btn btn-ghost" onclick="onbPrev()">Wstecz</button>` : ``}
+            <button class="btn btn-primary" onclick="onbNext()">${last ? "Zaczynamy! 🚀" : "Dalej"}</button>
+        </div>
+    `;
+}
+function setOnbGoal(v) { onbGoal = v; renderOnb(); }
+function onbNext() {
+    if (onbIndex < onbSlides.length - 1) { onbIndex++; renderOnb(); }
+    else finishOnboarding();
+}
+function onbPrev() {
+    if (onbIndex > 0) { onbIndex--; renderOnb(); }
+}
+function showOnboarding() {
+    buildOnboarding();
+    onbIndex = 0;
+    onbGoal = getGame().dailyGoal || 10;
+    renderOnb();
+    document.getElementById("onboarding").classList.add("open");
+}
+function finishOnboarding() {
+    const g = getGame();
+    const first = !g.seenOnboarding;
+    g.seenOnboarding = true;
+    g.dailyGoal = onbGoal;
+    saveGame(g);
+    document.getElementById("onboarding").classList.remove("open");
+    updateGameUI();
+    if (first) {
+        awardXp(20);
+        setTimeout(() => showToast("Miłej zabawy w CatNet! 🐾 +20 XP"), 300);
+    }
+}
+
+/* Admin: grywalizacja */
+function admResetGame() {
+    if (!confirm("Zresetować postępy (XP, poziom, passa, odznaki)?")) return;
+    localStorage.removeItem(GAME_KEY);
+    initGamification();
+    showToast("Zresetowano postępy");
+    admStats();
+}
+
+/* ===========================================================
    INICJALIZACJA WSPÓLNA
    =========================================================== */
 document.addEventListener("DOMContentLoaded", function () {
     buildSettingsDrawer();
     buildLightbox();
+    buildProgressDrawer();
+    buildOnboarding();
+    buildNavExtras();
     applySettings();
     detectAdblock();
+    initGamification();
 
     const toggle = document.getElementById("settings-toggle");
     if (toggle) toggle.addEventListener("click", openSettings);
 
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") { closeSettings(); closeLightbox(); }
+        if (e.key === "Escape") {
+            closeSettings();
+            closeLightbox();
+            closeProgress();
+        }
     });
 });
