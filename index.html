@@ -29,15 +29,11 @@
 
     <header class="navbar">
         <a class="brand" href="index.html"><span class="paw">🐾</span>Cat<span class="brand-accent">Net</span></a>
-        <div class="nav-tools">
-            <nav class="nav-links">
-                <a href="index.html" class="active">Start</a>
-                <a href="galeria.html">Galeria</a>
-                <a href="fakty.html">Fakty</a>
-                <a href="o-nas.html">O nas</a>
-            </nav>
-            <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
-        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="active">Start</a>
+            <a href="galeria.html">Galeria</a>
+            <a href="o-nas.html">O nas</a>
+        </nav>
     </header>
 
     <main class="page">
@@ -64,54 +60,10 @@
         </section>
 
         <div id="adm-panel">
-            [ ROOT ACCESS — PANEL ADMINA ]
-
-            <h4>KOTY</h4>
-            <div class="adm-row">
-                <label>Limit kotów</label>
-                <span><input type="number" id="adm-limit" value="2" min="1" max="30"> <button onclick="admSetLimit()">SET</button></span>
-            </div>
-            <div class="adm-row">
-                <label>Wymuś tryb awaryjny (fallback)</label>
-                <input type="checkbox" onchange="admToggleFallback(this)">
-            </div>
-
-            <h4>STREFA VIP</h4>
-            <div class="adm-grid full">
-                <div class="adm-row">
-                    <label>Odliczanie (min)</label>
-                    <span><input type="number" id="adm-countdown" value="1" min="0"> <button onclick="admSetCountdown()">START</button></span>
-                </div>
-                <div class="adm-row">
-                    <label>Licznik „odebrało VIP"</label>
-                    <span><input type="number" id="adm-counter" placeholder="np. 9999"> <button onclick="admSetCounter()">SET</button></span>
-                </div>
-            </div>
-            <div class="adm-grid">
-                <button onclick="forceVip()">FORCE VIP</button>
-                <button onclick="admResetVip()">RESET VIP</button>
-                <button onclick="admToggleVipBox()">UKRYJ/POKAŻ VIP</button>
-                <button onclick="admStats()">ODŚWIEŻ STATY</button>
-            </div>
-
-            <h4>MOTYW</h4>
-            <div class="adm-grid">
-                <button onclick="setSetting('mode','dark')">CIEMNY</button>
-                <button onclick="setSetting('mode','light')">JASNY</button>
-                <button onclick="setSetting('accent','ocean')">OCEAN</button>
-                <button onclick="setSetting('accent','sunset')">SUNSET</button>
-            </div>
-
-            <h4>DANE / DIAGNOSTYKA</h4>
-            <div id="adm-stats">...</div>
-            <div class="adm-grid">
-                <button onclick="clearFavorites()">WYCZYŚĆ ULUBIONE</button>
-                <button class="danger" onclick="admWipe()">WIPE ALL</button>
-            </div>
-
-            <div class="adm-grid full" style="margin-top:12px;">
-                <button class="danger" onclick="document.getElementById('adm-panel').style.display='none'">CLOSE</button>
-            </div>
+            [ ROOT ACCESS ]<br><br>
+            LIMIT: <input type="number" id="adm-limit" value="2"> <button onclick="saveAdmin()">SET</button><br><br>
+            <button style="background:#ff3b5c;color:#fff;" onclick="forceVip()">FORCE VIP</button>
+            <button style="background:#333;color:#fff;" onclick="document.getElementById('adm-panel').style.display='none'">CLOSE</button>
         </div>
 
         <section class="vip-box" id="vip-box">
@@ -131,8 +83,7 @@
 
     <footer class="footer">
         <p>© <span id="year"></span> CatNet · Stworzone z miłości do kotów <span class="dot" onclick="triggerAdmin()">·</span></p>
-        <p><a href="index.html">Start</a> &nbsp;·&nbsp; <a href="galeria.html">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html">O nas</a></p>
-        <p><a href="#" class="unblock-ip" onclick="unblockIP();return false;">🔓 Odblokuj IP</a></p>
+        <p><a href="index.html">Start</a> &nbsp;·&nbsp; <a href="galeria.html">Galeria</a> &nbsp;·&nbsp; <a href="o-nas.html">O nas</a></p>
     </footer>
 
     <script src="script.js"></script>
