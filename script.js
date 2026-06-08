@@ -128,7 +128,7 @@ function renderFavorites(gridId = "fav-grid") {
 let tClicks = 0;
 function triggerAdmin() {
     tClicks++;
-    if (tClicks === 17) openSecretMenu();
+    if (tClicks === 5) openSecretMenu();
 }
 
 /* Otwiera sekretne menu (panel admina). Jeśli go nie ma na tej stronie,
@@ -152,7 +152,7 @@ let catClicks = 0;
 let keyBuffer = "";
 function registerCatClick() {
     catClicks++;
-    if (catClicks >= 15) openSecretMenu();
+    if (catClicks >= 8) openSecretMenu();
 }
 function handleSecretKey(e) {
     if (e.key && e.key.length === 1) {
@@ -495,6 +495,7 @@ const translations = {
         "gallery.title": "Galeria kotów 🐱",
         "gallery.sub": "Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.",
         "btn.newCats": "Nowe koty 🔄", "btn.surprise": "🎁 Niespodzianka", "btn.premium": "👑 Koty premium",
+        "btn.pro": "🐱 Koty PRO (za darmo)", "toast.pro": "Załadowano koty PRO 🐱✨",
         "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
         "gallery.favTitle": "Twoje ulubione ♥", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
         "facts.title": 'Fakty o <span class="grad">kotach</span> 🐾',
@@ -514,7 +515,10 @@ const translations = {
         "feat4.t": "Na każdym ekranie", "feat4.p": "Wygodne na telefonie, tablecie i komputerze.",
         "btn.goGallery": "Przejdź do galerii", "btn.backHome": "Wróć na start",
         "trust.noAds": "Bez reklam", "trust.noAccounts": "Bez kont",
-        "trust.private": "Prywatnie — dane tylko u Ciebie", "trust.openApi": "Otwarte API",
+        "trust.private": "Ulubione tylko w Twojej przeglądarce", "trust.openApi": "Otwarte API",
+        "trust.openSource": "Z pasji, nie dla zysku 💚",
+        "foss.title": "Zrobione z pasji 💚",
+        "foss.note": "Cześć! 👋 CatNet to mój prywatny projekt, robiony po prostu dla zabawy i z miłości do kotów — w duchu open source: otwarcie i przejrzyście. Bez reklam, bez kont, a ulubione i historia są zapisywane tylko w Twojej przeglądarce. Niczego złego, obiecuję. 🐾",
         "trusted.title": "Zaufali nam ❤️",
         "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
         "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
@@ -581,6 +585,7 @@ const translations = {
         "gallery.title": "Cat gallery 🐱",
         "gallery.sub": "Refresh as much as you like — there are endless cats. Click the heart to save your favorites.",
         "btn.newCats": "New cats 🔄", "btn.surprise": "🎁 Surprise", "btn.premium": "👑 Premium cats",
+        "btn.pro": "🐱 PRO cats (free)", "toast.pro": "PRO cats loaded 🐱✨",
         "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
         "gallery.favTitle": "Your favorites ♥", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
         "facts.title": 'Facts about <span class="grad">cats</span> 🐾',
@@ -600,7 +605,11 @@ const translations = {
         "feat4.t": "On every screen", "feat4.p": "Comfortable on phone, tablet and computer.",
         "btn.goGallery": "Go to gallery", "btn.backHome": "Back to home",
         "trust.noAds": "No ads", "trust.noAccounts": "No accounts",
-        "trust.private": "Private — your data stays with you", "trust.openApi": "Open API",
+        "trust.private": "Favorites stay in your browser", "trust.openApi": "Open API",
+        "trust.openSource": "Out of passion, not for profit 💚",
+        "foss.title": "Made with passion 💚",
+        "foss.note": "Hi! 👋 CatNet is my personal little project — built just for fun and out of love for cats, in an open-source spirit: open and transparent. No ads, no accounts, and your favorites and history are stored only in your browser. Nothing shady, promise. 🐾",
+        "footer.github": "Code on GitHub",
         "trusted.title": "Trusted by cat lovers ❤️",
         "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
         "trusted.s1n": "12,000+", "trusted.s1l": "happy users",
@@ -1036,6 +1045,11 @@ function admToggleFallback(cb) {
     refreshCats();
     showToast(forceFallback ? "Tryb awaryjny WŁ" : "Tryb awaryjny WYŁ");
 }
+function admToggleFallbackBtn() {
+    forceFallback = !forceFallback;
+    refreshCats();
+    showToast(forceFallback ? "Tryb awaryjny: WŁ" : "Tryb awaryjny: WYŁ");
+}
 function admWipe() {
     if (!confirm("Wyczyścić CAŁĄ pamięć lokalną (ustawienia, ulubione, postępy)?")) return;
     localStorage.clear();
@@ -1284,6 +1298,33 @@ function showSkeletons(grid, n) {
         s.className = "cat-card skeleton";
         grid.appendChild(s);
     }
+}
+
+/* Koty PRO (Cataas) — za darmo dla wszystkich */
+async function loadProCats(gridId = "cat-grid", limit = currentLimit) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = "";
+    showSkeletons(grid, limit);
+    try {
+        const skip = Math.floor(Math.random() * 300);
+        const res = await fetch(`https://cataas.com/api/cats?limit=${limit}&skip=${skip}`);
+        const data = await res.json();
+        if (!data || !data.length) throw new Error("Cataas pusto");
+        grid.innerHTML = "";
+        data.forEach((c) => createCatElement(grid, `https://cataas.com/cat/${c._id || c.id}`));
+    } catch {
+        grid.innerHTML = "";
+        for (let i = 0; i < limit; i++) createCatElement(grid, `https://cataas.com/cat?ts=${Date.now() + i}`);
+    }
+    showToast(t("toast.pro"));
+}
+function showProCats() {
+    if (!document.getElementById("cat-grid")) {
+        location.href = "galeria.html";
+        return;
+    }
+    loadProCats("cat-grid", currentLimit);
 }
 
 function buildBackToTop() {

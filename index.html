@@ -16,7 +16,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -60,8 +59,9 @@
         <div class="trust-bar">
             <span class="trust-item">🚫 <span data-i18n="trust.noAds">Bez reklam</span></span>
             <span class="trust-item">🙅 <span data-i18n="trust.noAccounts">Bez kont</span></span>
-            <span class="trust-item">🔒 <span data-i18n="trust.private">Prywatnie — dane tylko u Ciebie</span></span>
+            <span class="trust-item">🔒 <span data-i18n="trust.private">Ulubione tylko w Twojej przeglądarce</span></span>
             <span class="trust-item">🐾 <span data-i18n="trust.openApi">Otwarte API</span></span>
+            <span class="trust-item">💚 <span data-i18n="trust.openSource">Z pasji, nie dla zysku</span></span>
         </div>
 
         <section>
@@ -103,47 +103,77 @@
             </div>
         </section>
 
-        <div id="adm-panel">
-            [ ROOT ACCESS — PANEL ADMINA ]
-
-            <h4>KOTY</h4>
-            <div class="adm-row">
-                <label>Limit kotów</label>
-                <span><input type="number" id="adm-limit" value="2" min="1" max="30"> <button onclick="admSetLimit()">SET</button></span>
-            </div>
-            <div class="adm-row">
-                <label>Wymuś tryb awaryjny (fallback)</label>
-                <input type="checkbox" onchange="admToggleFallback(this)">
+        <div id="adm-panel" class="adm-v2">
+            <div class="adm-bar">
+                <div class="adm-bar-title">⚙️ CatNet · Panel administratora</div>
+                <button class="adm-x" onclick="document.getElementById('adm-panel').style.display='none'">✕</button>
             </div>
 
-            <h4>NARZĘDZIA</h4>
-            <div class="adm-grid">
-                <button onclick="admStats()">ODŚWIEŻ STATY</button>
-                <button onclick="unblockIP()">ODBLOKUJ IP</button>
+            <div class="adm-sec">
+                <h5>🐾 Koty</h5>
+                <div class="adm-limit">
+                    <span>Limit kotów</span>
+                    <input type="number" id="adm-limit" value="2" min="1" max="30">
+                    <button class="adm-btn" onclick="admSetLimit()">USTAW</button>
+                </div>
+                <div class="adm-actions">
+                    <button class="adm-btn" onclick="refreshCats()">🔄 Nowe koty</button>
+                    <button class="adm-btn" onclick="showProCats()">🐱 Koty PRO</button>
+                    <button class="adm-btn" onclick="surpriseCat()">🎁 Niespodzianka</button>
+                    <button class="adm-btn" onclick="admToggleFallbackBtn()">🛟 Tryb awaryjny</button>
+                </div>
             </div>
 
-            <h4>MOTYW</h4>
-            <div class="adm-grid">
-                <button onclick="setSetting('mode','dark')">CIEMNY</button>
-                <button onclick="setSetting('mode','light')">JASNY</button>
-                <button onclick="setSetting('accent','ocean')">OCEAN</button>
-                <button onclick="setSetting('accent','sunset')">SUNSET</button>
+            <div class="adm-sec">
+                <h5>🎨 Wygląd</h5>
+                <div class="adm-actions">
+                    <button class="adm-btn" onclick="setSetting('mode','dark')">🌙 Ciemny</button>
+                    <button class="adm-btn" onclick="setSetting('mode','light')">☀️ Jasny</button>
+                    <button class="adm-btn" onclick="setSetting('density','comfortable')">▤ Komfort</button>
+                    <button class="adm-btn" onclick="setSetting('density','dense')">▦ Gęsta</button>
+                    <button class="adm-btn" onclick="setSetting('accent','aurora')">Aurora</button>
+                    <button class="adm-btn" onclick="setSetting('accent','ocean')">Ocean</button>
+                    <button class="adm-btn" onclick="setSetting('accent','sunset')">Sunset</button>
+                    <button class="adm-btn" onclick="setSetting('accent','forest')">Forest</button>
+                    <button class="adm-btn" onclick="setSetting('accent','candy')">Candy</button>
+                    <button class="adm-btn" onclick="setSetting('accent','mono')">Mono</button>
+                </div>
             </div>
 
-            <h4>INNE</h4>
-            <div class="adm-grid">
-                <button onclick="showOnboarding()">SAMOUCZEK</button>
+            <div class="adm-sec">
+                <h5>🌍 Język</h5>
+                <div class="adm-actions">
+                    <button class="adm-btn" onclick="setLang('auto')">Auto</button>
+                    <button class="adm-btn" onclick="setLang('pl')">Polski</button>
+                    <button class="adm-btn" onclick="setLang('en')">English</button>
+                </div>
             </div>
 
-            <h4>DANE / DIAGNOSTYKA</h4>
-            <div id="adm-stats">...</div>
-            <div class="adm-grid">
-                <button onclick="clearFavorites()">WYCZYŚĆ ULUBIONE</button>
-                <button class="danger" onclick="admWipe()">WIPE ALL</button>
+            <div class="adm-sec">
+                <h5>💾 Dane</h5>
+                <div class="adm-actions">
+                    <button class="adm-btn" onclick="exportData()">⬇️ Eksport</button>
+                    <button class="adm-btn" onclick="importData()">⬆️ Import</button>
+                    <button class="adm-btn" onclick="copyExport()">📋 Kopiuj kod</button>
+                    <button class="adm-btn" onclick="clearFavorites()">🗑️ Ulubione</button>
+                    <button class="adm-btn" onclick="clearHistory()">🧹 Historia</button>
+                </div>
             </div>
 
-            <div class="adm-grid full" style="margin-top:12px;">
-                <button class="danger" onclick="document.getElementById('adm-panel').style.display='none'">CLOSE</button>
+            <div class="adm-sec">
+                <h5>🛠️ Narzędzia</h5>
+                <div class="adm-actions">
+                    <button class="adm-btn" onclick="showOnboarding()">▶️ Samouczek</button>
+                    <button class="adm-btn" onclick="unblockIP()">🔓 Odblokuj IP</button>
+                    <button class="adm-btn" onclick="admStats()">📊 Staty</button>
+                    <button class="adm-btn" onclick="location.reload()">↻ Przeładuj</button>
+                    <button class="adm-btn danger" onclick="admWipe()">💥 WIPE ALL</button>
+                </div>
+            </div>
+
+            <div class="adm-sec">
+                <h5>📈 Diagnostyka</h5>
+                <div id="adm-stats">...</div>
             </div>
         </div>
 
