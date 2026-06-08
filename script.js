@@ -983,7 +983,7 @@ function unblockIP() {
 }
 
 /* ===========================================================
-   GRYWALIZACJA: passa 🔥, XP, poziomy, cel dzienny, odznaki
+   GRYWALIZACJA: passa 🔥, XP, poziomy, cel dzienny
    =========================================================== */
 const GAME_KEY = "catnet_game";
 const defaultGame = {
@@ -996,7 +996,6 @@ const defaultGame = {
     dailyBonusGiven: false,
     totalViewed: 0,
     factsViewed: 0,
-    achievements: [],
     seenOnboarding: false
 };
 
@@ -1024,19 +1023,6 @@ function levelInfo(xp) {
     return { level, into: xp - acc, need, progress: Math.round(((xp - acc) / need) * 100) };
 }
 
-const ACHIEVEMENTS = [
-    { id: "first_cat", ico: "🐱", nm: "Pierwszy kot", test: (g) => g.totalViewed >= 1 },
-    { id: "cats_50", ico: "😻", nm: "Kociarz", test: (g) => g.totalViewed >= 50 },
-    { id: "cats_200", ico: "🐯", nm: "Łowca kotów", test: (g) => g.totalViewed >= 200 },
-    { id: "first_fav", ico: "❤️", nm: "Pierwsze serce", test: () => getFavorites().length >= 1 },
-    { id: "collector", ico: "🏵️", nm: "Kolekcjoner", test: () => getFavorites().length >= 10 },
-    { id: "streak_3", ico: "🔥", nm: "Passa 3 dni", test: (g) => g.streak >= 3 },
-    { id: "streak_7", ico: "🚀", nm: "Passa 7 dni", test: (g) => g.streak >= 7 },
-    { id: "level_5", ico: "⭐", nm: "Poziom 5", test: (g) => levelInfo(g.xp).level >= 5 },
-    { id: "curious", ico: "🧠", nm: "Ciekawski", test: (g) => g.factsViewed >= 20 },
-    { id: "goal_done", ico: "🎯", nm: "Cel dnia", test: (g) => g.dailyBonusGiven }
-];
-
 function awardXp(amount) {
     const g = getGame();
     const before = levelInfo(g.xp).level;
@@ -1044,24 +1030,7 @@ function awardXp(amount) {
     const after = levelInfo(g.xp).level;
     saveGame(g);
     if (after > before) setTimeout(() => showToast(`🎉 Poziom ${after}! Tak trzymaj!`), 400);
-    checkAchievements();
     updateGameUI();
-}
-
-function checkAchievements() {
-    const g = getGame();
-    let changed = false;
-    ACHIEVEMENTS.forEach((a) => {
-        if (!g.achievements.includes(a.id) && a.test(g)) {
-            g.achievements.push(a.id);
-            changed = true;
-            setTimeout(() => showToast(`🏆 Odznaka: ${a.nm}!`), 700);
-        }
-    });
-    if (changed) {
-        saveGame(g);
-        updateGameUI();
-    }
 }
 
 function recordCatViewed() {
@@ -1106,7 +1075,6 @@ function initGamification() {
     } else {
         saveGame(g);
     }
-    checkAchievements();
     updateGameUI();
     if (!g.seenOnboarding) setTimeout(showOnboarding, 600);
 }
@@ -1128,9 +1096,6 @@ function updateGameUI() {
         ring.style.setProperty("--p", pct);
         set("pg-ring-count", `${Math.min(g.todayCount, g.dailyGoal)}/${g.dailyGoal}`);
     }
-    document.querySelectorAll(".ach").forEach((el) =>
-        el.classList.toggle("unlocked", g.achievements.includes(el.dataset.id))
-    );
 }
 
 /* ---------- Pasek nawigacji: HUD + hamburger ---------- */
@@ -1165,10 +1130,6 @@ function buildProgressDrawer() {
     overlay.id = "progress-overlay";
     overlay.addEventListener("click", closeProgress);
 
-    const achHtml = ACHIEVEMENTS.map(
-        (a) => `<div class="ach" data-id="${a.id}"><div class="ico">${a.ico}</div><div class="nm">${a.nm}</div></div>`
-    ).join("");
-
     const drawer = document.createElement("aside");
     drawer.className = "drawer left";
     drawer.id = "progress-drawer";
@@ -1200,10 +1161,6 @@ function buildProgressDrawer() {
                 </div>
             </div>
         </div>
-        <div class="setting-group">
-            <label>Odznaki</label>
-            <div class="ach-grid">${achHtml}</div>
-        </div>
         <button class="btn btn-ghost btn-block" onclick="showOnboarding()">▶️ Pokaż samouczek</button>
     `;
     document.body.appendChild(overlay);
@@ -1226,7 +1183,7 @@ const onbSlides = [
     { m: "🐱", h: "Witaj w CatNet!", p: "Najsłodsze koty w sieci już czekają. Pokażemy Ci w kilka sekund, jak to działa." },
     { m: "🔄", h: "Odkrywaj koty", p: "Odświeżaj galerię i oglądaj nowe koty bez końca — każdy klik to nowa porcja mruczenia." },
     { m: "❤️", h: "Zbieraj ulubione", p: "Kliknij serduszko na zdjęciu, aby zapisać najsłodsze koty do swojej kolekcji." },
-    { m: "🔥", h: "Buduj passę", p: "Wracaj codziennie, zdobywaj XP, podbijaj poziomy i odblokowuj odznaki!" },
+    { m: "🔥", h: "Buduj passę", p: "Wracaj codziennie, zdobywaj XP i podbijaj kolejne poziomy!" },
     { m: "🎯", h: "Twój cel dzienny", p: "Ile kotów chcesz oglądać każdego dnia?", goal: true }
 ];
 let onbIndex = 0;
@@ -1299,7 +1256,7 @@ function finishOnboarding() {
 
 /* Admin: grywalizacja */
 function admResetGame() {
-    if (!confirm("Zresetować postępy (XP, poziom, passa, odznaki)?")) return;
+    if (!confirm("Zresetować postępy (XP, poziom, passa)?")) return;
     localStorage.removeItem(GAME_KEY);
     initGamification();
     showToast("Zresetowano postępy");

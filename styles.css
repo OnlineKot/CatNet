@@ -1011,18 +1011,6 @@ select.cn-select {
     font-size: 16px;
 }
 
-/* ---------- Link „Odblokuj IP” w stopce ---------- */
-.unblock-ip {
-    display: inline-block;
-    margin-top: 4px;
-    font-weight: 600;
-    color: var(--accent-2) !important;
-}
-
-.unblock-ip:hover {
-    text-decoration: underline;
-}
-
 /* ===========================================================
    NAWIGACJA RESPONSYWNA + HUD GRYWALIZACJI
    =========================================================== */
@@ -1217,42 +1205,6 @@ select.cn-select {
 .goal-ring .ring-inner .rl {
     font-size: 12px;
     color: var(--text-muted);
-}
-
-.ach-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-    gap: 12px;
-    margin-top: 10px;
-}
-
-.ach {
-    text-align: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 12px 6px;
-    opacity: 0.4;
-    filter: grayscale(100%);
-    transition: all 0.2s ease;
-}
-
-.ach.unlocked {
-    opacity: 1;
-    filter: none;
-    border-color: var(--accent);
-    box-shadow: 0 6px 18px rgba(124, 92, 255, 0.25);
-}
-
-.ach .ico {
-    font-size: 28px;
-}
-
-.ach .nm {
-    font-size: 11px;
-    font-weight: 700;
-    margin-top: 4px;
-    line-height: 1.2;
 }
 
 /* ===========================================================
