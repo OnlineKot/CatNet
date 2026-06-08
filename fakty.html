@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria kotów — CatNet</title>
-    <meta name="description" content="Przeglądaj nieskończoną galerię uroczych kotów i zapisuj swoje ulubione zdjęcia.">
+    <title>Fakty o kotach — CatNet</title>
+    <meta name="description" content="Odkrywaj zaskakujące fakty o kotach — za każdym kliknięciem coś nowego.">
 
-    <meta property="og:title" content="Galeria kotów — CatNet">
+    <meta property="og:title" content="Fakty o kotach — CatNet">
     <meta property="og:image" content="https://onlinekot.github.io/CatNet/CatNet.PNG">
     <meta property="og:type" content="website">
 
@@ -31,8 +31,8 @@
         <div class="nav-tools">
             <nav class="nav-links">
                 <a href="index.html">Start</a>
-                <a href="galeria.html" class="active">Galeria</a>
-                <a href="fakty.html">Fakty</a>
+                <a href="galeria.html">Galeria</a>
+                <a href="fakty.html" class="active">Fakty</a>
                 <a href="o-nas.html">O nas</a>
             </nav>
             <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
@@ -41,25 +41,30 @@
 
     <main class="page">
 
-        <h1 class="section-title">Galeria kotów 🐱</h1>
-        <p class="section-sub">Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.</p>
+        <section class="hero">
+            <h1>Fakty o <span class="grad">kotach</span> 🐾</h1>
+            <p>Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.</p>
 
-        <div class="grid-toolbar">
-            <div class="toolbar-controls">
-                <button class="btn btn-primary" onclick="refreshCats('cat-grid')">Nowe koty 🔄</button>
-                <button class="btn btn-ghost" onclick="surpriseCat()">🎁 Niespodzianka</button>
-                <select class="cn-select" id="breed-filter" title="Filtruj po rasie">
-                    <option value="">Wszystkie rasy</option>
-                </select>
+            <div class="fact-card" style="max-width:660px;">
+                <div class="fact-label">Czy wiesz, że...</div>
+                <div class="fact-text" id="fact-text">Wczytywanie...</div>
             </div>
-            <span class="fav-counter">Twoje ulubione: <b id="fav-count">0</b></span>
-        </div>
 
-        <div id="cat-grid" class="cat-grid"></div>
+            <div class="hero-actions" style="margin-top:26px;">
+                <button class="btn btn-primary" onclick="showRandomFact('fact-text')">Następny fakt ✨</button>
+            </div>
+        </section>
 
-        <h2 class="section-title" style="margin-top:60px;">Twoje ulubione ♥</h2>
-        <p class="section-sub">Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.</p>
-        <div id="fav-grid" class="cat-grid"></div>
+        <section style="text-align:center;">
+            <h2 class="section-title">Najsłodszy kot na świecie 🐱💖</h2>
+            <p class="section-sub" style="margin-left:auto;margin-right:auto;">
+                A ten kot jest, przy okazji, po prostu najsłodszym kotem na świecie.
+            </p>
+            <div id="sweet-grid" class="cat-grid" style="max-width:420px;margin:0 auto;"></div>
+            <div class="hero-actions" style="margin-top:22px;">
+                <button class="btn btn-ghost" onclick="loadSweetCat()">Pokaż innego najsłodszego kota 🐾</button>
+            </div>
+        </section>
 
     </main>
 
@@ -72,12 +77,8 @@
     <script>
         document.getElementById("year").innerText = new Date().getFullYear();
         window.onload = function () {
-            currentLimit = getSettings().perPage;
-            loadCats("cat-grid", currentLimit);
-            loadBreeds("breed-filter");
-            updateFavCounter();
-            renderFavorites("fav-grid");
-            if (getSettings().autoRefresh) startAutoRefresh();
+            showRandomFact("fact-text");
+            loadSweetCat();
         };
     </script>
 

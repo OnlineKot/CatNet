@@ -241,20 +241,158 @@ function forceVip() {
 
 /* ---------- Ciekawostki o kotach ---------- */
 const catFacts = [
-    "Kot potrafi wydawać ponad 100 różnych dźwięków, a pies tylko około 10.",
-    "Koty przesypiają nawet 70% swojego życia.",
-    "Mruczenie kota ma częstotliwość, która wspomaga gojenie się kości.",
-    "Każdy nosek kota ma unikalny wzór — jak ludzki odcisk palca.",
-    "Koty nie czują smaku słodkiego.",
-    "Grupa kotów to po angielsku „a clowder”.",
+    "Koty przesypiają od 12 do 16 godzin na dobę.",
+    "Kot potrafi wydać ponad 100 różnych dźwięków, a pies tylko około 10.",
+    "Każdy nosek kota ma niepowtarzalny wzór — jak ludzki odcisk palca.",
+    "Koty w ogóle nie czują smaku słodkiego.",
+    "Mruczenie kota mieści się w częstotliwości sprzyjającej regeneracji kości.",
     "Kot potrafi biec z prędkością nawet 48 km/h.",
-    "Koty ocierają się o ludzi, by zostawić swój zapach — to znak akceptacji."
+    "Grupa kotów to po angielsku „a clowder”.",
+    "Kot ma pięć palców na każdej przedniej łapie, a tylko cztery na tylnych.",
+    "W każdym uchu kota pracują 32 mięśnie.",
+    "Koty potrafią obracać uszy o niemal 180 stopni.",
+    "Kot widzi w półmroku kilka razy lepiej niż człowiek.",
+    "Wąsy kota wyczuwają najmniejszy ruch powietrza.",
+    "Kot ma trzecią powiekę, zwaną migotką.",
+    "Serce kota bije około 140–220 razy na minutę.",
+    "Koty pocą się wyłącznie przez opuszki łap.",
+    "Kot potrafi skoczyć na wysokość kilkukrotności swojej długości.",
+    "Koty spędzają nawet połowę dnia na pielęgnacji futra.",
+    "Język kota pokryty jest maleńkimi haczykami z keratyny.",
+    "Kot machający ogonem na boki często jest poirytowany.",
+    "Powolne mruganie kota to koci „pocałunek” i znak zaufania.",
+    "Koty ocierają się o ludzi, by zostawić swój zapach.",
+    "Najstarszy znany kot dożył 38 lat.",
+    "Kot potrafi rozpoznać głos opiekuna, ale często go ignoruje.",
+    "Dorosły kot ma 30 zębów, a kocię tylko 26.",
+    "Koty nie mają obojczyka, dlatego mieszczą się w wąskich szczelinach.",
+    "Jeśli głowa kota się zmieści, zmieści się i reszta ciała.",
+    "Koty miauczą głównie do ludzi, rzadko do innych kotów.",
+    "Koty mają zwykle po 12 wąsów z każdej strony pyszczka.",
+    "Kot pije, zaginając czubek języka do tyłu w kształt litery J.",
+    "Kot rozpoznaje świat głównie węchem — ma miliony receptorów zapachu.",
+    "Kot przewraca się na grzbiet, gdy w pełni Ci ufa.",
+    "Koty domowe i tygrysy dzielą ponad 95% DNA.",
+    "Kocięta rodzą się ślepe i głuche.",
+    "Koty zaczynają mruczeć już w pierwszych dniach życia.",
+    "Najcięższy zarejestrowany kot ważył ponad 20 kg.",
+    "Koty potrafią śnić — poruszają wąsami i łapkami przez sen.",
+    "Kot ląduje na łapach dzięki tzw. odruchowi prostowania.",
+    "Wiele kotów nie znosi zapachu cytrusów.",
+    "W starożytnym Egipcie koty czczono jako święte zwierzęta.",
+    "Koty potrafią wyczuć zbliżającą się burzę.",
+    "Kot porusza się, stawiając najpierw obie prawe, potem obie lewe łapy.",
+    "Kocie pazury są zakrzywione, dlatego łatwiej wspinają się w górę niż schodzą.",
+    "Koty drapią przedmioty, by ostrzyć pazury i zaznaczyć teren.",
+    "Wąsy kota mają mniej więcej szerokość jego ciała.",
+    "Koty lepiej widzą odcienie niebieskiego i zielonego niż czerwień.",
+    "Większość kotów nie lubi moczyć futra — ale są wyjątki.",
+    "Rasa Turecki Van słynie z zamiłowania do pływania.",
+    "Koty potrafią ćwierkać na widok ptaków za oknem.",
+    "Oczy kota świecą w ciemności dzięki warstwie odbijającej światło.",
+    "Koty są najbardziej aktywne o świcie i o zmierzchu.",
+    "Mruczenie kota potrafi obniżyć ciśnienie krwi opiekuna.",
+    "Niektóre koty są „praworęczne”, inne „leworęczne”.",
+    "Kot potrafi przebiec krótki dystans szybciej niż najszybszy człowiek.",
+    "Kot potrafi wskoczyć i wylądować niemal bezgłośnie.",
+    "Koty mają wąsy także z tyłu przednich łap.",
+    "Wyprostowany ogon z zagiętym czubkiem to przyjazne powitanie.",
+    "Kot, który „udeptuje” Cię łapkami, czuje się przy Tobie bezpiecznie.",
+    "Koty potrafią nauczyć się otwierać drzwi i szuflady.",
+    "Kocięta z jednego miotu mogą mieć różnych ojców.",
+    "Kot widzi pod szerszym kątem niż człowiek.",
+    "Koty słabo widzą tuż przed własnym noskiem.",
+    "Słuch kota sięga znacznie wyżej niż ludzki — łapie ultradźwięki.",
+    "Dlatego kot słyszy mysz, której my w ogóle nie usłyszymy.",
+    "Kot potrafi rozpoznać swoje imię, choć nie zawsze reaguje.",
+    "Koty śpią więcej, gdy jest zimno lub pochmurno.",
+    "Wiele kotów jest nietolerancyjnych na laktozę, mimo miłości do mleka.",
+    "Koty to mięsożercy — najlepszą przekąską jest dla nich mięso.",
+    "Kot potrzebuje tauryny, którą musi dostać z pożywienia.",
+    "Wibrysy pomagają kotu „widzieć” w ciemności dotykiem.",
+    "Kot często wraca w to samo miejsce, które uznał za bezpieczne.",
+    "Kocie mruczenie bywa wykorzystywane w terapii relaksacyjnej.",
+    "Każdy kot ma swój własny, niepowtarzalny zapach.",
+    "Koty uwielbiają ciepłe, podwyższone miejsca z dobrym widokiem.",
+    "Pudełko to dla kota najlepsza kryjówka i poczucie bezpieczeństwa.",
+    "Koty czują się komfortowo w niewielkich, zamkniętych przestrzeniach.",
+    "Niektóre koty aportują zabawki jak pieski.",
+    "Kocie zabawy to trening instynktu łowieckiego.",
+    "Kot poluje „na niby” nawet wtedy, gdy jest najedzony.",
+    "Koty potrafią rozpoznawać emocje opiekuna po tonie głosu.",
+    "Kot porusza ogonem, uszami i całym ciałem, by się komunikować.",
+    "Kotka częściej używa prawej łapy, a kocur lewej.",
+    "Kot ma znakomity zmysł równowagi dzięki uchu wewnętrznemu.",
+    "Koty potrafią przeżyć upadek dzięki rozkładaniu ciała jak spadochron.",
+    "Kot potrafi przespać większość dnia, a starszy jeszcze więcej.",
+    "Kot zmienia nastrój w sekundę — od pieszczot do dzikiej zabawy.",
+    "Koci ogon pomaga utrzymać równowagę podczas skoków.",
+    "Koty rozpoznają znajome osoby także po sposobie chodzenia.",
+    "Kot potrafi zapamiętać, gdzie schowano jego ulubioną zabawkę.",
+    "Mruczenie to także sposób kota na ukojenie własnego stresu.",
+    "Koty witają się, dotykając się noskami.",
+    "Kot wystawiający brzuch okazuje Ci ogromne zaufanie.",
+    "Wzór futra każdego kota jest niepowtarzalny.",
+    "Koty potrafią naśladować ton ludzkiego głosu, by zwrócić uwagę.",
+    "Kot bywa zaskakująco zwinny nawet w ciasnych zakamarkach.",
+    "Koty często wybierają najcieplejsze miejsce w całym domu.",
+    "Kot, który mruży do Ciebie oczy, mówi „lubię Cię”.",
+    "Koty potrafią nauczyć się prostych sztuczek za pomocą nagród.",
+    "Przyjaźń z kotem buduje się powoli, ale jest wyjątkowo trwała.",
+    "Kot potrafi rozpoznać, kiedy jesteś smutny, i przychodzi się przytulić.",
+    "A ten kot, którego właśnie oglądasz, jest po prostu najsłodszym kotem na świecie. 🐱💖"
 ];
 
-function showRandomFact() {
-    const el = document.getElementById("cat-fact");
+/* Własne fakty dodane przez admina */
+function getCustomFacts() {
+    try {
+        return JSON.parse(localStorage.getItem("catnet_custom_facts") || "[]");
+    } catch {
+        return [];
+    }
+}
+function getAllFacts() {
+    return catFacts.concat(getCustomFacts());
+}
+
+/* „Dozowanie” — worek losujący bez powtórek aż do wyczerpania puli */
+let factBag = [];
+function nextFact() {
+    if (factBag.length === 0) {
+        factBag = getAllFacts().slice();
+        for (let i = factBag.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [factBag[i], factBag[j]] = [factBag[j], factBag[i]];
+        }
+    }
+    return factBag.pop();
+}
+
+function showRandomFact(elId = "cat-fact") {
+    const el = document.getElementById(elId);
     if (!el) return;
-    el.innerText = catFacts[Math.floor(Math.random() * catFacts.length)];
+    el.style.opacity = "0";
+    setTimeout(() => {
+        el.innerText = nextFact();
+        el.style.transition = "opacity 0.3s ease";
+        el.style.opacity = "1";
+    }, 120);
+}
+
+/* Najsłodszy kot na świecie (sekcja na stronie Fakty) */
+async function loadSweetCat() {
+    const grid = document.getElementById("sweet-grid");
+    if (!grid) return;
+    let url;
+    try {
+        const res = await fetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
+        const data = await res.json();
+        url = data[0].url;
+    } catch {
+        url = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+    }
+    grid.innerHTML = "";
+    createCatElement(grid, url);
 }
 
 /* ===========================================================
@@ -683,7 +821,29 @@ function admStats() {
         `VIP aktywny: ${sessionStorage.getItem("catnet_rgb_active") === "true" ? "TAK" : "nie"}\n` +
         `odblokowanie: ${unlock ? new Date(parseInt(unlock)).toLocaleString("pl-PL") : "-"}\n` +
         `motyw: ${s.accent} / ${s.mode} / ${s.density}\n` +
-        `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}`;
+        `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}\n` +
+        `własne fakty: ${getCustomFacts().length}`;
+}
+
+function admAddFact() {
+    const input = document.getElementById("adm-fact");
+    if (!input) return;
+    const txt = input.value.trim();
+    if (!txt) return;
+    const facts = getCustomFacts();
+    facts.push(txt);
+    localStorage.setItem("catnet_custom_facts", JSON.stringify(facts));
+    input.value = "";
+    factBag = []; // przebuduj pulę losowania
+    showToast("Dodano fakt do losowania");
+    admStats();
+}
+function admClearFacts() {
+    if (!confirm("Usunąć wszystkie własne fakty admina?")) return;
+    localStorage.removeItem("catnet_custom_facts");
+    factBag = [];
+    showToast("Usunięto własne fakty");
+    admStats();
 }
 
 /* ===========================================================
