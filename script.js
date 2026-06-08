@@ -7,7 +7,6 @@ let currentLimit = 2;
 let currentBreed = "";       // filtr rasy (puste = wszystkie)
 let forceFallback = false;   // tryb awaryjny wymuszony przez admina
 let autoRefreshTimer = null;  // pokaz slajdów / auto-odświeżanie
-let timerInterval;
 
 // Awaryjne koty (gdy TheCatAPI nie odpowiada)
 const fallbackImages = [
@@ -125,100 +124,6 @@ function renderFavorites(gridId = "fav-grid") {
     favs.forEach((url) => createCatElement(grid, url));
 }
 
-/* ---------- Prawdziwy licznik (CounterAPI) ---------- */
-async function loadCounter() {
-    const counterElement = document.getElementById("real-viewers");
-    if (!counterElement) return;
-    try {
-        const response = await fetch("https://api.counterapi.dev/v1/onlinekot2026/catnet_rgb/up");
-        if (!response.ok) throw new Error("Counter API Błąd");
-        const data = await response.json();
-        localStorage.setItem("catnet_rgb_count", data.count);
-        counterElement.innerText = data.count;
-    } catch {
-        counterElement.innerText = localStorage.getItem("catnet_rgb_count") || "1482";
-    }
-}
-
-/* ---------- Logika VIP ---------- */
-function requestVip() {
-    const now = new Date().getTime();
-    const savedTime = localStorage.getItem("catnet_rgb_unlock");
-
-    if (!savedTime) {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        localStorage.setItem("catnet_rgb_unlock", tomorrow.getTime());
-        alert(
-            "CatNet VIP jest całkowicie za darmo! Ze względu na ogromne zainteresowanie, darmowe wejściówki odnawiają się codziennie o północy. Poczekaj do jutra i odbierz swój dostęp!"
-        );
-        startCountdown(tomorrow.getTime());
-    } else {
-        const unlockTime = parseInt(savedTime);
-        if (now >= unlockTime) {
-            const key = prompt("Podaj klucz deszyfrujący VIP:");
-            if (key) {
-                sessionStorage.setItem("catnet_rgb_active", "true");
-                activateVipMode();
-            }
-        }
-    }
-}
-
-function checkVipStatus() {
-    const savedTime = localStorage.getItem("catnet_rgb_unlock");
-    if (!savedTime) return;
-    const unlockTime = parseInt(savedTime);
-    if (new Date().getTime() < unlockTime) {
-        startCountdown(unlockTime);
-    } else {
-        const btn = document.getElementById("vip-btn");
-        if (btn) btn.innerText = "WPROWADŹ KLUCZ VIP";
-    }
-}
-
-function startCountdown(unlockTime) {
-    const btn = document.getElementById("vip-btn");
-    const timerBox = document.getElementById("timer-container");
-    const countdownDisplay = document.getElementById("countdown");
-    const badge = document.getElementById("vip-badge");
-    if (!btn || !timerBox || !countdownDisplay) return;
-
-    btn.disabled = true;
-    btn.innerText = "WERYFIKACJA W TOKU...";
-    if (badge) badge.style.display = "none";
-    timerBox.style.display = "block";
-
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        const diff = unlockTime - new Date().getTime();
-        if (diff <= 0) {
-            clearInterval(timerInterval);
-            btn.disabled = false;
-            btn.innerText = "WPROWADŹ KLUCZ VIP";
-            if (badge) badge.style.display = "flex";
-            timerBox.style.display = "none";
-        } else {
-            let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            let s = Math.floor((diff % (1000 * 60)) / 1000);
-            h = h < 10 ? "0" + h : h;
-            m = m < 10 ? "0" + m : m;
-            s = s < 10 ? "0" + s : s;
-            countdownDisplay.innerText = `${h}:${m}:${s}`;
-        }
-    }, 1000);
-}
-
-function activateVipMode() {
-    document.body.classList.add("vip-mode");
-    const box = document.getElementById("vip-box");
-    if (box) box.style.display = "none";
-    currentLimit = 3;
-    loadCats("cat-grid", currentLimit);
-}
-
 /* ---------- Ukryty panel admina ---------- */
 let tClicks = 0;
 function triggerAdmin() {
@@ -235,11 +140,6 @@ function triggerAdmin() {
 function saveAdmin() {
     currentLimit = document.getElementById("adm-limit").value;
     refreshCats();
-    document.getElementById("adm-panel").style.display = "none";
-}
-function forceVip() {
-    sessionStorage.setItem("catnet_rgb_active", "true");
-    activateVipMode();
     document.getElementById("adm-panel").style.display = "none";
 }
 
@@ -771,47 +671,13 @@ function admSetLimit() {
     refreshCats();
     showToast("Limit kotów: " + v);
 }
-function admResetVip() {
-    localStorage.removeItem("catnet_rgb_unlock");
-    sessionStorage.removeItem("catnet_rgb_active");
-    document.body.classList.remove("vip-mode");
-    const box = document.getElementById("vip-box");
-    if (box) box.style.display = "";
-    clearInterval(timerInterval);
-    const btn = document.getElementById("vip-btn");
-    if (btn) { btn.disabled = false; btn.innerText = "ODBLOKUJ TRYB VIP"; }
-    const tc = document.getElementById("timer-container");
-    if (tc) tc.style.display = "none";
-    showToast("Zresetowano VIP");
-    admStats();
-}
-function admSetCountdown() {
-    const mins = parseInt(document.getElementById("adm-countdown").value) || 1;
-    const unlock = new Date().getTime() + mins * 60 * 1000;
-    localStorage.setItem("catnet_rgb_unlock", unlock);
-    startCountdown(unlock);
-    showToast("Odliczanie: " + mins + " min");
-}
-function admSetCounter() {
-    const v = document.getElementById("adm-counter").value;
-    if (v === "") return;
-    localStorage.setItem("catnet_rgb_count", v);
-    const el = document.getElementById("real-viewers");
-    if (el) el.innerText = v;
-    showToast("Licznik ustawiony: " + v);
-}
-function admToggleVipBox() {
-    const box = document.getElementById("vip-box");
-    if (!box) return;
-    box.style.display = box.style.display === "none" ? "" : "none";
-}
 function admToggleFallback(cb) {
     forceFallback = cb.checked;
     refreshCats();
     showToast(forceFallback ? "Tryb awaryjny WŁ" : "Tryb awaryjny WYŁ");
 }
 function admWipe() {
-    if (!confirm("Wyczyścić CAŁĄ pamięć lokalną (ustawienia, ulubione, VIP)?")) return;
+    if (!confirm("Wyczyścić CAŁĄ pamięć lokalną (ustawienia, ulubione, postępy)?")) return;
     localStorage.clear();
     sessionStorage.clear();
     showToast("Wyczyszczono pamięć — odświeżam...");
@@ -821,12 +687,11 @@ function admStats() {
     const el = document.getElementById("adm-stats");
     if (!el) return;
     const s = getSettings();
-    const unlock = localStorage.getItem("catnet_rgb_unlock");
+    const g = getGame();
     el.innerText =
         `ulubione: ${getFavorites().length}\n` +
-        `licznik VIP: ${localStorage.getItem("catnet_rgb_count") || "-"}\n` +
-        `VIP aktywny: ${sessionStorage.getItem("catnet_rgb_active") === "true" ? "TAK" : "nie"}\n` +
-        `odblokowanie: ${unlock ? new Date(parseInt(unlock)).toLocaleString("pl-PL") : "-"}\n` +
+        `obejrzano łącznie: ${g.totalViewed}\n` +
+        `poziom: ${levelInfo(g.xp).level} · XP: ${g.xp} · passa: ${g.streak}\n` +
         `motyw: ${s.accent} / ${s.mode} / ${s.density}\n` +
         `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}`;
 }

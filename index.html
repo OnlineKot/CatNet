@@ -76,21 +76,8 @@
                 <input type="checkbox" onchange="admToggleFallback(this)">
             </div>
 
-            <h4>STREFA VIP</h4>
-            <div class="adm-grid full">
-                <div class="adm-row">
-                    <label>Odliczanie (min)</label>
-                    <span><input type="number" id="adm-countdown" value="1" min="0"> <button onclick="admSetCountdown()">START</button></span>
-                </div>
-                <div class="adm-row">
-                    <label>Licznik „odebrało VIP"</label>
-                    <span><input type="number" id="adm-counter" placeholder="np. 9999"> <button onclick="admSetCounter()">SET</button></span>
-                </div>
-            </div>
+            <h4>NARZĘDZIA</h4>
             <div class="adm-grid">
-                <button onclick="forceVip()">FORCE VIP</button>
-                <button onclick="admResetVip()">RESET VIP</button>
-                <button onclick="admToggleVipBox()">UKRYJ/POKAŻ VIP</button>
                 <button onclick="admStats()">ODŚWIEŻ STATY</button>
                 <button onclick="unblockIP()">ODBLOKUJ IP</button>
             </div>
@@ -122,19 +109,6 @@
             </div>
         </div>
 
-        <section class="vip-box" id="vip-box">
-            <div class="vip-badge" id="vip-badge">1</div>
-            <h3>Strefa VIP ✨</h3>
-            <div class="real-counter">
-                OSÓB, KTÓRE ODEBRAŁY VIP: <span class="counter-number" id="real-viewers">...</span>
-            </div>
-            <button class="btn btn-primary" id="vip-btn" style="width:100%;justify-content:center;" onclick="requestVip()">ODBLOKUJ TRYB VIP</button>
-            <div class="timer-text" id="timer-container">
-                OFERTA VIP ODNAWIA SIĘ ZA:
-                <span id="countdown">00:00:00</span>
-            </div>
-        </section>
-
     </main>
 
     <footer class="footer">
@@ -147,13 +121,7 @@
         document.getElementById("year").innerText = new Date().getFullYear();
         window.onload = function () {
             showRandomFact();
-            loadCounter();
-            if (sessionStorage.getItem("catnet_rgb_active") === "true") {
-                activateVipMode();
-            } else {
-                loadCats();
-                checkVipStatus();
-            }
+            loadCats();
         };
     </script>
 
