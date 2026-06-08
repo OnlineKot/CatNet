@@ -99,7 +99,7 @@ body {
 
 .nav-links a.active {
     color: #fff;
-    background: var(--accent);
+    background: var(--accent-grad);
 }
 
 /* ---------- Układ strony ---------- */
@@ -206,13 +206,21 @@ body {
 
 .btn-primary {
     color: #fff;
-    background: var(--accent);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    background: var(--accent-grad);
+    background-size: 180% 180%;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+    animation: gradShift 7s ease infinite;
 }
 
 .btn-primary:hover {
-    filter: brightness(1.08);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32);
+    filter: brightness(1.06);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+}
+
+@keyframes gradShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .btn-ghost {
@@ -384,7 +392,10 @@ body {
 .stat .num {
     font-size: 36px;
     font-weight: 800;
-    color: var(--accent);
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .stat .label {
@@ -609,7 +620,7 @@ body.dense .cat-grid {
 
 .seg button.active {
     color: #fff;
-    background: var(--accent);
+    background: var(--accent-grad);
 }
 
 .range-row {
@@ -676,7 +687,7 @@ body.dense .cat-grid {
 }
 
 .switch input:checked + .slider {
-    background: var(--accent);
+    background: var(--accent-grad);
     border-color: transparent;
 }
 
@@ -788,7 +799,7 @@ select.cn-select {
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    background: var(--accent);
+    background: var(--accent-grad);
     color: #fff;
 }
 
@@ -1333,6 +1344,30 @@ select.cn-select {
     font-size: 14px;
 }
 
+.foss-note {
+    max-width: 720px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-top: 24px;
+}
+
+.foss-note h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.foss-note p {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin: 0 0 14px;
+}
+
+a.trust-item {
+    text-decoration: none;
+}
+
 /* ===========================================================
    NOWOCZESNE DODATKI: szkielety, konfetti, „do góry”, polecenia
    =========================================================== */
@@ -1371,7 +1406,7 @@ select.cn-select {
     height: 48px;
     border-radius: 14px;
     border: none;
-    background: var(--accent);
+    background: var(--accent-grad);
     color: #fff;
     font-size: 22px;
     cursor: pointer;
