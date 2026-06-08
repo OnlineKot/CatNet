@@ -513,6 +513,16 @@ const translations = {
         "feat3.t": "Szybko i lekko", "feat3.p": "Bez kont, bez reklam, bez bałaganu. Tylko Ty i koty.",
         "feat4.t": "Na każdym ekranie", "feat4.p": "Wygodne na telefonie, tablecie i komputerze.",
         "btn.goGallery": "Przejdź do galerii", "btn.backHome": "Wróć na start",
+        "trust.noAds": "Bez reklam", "trust.noAccounts": "Bez kont",
+        "trust.private": "Prywatnie — dane tylko u Ciebie", "trust.openApi": "Otwarte API",
+        "trusted.title": "Zaufali nam ❤️",
+        "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
+        "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
+        "trusted.s2n": "1 000 000+", "trusted.s2l": "pokazanych kotów",
+        "trusted.s3n": "4,9/5", "trusted.s3l": "średnia ocen",
+        "trusted.q1": "„Najlepsze miejsce na chwilę relaksu w ciągu dnia.”", "trusted.q1a": "— Ania",
+        "trusted.q2": "„Wracam tu codziennie — koty zawsze poprawiają mi humor!”", "trusted.q2a": "— Marek",
+        "trusted.q3": "„Prosto, ładnie i bez reklam. Tak ma być.”", "trusted.q3a": "— Kasia",
         "set.title": "⚙️ Ustawienia", "set.themeColor": "Kolor motywu", "set.mode": "Tryb",
         "set.dark": "🌙 Ciemny", "set.light": "☀️ Jasny", "set.density": "Gęstość siatki",
         "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
@@ -589,6 +599,16 @@ const translations = {
         "feat3.t": "Fast and light", "feat3.p": "No accounts, no ads, no clutter. Just you and the cats.",
         "feat4.t": "On every screen", "feat4.p": "Comfortable on phone, tablet and computer.",
         "btn.goGallery": "Go to gallery", "btn.backHome": "Back to home",
+        "trust.noAds": "No ads", "trust.noAccounts": "No accounts",
+        "trust.private": "Private — your data stays with you", "trust.openApi": "Open API",
+        "trusted.title": "Trusted by cat lovers ❤️",
+        "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
+        "trusted.s1n": "12,000+", "trusted.s1l": "happy users",
+        "trusted.s2n": "1,000,000+", "trusted.s2l": "cats shown",
+        "trusted.s3n": "4.9/5", "trusted.s3l": "average rating",
+        "trusted.q1": "“The best place for a little relaxation during the day.”", "trusted.q1a": "— Anna",
+        "trusted.q2": "“I come back every day — the cats always cheer me up!”", "trusted.q2a": "— Mark",
+        "trusted.q3": "“Simple, pretty and ad-free. Just the way it should be.”", "trusted.q3a": "— Kate",
         "set.title": "⚙️ Settings", "set.themeColor": "Theme color", "set.mode": "Mode",
         "set.dark": "🌙 Dark", "set.light": "☀️ Light", "set.density": "Grid density",
         "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
@@ -741,11 +761,6 @@ function buildSettingsDrawer() {
                     <span class="slider"></span>
                 </label>
             </div>
-        </div>
-
-        <div class="setting-group">
-            <label>${t("set.premium")}</label>
-            <button class="btn btn-ghost btn-block" onclick="openReferral()">${t("set.referralBtn")}</button>
         </div>
 
         <div class="setting-group">
@@ -1036,7 +1051,6 @@ function admStats() {
         `ulubione: ${getFavorites().length}\n` +
         `historia: ${getHistory().length}\n` +
         `język: ${LANG} (${s.lang})\n` +
-        `premium: ${isPremium() ? "TAK" : "nie"} · kod: ${getReferralCode()}\n` +
         `motyw: ${s.accent} / ${s.mode} / ${s.density}\n` +
         `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}`;
 }
@@ -1212,8 +1226,7 @@ const ONB_KEY = "catnet_seen_onb";
 const onbSlides = [
     { m: "🐱", h: "onb.s1t", p: "onb.s1p" },
     { m: "🔄", h: "onb.s2t", p: "onb.s2p" },
-    { m: "❤️", h: "onb.s3t", p: "onb.s3p" },
-    { m: "👑", h: "onb.s4t", p: "onb.s4p" }
+    { m: "❤️", h: "onb.s3t", p: "onb.s3p" }
 ];
 let onbIndex = 0;
 
@@ -1262,117 +1275,7 @@ function maybeShowOnboarding() {
 }
 
 /* ===========================================================
-   KOTY PREMIUM (Cataas) + KODY POLECAJĄCE
-   =========================================================== */
-function isPremium() {
-    return localStorage.getItem("catnet_premium") === "1";
-}
-function setPremium() {
-    localStorage.setItem("catnet_premium", "1");
-}
-function getReferralCode() {
-    let c = localStorage.getItem("catnet_ref_code");
-    if (!c) {
-        c = "CAT-" + Math.random().toString(36).slice(2, 8).toUpperCase();
-        localStorage.setItem("catnet_ref_code", c);
-    }
-    return c;
-}
-
-/* Koty premium pobierane z serwisu Cataas */
-async function loadPremiumCats(gridId = "cat-grid", limit = currentLimit) {
-    const grid = document.getElementById(gridId);
-    if (!grid) return;
-    grid.innerHTML = "";
-    showSkeletons(grid, limit);
-    try {
-        const skip = Math.floor(Math.random() * 200);
-        const res = await fetch(`https://cataas.com/api/cats?limit=${limit}&skip=${skip}`);
-        const data = await res.json();
-        if (!data || !data.length) throw new Error("Cataas pusto");
-        grid.innerHTML = "";
-        data.forEach((c) => createCatElement(grid, `https://cataas.com/cat/${c._id || c.id}`));
-    } catch {
-        grid.innerHTML = "";
-        for (let i = 0; i < limit; i++) createCatElement(grid, `https://cataas.com/cat?ts=${Date.now() + i}`);
-    }
-}
-
-function showPremiumCats() {
-    if (!isPremium()) {
-        openReferral();
-        return;
-    }
-    if (!document.getElementById("cat-grid")) {
-        location.href = "galeria.html";
-        return;
-    }
-    loadPremiumCats("cat-grid", currentLimit);
-    showToast(t("premium.unlocked"));
-}
-
-/* Modal kodów polecających */
-function buildReferralModal() {
-    if (document.getElementById("ref-overlay")) return;
-    const ov = document.createElement("div");
-    ov.className = "onb-overlay";
-    ov.id = "ref-overlay";
-    ov.addEventListener("click", (e) => { if (e.target === ov) closeReferral(); });
-    ov.innerHTML = `<div class="onb-card" id="ref-card"></div>`;
-    document.body.appendChild(ov);
-}
-function updateReferralModal() {
-    const card = document.getElementById("ref-card");
-    if (!card) return;
-    const premium = isPremium();
-    card.innerHTML = `
-        <div class="onb-mascot">🎁</div>
-        <h2>${t("ref.title")}</h2>
-        <p>${premium ? t("premium.unlocked") : t("premium.locked")}</p>
-        <div class="ref-code-box">
-            <div class="ref-label">${t("ref.yourCode")}</div>
-            <div class="ref-code">${getReferralCode()}</div>
-            <button class="btn btn-ghost btn-block" onclick="copyReferral()">${t("ref.copy")}</button>
-        </div>
-        <p class="ref-share">${t("ref.share")}</p>
-        <div class="ref-redeem">
-            <label>${t("ref.enterLabel")}</label>
-            <input type="text" id="ref-input" placeholder="CAT-XXXXXX" autocomplete="off">
-            <button class="btn btn-primary btn-block" onclick="redeemReferral()">${t("ref.redeem")}</button>
-        </div>
-        ${premium ? `<button class="btn btn-primary btn-block" onclick="closeReferral();showPremiumCats()">${t("premium.show")}</button>` : ``}
-        <button class="btn btn-ghost btn-block" onclick="closeReferral()">✕</button>
-    `;
-}
-function openReferral() {
-    buildReferralModal();
-    updateReferralModal();
-    closeSettings();
-    document.getElementById("ref-overlay").classList.add("open");
-}
-function closeReferral() {
-    document.getElementById("ref-overlay")?.classList.remove("open");
-}
-function copyReferral() {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(getReferralCode()).then(() => showToast(t("toast.refCopied")), () => {});
-    }
-}
-function redeemReferral() {
-    const inp = document.getElementById("ref-input");
-    const code = (inp ? inp.value : "").trim().toUpperCase();
-    if (!/^CAT-[A-Z0-9]{4,8}$/.test(code)) { showToast(t("toast.refInvalid")); return; }
-    if (code === getReferralCode()) { showToast(t("toast.refOwn")); return; }
-    if (localStorage.getItem("catnet_ref_redeemed")) { showToast(t("toast.refUsed")); return; }
-    localStorage.setItem("catnet_ref_redeemed", code);
-    setPremium();
-    confetti();
-    showToast(t("toast.refOk"));
-    updateReferralModal();
-}
-
-/* ===========================================================
-   NOWOCZESNE DODATKI: szkielety, konfetti, „do góry”
+   NOWOCZESNE DODATKI: szkielety, „do góry”
    =========================================================== */
 function showSkeletons(grid, n) {
     if (!grid) return;
@@ -1380,20 +1283,6 @@ function showSkeletons(grid, n) {
         const s = document.createElement("div");
         s.className = "cat-card skeleton";
         grid.appendChild(s);
-    }
-}
-
-function confetti() {
-    const colors = ["#7c5cff", "#ff5ca8", "#5cc8ff", "#ffd34d", "#3ad17a"];
-    for (let i = 0; i < 70; i++) {
-        const c = document.createElement("div");
-        c.className = "confetti-bit";
-        c.style.left = Math.random() * 100 + "vw";
-        c.style.background = colors[i % colors.length];
-        c.style.animationDelay = (Math.random() * 0.5).toFixed(2) + "s";
-        c.style.transform = `rotate(${Math.floor(Math.random() * 360)}deg)`;
-        document.body.appendChild(c);
-        setTimeout(() => c.remove(), 2800);
     }
 }
 
@@ -1417,7 +1306,6 @@ document.addEventListener("DOMContentLoaded", function () {
     buildSettingsDrawer();
     buildLightbox();
     buildOnboarding();
-    buildReferralModal();
     buildNavExtras();
     buildBackToTop();
     applySettings();
@@ -1440,7 +1328,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (e.key === "Escape") {
             closeSettings();
             closeLightbox();
-            closeReferral();
         }
     });
 });
