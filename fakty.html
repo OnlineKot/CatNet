@@ -30,10 +30,10 @@
         <a class="brand" href="index.html"><span class="paw">🐾</span>Cat<span class="brand-accent">Net</span></a>
         <div class="nav-tools">
             <nav class="nav-links">
-                <a href="index.html">Start</a>
-                <a href="galeria.html">Galeria</a>
-                <a href="fakty.html" class="active">Fakty</a>
-                <a href="o-nas.html">O nas</a>
+                <a href="index.html" data-i18n="nav.start">Start</a>
+                <a href="galeria.html" data-i18n="nav.gallery">Galeria</a>
+                <a href="fakty.html" class="active" data-i18n="nav.facts">Fakty</a>
+                <a href="o-nas.html" data-i18n="nav.about">O nas</a>
             </nav>
             <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
         </div>
@@ -42,36 +42,35 @@
     <main class="page">
 
         <section class="hero">
-            <h1>Fakty o <span class="grad">kotach</span> 🐾</h1>
-            <p>Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.</p>
+            <h1 data-i18n="facts.title">Fakty o <span class="grad">kotach</span> 🐾</h1>
+            <p data-i18n="facts.sub">Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.</p>
 
             <div class="fact-card" style="max-width:660px;">
-                <div class="fact-label">Czy wiesz, że...</div>
-                <div class="fact-text" id="fact-text">Wczytywanie...</div>
+                <div class="fact-label" data-i18n="facts.didYouKnow">Czy wiesz, że...</div>
+                <div class="fact-text" id="fact-text" data-i18n="loading">Wczytywanie...</div>
             </div>
 
             <div class="hero-actions" style="margin-top:26px;">
-                <button class="btn btn-primary" onclick="showRandomFact('fact-text')">Następny fakt ✨</button>
+                <button class="btn btn-primary" onclick="showRandomFact('fact-text')" data-i18n="btn.nextFact">Następny fakt ✨</button>
             </div>
         </section>
 
         <section style="text-align:center;">
-            <h2 class="section-title">Najsłodszy kot na świecie 🐱💖</h2>
-            <p class="section-sub" style="margin-left:auto;margin-right:auto;">
-                A ten kot jest, przy okazji, po prostu najsłodszym kotem na świecie.
+            <h2 class="section-title" data-i18n="facts.sweetTitle">Freud — najsłodszy kot na świecie 🐱💖</h2>
+            <p class="section-sub" style="margin-left:auto;margin-right:auto;" data-i18n="facts.sweetSub">
+                Poznaj Freuda. To on jest, przy okazji, po prostu najsłodszym kotem na świecie.
             </p>
             <div id="sweet-grid" class="cat-grid" style="max-width:420px;margin:0 auto;"></div>
             <div class="hero-actions" style="margin-top:22px;">
-                <button class="btn btn-ghost" onclick="loadSweetCat()">Pokaż innego najsłodszego kota 🐾</button>
+                <button class="btn btn-ghost" onclick="loadSweetCat()" data-i18n="btn.anotherSweet">Pokaż innego uroczego kota 🐾</button>
             </div>
         </section>
 
     </main>
 
     <footer class="footer">
-        <p>© <span id="year"></span> CatNet · Stworzone z miłości do kotów</p>
-        <p><a href="index.html">Start</a> &nbsp;·&nbsp; <a href="galeria.html">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html">O nas</a></p>
-        <p><a href="#" class="unblock-ip" onclick="unblockIP();return false;">🔓 Odblokuj IP</a></p>
+        <p>© <span id="year"></span> CatNet · <span data-i18n="footer.made">Stworzone z miłości do kotów</span></p>
+        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a></p>
     </footer>
 
     <script src="script.js"></script>

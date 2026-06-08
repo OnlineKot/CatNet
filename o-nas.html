@@ -30,10 +30,10 @@
         <a class="brand" href="index.html"><span class="paw">🐾</span>Cat<span class="brand-accent">Net</span></a>
         <div class="nav-tools">
             <nav class="nav-links">
-                <a href="index.html">Start</a>
-                <a href="galeria.html">Galeria</a>
-                <a href="fakty.html">Fakty</a>
-                <a href="o-nas.html" class="active">O nas</a>
+                <a href="index.html" data-i18n="nav.start">Start</a>
+                <a href="galeria.html" data-i18n="nav.gallery">Galeria</a>
+                <a href="fakty.html" data-i18n="nav.facts">Fakty</a>
+                <a href="o-nas.html" class="active" data-i18n="nav.about">O nas</a>
             </nav>
             <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
         </div>
@@ -41,65 +41,64 @@
 
     <main class="page">
 
-        <h1 class="section-title">O CatNet 🐾</h1>
+        <h1 class="section-title" data-i18n="about.title">O CatNet 🐾</h1>
         <div class="prose">
-            <p>CatNet powstał z prostego przekonania: świat jest piękniejszy, gdy jest w nim
+            <p data-i18n="about.p1">CatNet powstał z prostego przekonania: świat jest piękniejszy, gdy jest w nim
                więcej kotów. To miejsce, w którym jednym kliknięciem odkryjesz nieskończoną
                galerię uroczych pyszczków — bez logowania, bez opłat, bez końca.</p>
-            <p>Każde zdjęcie pochodzi z otwartego API <strong>TheCatAPI</strong>, dzięki czemu
+            <p data-i18n="about.p2">Każde zdjęcie pochodzi z otwartego API <strong>TheCatAPI</strong>, dzięki czemu
                za każdym odświeżeniem czeka na Ciebie zupełnie nowa porcja mruczących bohaterów.</p>
         </div>
 
         <div class="stats">
             <div class="stat">
                 <div class="num">∞</div>
-                <div class="label">Kotów do odkrycia</div>
+                <div class="label" data-i18n="stat.infinite">Kotów do odkrycia</div>
             </div>
             <div class="stat">
                 <div class="num">0 zł</div>
-                <div class="label">Zawsze za darmo</div>
+                <div class="label" data-i18n="stat.free">Zawsze za darmo</div>
             </div>
             <div class="stat">
                 <div class="num">100%</div>
-                <div class="label">Czystej radości</div>
+                <div class="label" data-i18n="stat.joy">Czystej radości</div>
             </div>
         </div>
 
-        <h2 class="section-title" style="margin-top:50px;">Dlaczego CatNet?</h2>
+        <h2 class="section-title" style="margin-top:50px;" data-i18n="about.whyTitle">Dlaczego CatNet?</h2>
         <div class="feature-grid">
             <div class="feature">
                 <div class="icon">🔄</div>
-                <h3>Nigdy się nie kończy</h3>
-                <p>Tysiące losowych zdjęć kotów. Odświeżaj, ile tylko chcesz.</p>
+                <h3 data-i18n="feat1.t">Nigdy się nie kończy</h3>
+                <p data-i18n="feat1.p">Tysiące losowych zdjęć kotów. Odświeżaj, ile tylko chcesz.</p>
             </div>
             <div class="feature">
                 <div class="icon">♥</div>
-                <h3>Twoje ulubione</h3>
-                <p>Zapisuj najsłodsze koty jednym kliknięciem — zostaną w Twojej przeglądarce.</p>
+                <h3 data-i18n="feat2.t">Twoje ulubione</h3>
+                <p data-i18n="feat2.p">Zapisuj najsłodsze koty jednym kliknięciem — zostaną w Twojej przeglądarce.</p>
             </div>
             <div class="feature">
                 <div class="icon">⚡</div>
-                <h3>Szybko i lekko</h3>
-                <p>Bez kont, bez reklam, bez bałaganu. Tylko Ty i koty.</p>
+                <h3 data-i18n="feat3.t">Szybko i lekko</h3>
+                <p data-i18n="feat3.p">Bez kont, bez reklam, bez bałaganu. Tylko Ty i koty.</p>
             </div>
             <div class="feature">
                 <div class="icon">📱</div>
-                <h3>Na każdym ekranie</h3>
-                <p>Wygodne na telefonie, tablecie i komputerze.</p>
+                <h3 data-i18n="feat4.t">Na każdym ekranie</h3>
+                <p data-i18n="feat4.p">Wygodne na telefonie, tablecie i komputerze.</p>
             </div>
         </div>
 
         <div class="hero-actions" style="margin-top:50px;">
-            <a class="btn btn-primary" href="galeria.html">Przejdź do galerii</a>
-            <a class="btn btn-ghost" href="index.html">Wróć na start</a>
+            <a class="btn btn-primary" href="galeria.html" data-i18n="btn.goGallery">Przejdź do galerii</a>
+            <a class="btn btn-ghost" href="index.html" data-i18n="btn.backHome">Wróć na start</a>
         </div>
 
     </main>
 
     <footer class="footer">
-        <p>© <span id="year"></span> CatNet · Stworzone z miłości do kotów</p>
-        <p><a href="index.html">Start</a> &nbsp;·&nbsp; <a href="galeria.html">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html">O nas</a></p>
-        <p><a href="#" class="unblock-ip" onclick="unblockIP();return false;">🔓 Odblokuj IP</a></p>
+        <p>© <span id="year"></span> CatNet · <span data-i18n="footer.made">Stworzone z miłości do kotów</span></p>
+        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a></p>
     </footer>
 
     <script src="script.js"></script>

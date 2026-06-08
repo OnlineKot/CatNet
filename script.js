@@ -7,7 +7,6 @@ let currentLimit = 2;
 let currentBreed = "";       // filtr rasy (puste = wszystkie)
 let forceFallback = false;   // tryb awaryjny wymuszony przez admina
 let autoRefreshTimer = null;  // pokaz slajdów / auto-odświeżanie
-let timerInterval;
 
 // Awaryjne koty (gdy TheCatAPI nie odpowiada)
 const fallbackImages = [
@@ -53,6 +52,7 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
     grid.innerHTML = "";
+    showSkeletons(grid, limit);
 
     try {
         if (forceFallback) throw new Error("Wymuszony tryb awaryjny");
@@ -64,9 +64,11 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
         const data = await response.json();
         if (!data || data.length === 0) throw new Error("Pusta odpowiedź API");
 
+        grid.innerHTML = "";
         data.forEach((cat) => createCatElement(grid, cat.url));
     } catch (err) {
         console.warn("Zabezpieczenie aktywne: TheCatAPI nie odpowiada, ładuję rezerwę.", err);
+        grid.innerHTML = "";
         if (!forceFallback) showBlockedNotice(grid);
         for (let i = 0; i < limit; i++) {
             createCatElement(grid, fallbackImages[i % fallbackImages.length]);
@@ -84,7 +86,7 @@ function createCatElement(grid, url) {
     img.alt = "Losowy kot z CatNet";
     img.loading = "lazy";
     img.style.cursor = "zoom-in";
-    img.addEventListener("click", () => openLightbox(url));
+    img.addEventListener("click", () => { registerCatClick(); openLightbox(url); });
 
     const fav = document.createElement("button");
     fav.className = "fav-btn" + (isFavorite(url) ? " is-fav" : "");
@@ -116,128 +118,52 @@ function renderFavorites(gridId = "fav-grid") {
     grid.innerHTML = "";
 
     if (favs.length === 0) {
-        grid.innerHTML =
-            '<p class="empty-hint">Nie masz jeszcze ulubionych kotów. Kliknij serduszko na zdjęciu, aby je tu zapisać. 🐾</p>';
+        grid.innerHTML = `<p class="empty-hint">${t("empty.favs")}</p>`;
         return;
     }
     favs.forEach((url) => createCatElement(grid, url));
-}
-
-/* ---------- Prawdziwy licznik (CounterAPI) ---------- */
-async function loadCounter() {
-    const counterElement = document.getElementById("real-viewers");
-    if (!counterElement) return;
-    try {
-        const response = await fetch("https://api.counterapi.dev/v1/onlinekot2026/catnet_rgb/up");
-        if (!response.ok) throw new Error("Counter API Błąd");
-        const data = await response.json();
-        localStorage.setItem("catnet_rgb_count", data.count);
-        counterElement.innerText = data.count;
-    } catch {
-        counterElement.innerText = localStorage.getItem("catnet_rgb_count") || "1482";
-    }
-}
-
-/* ---------- Logika VIP ---------- */
-function requestVip() {
-    const now = new Date().getTime();
-    const savedTime = localStorage.getItem("catnet_rgb_unlock");
-
-    if (!savedTime) {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        localStorage.setItem("catnet_rgb_unlock", tomorrow.getTime());
-        alert(
-            "CatNet VIP jest całkowicie za darmo! Ze względu na ogromne zainteresowanie, darmowe wejściówki odnawiają się codziennie o północy. Poczekaj do jutra i odbierz swój dostęp!"
-        );
-        startCountdown(tomorrow.getTime());
-    } else {
-        const unlockTime = parseInt(savedTime);
-        if (now >= unlockTime) {
-            const key = prompt("Podaj klucz deszyfrujący VIP:");
-            if (key) {
-                sessionStorage.setItem("catnet_rgb_active", "true");
-                activateVipMode();
-            }
-        }
-    }
-}
-
-function checkVipStatus() {
-    const savedTime = localStorage.getItem("catnet_rgb_unlock");
-    if (!savedTime) return;
-    const unlockTime = parseInt(savedTime);
-    if (new Date().getTime() < unlockTime) {
-        startCountdown(unlockTime);
-    } else {
-        const btn = document.getElementById("vip-btn");
-        if (btn) btn.innerText = "WPROWADŹ KLUCZ VIP";
-    }
-}
-
-function startCountdown(unlockTime) {
-    const btn = document.getElementById("vip-btn");
-    const timerBox = document.getElementById("timer-container");
-    const countdownDisplay = document.getElementById("countdown");
-    const badge = document.getElementById("vip-badge");
-    if (!btn || !timerBox || !countdownDisplay) return;
-
-    btn.disabled = true;
-    btn.innerText = "WERYFIKACJA W TOKU...";
-    if (badge) badge.style.display = "none";
-    timerBox.style.display = "block";
-
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        const diff = unlockTime - new Date().getTime();
-        if (diff <= 0) {
-            clearInterval(timerInterval);
-            btn.disabled = false;
-            btn.innerText = "WPROWADŹ KLUCZ VIP";
-            if (badge) badge.style.display = "flex";
-            timerBox.style.display = "none";
-        } else {
-            let h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            let s = Math.floor((diff % (1000 * 60)) / 1000);
-            h = h < 10 ? "0" + h : h;
-            m = m < 10 ? "0" + m : m;
-            s = s < 10 ? "0" + s : s;
-            countdownDisplay.innerText = `${h}:${m}:${s}`;
-        }
-    }, 1000);
-}
-
-function activateVipMode() {
-    document.body.classList.add("vip-mode");
-    const box = document.getElementById("vip-box");
-    if (box) box.style.display = "none";
-    currentLimit = 3;
-    loadCats("cat-grid", currentLimit);
 }
 
 /* ---------- Ukryty panel admina ---------- */
 let tClicks = 0;
 function triggerAdmin() {
     tClicks++;
-    if (tClicks === 17) {
-        const panel = document.getElementById("adm-panel");
-        if (panel) {
-            panel.style.display = "block";
-            admStats();
-        }
-        tClicks = 0;
+    if (tClicks === 17) openSecretMenu();
+}
+
+/* Otwiera sekretne menu (panel admina). Jeśli go nie ma na tej stronie,
+   przechodzi na stronę główną i otwiera je tam. */
+function openSecretMenu() {
+    tClicks = 0;
+    catClicks = 0;
+    const panel = document.getElementById("adm-panel");
+    if (panel) {
+        panel.style.display = "block";
+        admStats();
+        panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+        sessionStorage.setItem("catnet_open_secret", "1");
+        location.href = "index.html";
     }
 }
+
+/* Ukryte wejścia: wpisz „cats" albo kliknij 15 kotów */
+let catClicks = 0;
+let keyBuffer = "";
+function registerCatClick() {
+    catClicks++;
+    if (catClicks >= 15) openSecretMenu();
+}
+function handleSecretKey(e) {
+    if (e.key && e.key.length === 1) {
+        keyBuffer = (keyBuffer + e.key.toLowerCase()).slice(-8);
+        if (keyBuffer.endsWith("cats") || keyBuffer.endsWith("koty")) openSecretMenu();
+    }
+}
+
 function saveAdmin() {
     currentLimit = document.getElementById("adm-limit").value;
     refreshCats();
-    document.getElementById("adm-panel").style.display = "none";
-}
-function forceVip() {
-    sessionStorage.setItem("catnet_rgb_active", "true");
-    activateVipMode();
     document.getElementById("adm-panel").style.display = "none";
 }
 
@@ -342,11 +268,114 @@ const catFacts = [
     "Koty potrafią nauczyć się prostych sztuczek za pomocą nagród.",
     "Przyjaźń z kotem buduje się powoli, ale jest wyjątkowo trwała.",
     "Kot potrafi rozpoznać, kiedy jesteś smutny, i przychodzi się przytulić.",
-    "A ten kot, którego właśnie oglądasz, jest po prostu najsłodszym kotem na świecie. 🐱💖"
+    "A Freud — kot, którego właśnie oglądasz — jest po prostu najsłodszym kotem na świecie. 🐱💖"
+];
+
+const catFactsEn = [
+    "Cats sleep between 12 and 16 hours a day.",
+    "A cat can make over 100 different sounds, while a dog makes only about 10.",
+    "Every cat's nose has a unique pattern — like a human fingerprint.",
+    "Cats can't taste sweetness at all.",
+    "A cat's purr is in a frequency range that helps bones regenerate.",
+    "A cat can run up to 48 km/h.",
+    "A group of cats is called \"a clowder\".",
+    "A cat has five toes on each front paw, but only four on the back ones.",
+    "There are 32 muscles in each cat's ear.",
+    "Cats can rotate their ears almost 180 degrees.",
+    "A cat sees in low light several times better than a human.",
+    "A cat's whiskers sense the slightest movement of air.",
+    "A cat has a third eyelid, called the nictitating membrane.",
+    "A cat's heart beats about 140–220 times per minute.",
+    "Cats sweat only through the pads of their paws.",
+    "A cat can jump several times its own length.",
+    "Cats spend up to half their day grooming.",
+    "A cat's tongue is covered with tiny keratin hooks.",
+    "A cat flicking its tail side to side is often annoyed.",
+    "A slow blink from a cat is a \"cat kiss\" and a sign of trust.",
+    "Cats rub against people to leave their scent.",
+    "The oldest known cat lived to 38 years.",
+    "A cat can recognize its owner's voice but often ignores it.",
+    "An adult cat has 30 teeth, a kitten only 26.",
+    "Cats have no collarbone, so they fit through narrow gaps.",
+    "If a cat's head fits, the rest of its body will too.",
+    "Cats mostly meow at humans, rarely at other cats.",
+    "Cats usually have 12 whiskers on each side of the muzzle.",
+    "A cat drinks by curling the tip of its tongue into a J shape.",
+    "A cat experiences the world mostly through smell — millions of scent receptors.",
+    "A cat rolls onto its back when it fully trusts you.",
+    "House cats and tigers share over 95% of their DNA.",
+    "Kittens are born blind and deaf.",
+    "Cats start purring in their first days of life.",
+    "The heaviest cat on record weighed over 20 kg.",
+    "Cats can dream — they twitch their whiskers and paws in their sleep.",
+    "A cat lands on its paws thanks to the \"righting reflex\".",
+    "Many cats can't stand the smell of citrus.",
+    "In ancient Egypt cats were worshipped as sacred animals.",
+    "Cats can sense an approaching storm.",
+    "A cat moves by stepping with both right legs, then both left.",
+    "A cat's claws curve, so it climbs up more easily than down.",
+    "Cats scratch objects to sharpen claws and mark territory.",
+    "A cat's whiskers are roughly as wide as its body.",
+    "Cats see shades of blue and green better than red.",
+    "Most cats dislike getting their fur wet — but there are exceptions.",
+    "The Turkish Van breed is famous for loving to swim.",
+    "Cats can chirp at the sight of birds outside the window.",
+    "A cat's eyes glow in the dark thanks to a light-reflecting layer.",
+    "Cats are most active at dawn and dusk.",
+    "A cat's purr can lower its owner's blood pressure.",
+    "Some cats are \"right-pawed\", others \"left-pawed\".",
+    "A cat can outrun the fastest human over a short distance.",
+    "A cat can jump and land almost silently.",
+    "Cats also have whiskers on the back of their front legs.",
+    "A raised tail with a curled tip is a friendly greeting.",
+    "A cat \"kneading\" you with its paws feels safe with you.",
+    "Cats can learn to open doors and drawers.",
+    "Kittens from one litter can have different fathers.",
+    "A cat sees at a wider angle than a human.",
+    "Cats see poorly right in front of their own nose.",
+    "A cat's hearing reaches much higher than a human's — into ultrasound.",
+    "That's why a cat hears a mouse we can't hear at all.",
+    "A cat can recognize its name, though it doesn't always react.",
+    "Cats sleep more when it's cold or cloudy.",
+    "Many cats are lactose intolerant, despite loving milk.",
+    "Cats are carnivores — meat is the best snack for them.",
+    "A cat needs taurine, which it must get from food.",
+    "Whiskers help a cat \"see\" in the dark by touch.",
+    "A cat often returns to the same spot it considers safe.",
+    "A cat's purr is sometimes used in relaxation therapy.",
+    "Every cat has its own unique scent.",
+    "Cats love warm, elevated spots with a good view.",
+    "A box is a cat's best hideout and a source of security.",
+    "Cats feel comfortable in small, enclosed spaces.",
+    "Some cats fetch toys like dogs.",
+    "A cat's play is training for its hunting instinct.",
+    "A cat \"pretend-hunts\" even when it's well fed.",
+    "Cats can recognize their owner's emotions from tone of voice.",
+    "A cat communicates with its tail, ears and whole body.",
+    "A female cat more often uses her right paw, a male his left.",
+    "A cat has an excellent sense of balance thanks to its inner ear.",
+    "Cats can survive a fall by spreading their body like a parachute.",
+    "A cat can sleep through most of the day, and an older one even more.",
+    "A cat switches mood in a second — from cuddles to wild play.",
+    "A cat's tail helps it keep balance during jumps.",
+    "Cats recognize familiar people also by the way they walk.",
+    "A cat can remember where its favorite toy was hidden.",
+    "Purring is also a cat's way to soothe its own stress.",
+    "Cats greet each other by touching noses.",
+    "A cat showing its belly is showing you huge trust.",
+    "Every cat's coat pattern is unique.",
+    "Cats can mimic the tone of a human voice to get attention.",
+    "A cat can be surprisingly agile even in tight nooks.",
+    "Cats often pick the warmest spot in the whole house.",
+    "A cat squinting at you is saying \"I like you\".",
+    "Cats can learn simple tricks with the help of rewards.",
+    "Friendship with a cat builds slowly, but it's exceptionally lasting.",
+    "A cat can sense when you're sad and come over for a cuddle.",
+    "And Freud — the cat you're looking at right now — is simply the cutest cat in the world. 🐱💖"
 ];
 
 function getAllFacts() {
-    return catFacts.slice();
+    return (LANG === "en" ? catFactsEn : catFacts).slice();
 }
 
 /* „Dozowanie” — worek losujący bez powtórek aż do wyczerpania puli */
@@ -408,7 +437,225 @@ const defaultSettings = {
     mode: "dark",
     density: "comfortable",
     perPage: 8,
-    autoRefresh: false
+    autoRefresh: false,
+    lang: "auto"
+};
+
+/* ===========================================================
+   i18n — wersja polska / angielska (auto-wykrywanie)
+   =========================================================== */
+let LANG = "pl";
+
+function detectLang() {
+    const s = getSettings();
+    if (s.lang === "pl" || s.lang === "en") return s.lang;
+    const langs = (navigator.languages || [navigator.language || "en"]).join(",").toLowerCase();
+    let tz = "";
+    try { tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "").toLowerCase(); } catch {}
+    // Z Polski → polski, w przeciwnym razie angielski
+    if (langs.includes("pl") || tz === "europe/warsaw") return "pl";
+    return "en";
+}
+
+function t(key) {
+    const d = translations[LANG] || translations.pl;
+    if (d && d[key] != null) return d[key];
+    return translations.pl[key] != null ? translations.pl[key] : key;
+}
+
+function applyI18n() {
+    document.documentElement.lang = LANG;
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+        el.innerHTML = t(el.getAttribute("data-i18n"));
+    });
+    document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+        el.placeholder = t(el.getAttribute("data-i18n-ph"));
+    });
+    document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+        el.title = t(el.getAttribute("data-i18n-title"));
+    });
+}
+
+function setLang(v) {
+    const s = getSettings();
+    s.lang = v;
+    saveSettings(s);
+    location.reload();
+}
+
+const translations = {
+    pl: {
+        "nav.start": "Start", "nav.gallery": "Galeria", "nav.facts": "Fakty", "nav.about": "O nas",
+        "footer.made": "Stworzone z miłości do kotów",
+        "hero.h1": 'Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱',
+        "hero.p": "Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty, polub swoje ulubione i wracaj po codzienną dawkę mruczenia.",
+        "btn.browseGallery": "Przeglądaj galerię", "btn.showNewCats": "Pokaż nowe koty",
+        "fact.label": "Ciekawostka o kotach",
+        "home.todayTitle": "Koty na dziś", "home.todaySub": "Mały podgląd tego, co czeka na Ciebie w galerii.",
+        "gallery.title": "Galeria kotów 🐱",
+        "gallery.sub": "Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.",
+        "btn.newCats": "Nowe koty 🔄", "btn.surprise": "🎁 Niespodzianka", "btn.premium": "👑 Koty premium",
+        "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
+        "gallery.favTitle": "Twoje ulubione ♥", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
+        "facts.title": 'Fakty o <span class="grad">kotach</span> 🐾',
+        "facts.sub": "Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.",
+        "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt ✨",
+        "facts.sweetTitle": "Freud — najsłodszy kot na świecie 🐱💖",
+        "facts.sweetSub": "Poznaj Freuda. To on jest, przy okazji, po prostu najsłodszym kotem na świecie.",
+        "btn.anotherSweet": "Pokaż innego uroczego kota 🐾", "loading": "Wczytywanie...",
+        "about.title": "O CatNet 🐾",
+        "about.p1": "CatNet powstał z prostego przekonania: świat jest piękniejszy, gdy jest w nim więcej kotów. To miejsce, w którym jednym kliknięciem odkryjesz nieskończoną galerię uroczych pyszczków — bez logowania, bez opłat, bez końca.",
+        "about.p2": "Zdjęcia pochodzą z otwartych API <strong>TheCatAPI</strong> oraz <strong>Cataas</strong>, dzięki czemu za każdym odświeżeniem czeka na Ciebie zupełnie nowa porcja mruczących bohaterów.",
+        "stat.infinite": "Kotów do odkrycia", "stat.free": "Zawsze za darmo", "stat.joy": "Czystej radości",
+        "about.whyTitle": "Dlaczego CatNet?",
+        "feat1.t": "Nigdy się nie kończy", "feat1.p": "Tysiące losowych zdjęć kotów. Odświeżaj, ile tylko chcesz.",
+        "feat2.t": "Twoje ulubione", "feat2.p": "Zapisuj najsłodsze koty jednym kliknięciem — zostaną w Twojej przeglądarce.",
+        "feat3.t": "Szybko i lekko", "feat3.p": "Bez kont, bez reklam, bez bałaganu. Tylko Ty i koty.",
+        "feat4.t": "Na każdym ekranie", "feat4.p": "Wygodne na telefonie, tablecie i komputerze.",
+        "btn.goGallery": "Przejdź do galerii", "btn.backHome": "Wróć na start",
+        "trust.noAds": "Bez reklam", "trust.noAccounts": "Bez kont",
+        "trust.private": "Prywatnie — dane tylko u Ciebie", "trust.openApi": "Otwarte API",
+        "trusted.title": "Zaufali nam ❤️",
+        "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
+        "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
+        "trusted.s2n": "1 000 000+", "trusted.s2l": "pokazanych kotów",
+        "trusted.s3n": "4,9/5", "trusted.s3l": "średnia ocen",
+        "trusted.q1": "„Najlepsze miejsce na chwilę relaksu w ciągu dnia.”", "trusted.q1a": "— Ania",
+        "trusted.q2": "„Wracam tu codziennie — koty zawsze poprawiają mi humor!”", "trusted.q2a": "— Marek",
+        "trusted.q3": "„Prosto, ładnie i bez reklam. Tak ma być.”", "trusted.q3a": "— Kasia",
+        "set.title": "⚙️ Ustawienia", "set.themeColor": "Kolor motywu", "set.mode": "Tryb",
+        "set.dark": "🌙 Ciemny", "set.light": "☀️ Jasny", "set.density": "Gęstość siatki",
+        "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
+        "set.slideshow": "🎞️ Pokaz slajdów (auto)", "set.quickActions": "Szybkie akcje",
+        "set.surprise": "🎁 Niespodzianka — losowy kot", "set.clearFavs": "🗑️ Wyczyść ulubione",
+        "set.reset": "↺ Przywróć domyślne", "set.backup": "Dane i kopia zapasowa",
+        "set.export": "⬇️ Eksportuj ulubione + historię (JSON · Base64)", "set.copyExport": "📋 Kopiuj kod eksportu",
+        "set.importFile": "⬆️ Importuj z pliku", "set.importCode": "📥 Importuj z kodu",
+        "set.clearHistory": "🧹 Wyczyść historię", "set.language": "Język",
+        "set.premium": "Premium i polecenia", "set.premiumBtn": "👑 Koty premium",
+        "set.referralBtn": "🎁 Kod polecający",
+        "pg.title": "🐾 Twoje postępy", "pg.level": "Poziom", "pg.dailyGoal": "Cel dzienny",
+        "pg.catsToday": "kotów dziś", "pg.streakHint": "Twoja passa — wróć jutro, by ją przedłużyć!",
+        "pg.days": "dni", "pg.showTutorial": "▶️ Pokaż samouczek",
+        "onb.s1t": "Witaj w CatNet!", "onb.s1p": "Najsłodsze koty w sieci już czekają. Pokażemy Ci w kilka sekund, jak to działa.",
+        "onb.s2t": "Odkrywaj koty", "onb.s2p": "Odświeżaj galerię i oglądaj nowe koty bez końca — każdy klik to nowa porcja mruczenia.",
+        "onb.s3t": "Zbieraj ulubione", "onb.s3p": "Kliknij serduszko na zdjęciu, aby zapisać najsłodsze koty do swojej kolekcji.",
+        "onb.s4t": "Koty premium 👑", "onb.s4p": "Zdobądź kod polecający od znajomego i odblokuj wyjątkowe koty premium z Cataas!",
+        "onb.goalCalm": "Spokojnie", "onb.goalCalmD": "3 koty dziennie",
+        "onb.goalStd": "Standard", "onb.goalStdD": "10 kotów dziennie",
+        "onb.goalHard": "Hardcore", "onb.goalHardD": "20 kotów dziennie",
+        "onb.next": "Dalej", "onb.back": "Wstecz", "onb.start": "Zaczynamy! 🚀",
+        "toast.resetSettings": "Przywrócono ustawienia domyślne", "toast.noFavs": "Brak ulubionych do usunięcia",
+        "toast.favsCleared": "Usunięto ulubione koty", "toast.downloaded": "Pobrano zdjęcie 🐾",
+        "toast.shareCopied": "Skopiowano link do zdjęcia 🔗", "toast.exported": "Wyeksportowano dane (JSON w Base64) ⬇️",
+        "toast.copied": "Skopiowano kod eksportu 📋", "toast.imported": "Zaimportowano dane ✅",
+        "toast.importErr": "Nieprawidłowy kod / plik importu ❌", "toast.historyCleared": "Wyczyszczono historię",
+        "toast.ipStart": "🔄 Trwa odblokowywanie adresu IP...", "toast.ipDone": "✅ Twój adres IP został pomyślnie odblokowany!",
+        "toast.goalDone": "🎯 Cel dzienny osiągnięty! +50 XP 🎉", "toast.levelUp": "🎉 Poziom {n}! Tak trzymaj!",
+        "toast.streak1": "🔥 Passa: {n} dzień! +15 XP", "toast.streak": "🔥 Passa: {n} dni! +15 XP",
+        "toast.onbDone": "Miłej zabawy w CatNet! 🐾 +20 XP", "toast.premiumOn": "👑 Tryb premium odblokowany!",
+        "blocked.title": "Nie można wyświetlić kotów",
+        "blocked.text": "Wygląda na to, że Twoja przeglądarka lub <strong>AdBlock</strong> blokuje połączenie. Wyłącz blokowanie reklam i odśwież stronę — w przeciwnym razie koty się nie załadują.",
+        "blocked.retry": "Spróbuj ponownie 🔄",
+        "adblock.banner": "🚫 Wygląda na to, że masz włączony <strong>AdBlock</strong> — przez to koty mogą się nie wyświetlać. Wyłącz blokowanie i odśwież stronę.",
+        "lightbox.fav": "♡ Ulubione", "lightbox.favOn": "♥ W ulubionych", "lightbox.download": "⬇️ Pobierz", "lightbox.share": "🔗 Udostępnij",
+        "empty.favs": "Nie masz jeszcze ulubionych kotów. Kliknij serduszko na zdjęciu, aby je tu zapisać. 🐾",
+        "premium.title": "👑 Koty premium", "premium.locked": "Koty premium z serwisu Cataas są zablokowane. Odblokuj je, wpisując kod polecający od znajomego!",
+        "premium.unlocked": "Masz dostęp do kotów premium! 👑", "premium.show": "Pokaż koty premium 👑",
+        "ref.title": "🎁 Kod polecający", "ref.yourCode": "Twój kod polecający:",
+        "ref.share": "Udostępnij ten kod znajomym. Gdy ktoś go wpisze, oboje dostajecie bonus!",
+        "ref.enterLabel": "Masz kod od znajomego? Wpisz go:", "ref.redeem": "Odbierz bonus",
+        "ref.copy": "📋 Kopiuj mój kod",
+        "toast.refCopied": "Skopiowano Twój kod 📋", "toast.refOwn": "To Twój własny kod 🙂",
+        "toast.refUsed": "Ten kod został już wykorzystany", "toast.refInvalid": "Nieprawidłowy kod polecający",
+        "toast.refOk": "🎉 Bonus odebrany! +150 XP i koty premium odblokowane 👑"
+    },
+    en: {
+        "nav.start": "Home", "nav.gallery": "Gallery", "nav.facts": "Facts", "nav.about": "About",
+        "footer.made": "Made with love for cats",
+        "hero.h1": 'The cutest <span class="grad">cats</span><br>on the whole web 🐱',
+        "hero.p": "Welcome to CatNet! Refresh the gallery to discover new adorable cats, like your favorites and come back for your daily dose of purring.",
+        "btn.browseGallery": "Browse gallery", "btn.showNewCats": "Show new cats",
+        "fact.label": "Cat fact",
+        "home.todayTitle": "Cats for today", "home.todaySub": "A little preview of what's waiting for you in the gallery.",
+        "gallery.title": "Cat gallery 🐱",
+        "gallery.sub": "Refresh as much as you like — there are endless cats. Click the heart to save your favorites.",
+        "btn.newCats": "New cats 🔄", "btn.surprise": "🎁 Surprise", "btn.premium": "👑 Premium cats",
+        "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
+        "gallery.favTitle": "Your favorites ♥", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
+        "facts.title": 'Facts about <span class="grad">cats</span> 🐾',
+        "facts.sub": "Click and discover — something new about our purring friends every time.",
+        "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact ✨",
+        "facts.sweetTitle": "Freud — the cutest cat in the world 🐱💖",
+        "facts.sweetSub": "Meet Freud. He is, by the way, simply the cutest cat in the world.",
+        "btn.anotherSweet": "Show another adorable cat 🐾", "loading": "Loading...",
+        "about.title": "About CatNet 🐾",
+        "about.p1": "CatNet was born from a simple belief: the world is more beautiful with more cats in it. It's a place where one click reveals an endless gallery of adorable faces — no login, no fees, no end.",
+        "about.p2": "The photos come from the open <strong>TheCatAPI</strong> and <strong>Cataas</strong> APIs, so every refresh brings a brand-new batch of purring heroes.",
+        "stat.infinite": "Cats to discover", "stat.free": "Always free", "stat.joy": "Pure joy",
+        "about.whyTitle": "Why CatNet?",
+        "feat1.t": "Never ends", "feat1.p": "Thousands of random cat photos. Refresh as much as you want.",
+        "feat2.t": "Your favorites", "feat2.p": "Save the cutest cats with one click — they stay in your browser.",
+        "feat3.t": "Fast and light", "feat3.p": "No accounts, no ads, no clutter. Just you and the cats.",
+        "feat4.t": "On every screen", "feat4.p": "Comfortable on phone, tablet and computer.",
+        "btn.goGallery": "Go to gallery", "btn.backHome": "Back to home",
+        "trust.noAds": "No ads", "trust.noAccounts": "No accounts",
+        "trust.private": "Private — your data stays with you", "trust.openApi": "Open API",
+        "trusted.title": "Trusted by cat lovers ❤️",
+        "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
+        "trusted.s1n": "12,000+", "trusted.s1l": "happy users",
+        "trusted.s2n": "1,000,000+", "trusted.s2l": "cats shown",
+        "trusted.s3n": "4.9/5", "trusted.s3l": "average rating",
+        "trusted.q1": "“The best place for a little relaxation during the day.”", "trusted.q1a": "— Anna",
+        "trusted.q2": "“I come back every day — the cats always cheer me up!”", "trusted.q2a": "— Mark",
+        "trusted.q3": "“Simple, pretty and ad-free. Just the way it should be.”", "trusted.q3a": "— Kate",
+        "set.title": "⚙️ Settings", "set.themeColor": "Theme color", "set.mode": "Mode",
+        "set.dark": "🌙 Dark", "set.light": "☀️ Light", "set.density": "Grid density",
+        "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
+        "set.slideshow": "🎞️ Slideshow (auto)", "set.quickActions": "Quick actions",
+        "set.surprise": "🎁 Surprise — random cat", "set.clearFavs": "🗑️ Clear favorites",
+        "set.reset": "↺ Restore defaults", "set.backup": "Data & backup",
+        "set.export": "⬇️ Export favorites + history (JSON · Base64)", "set.copyExport": "📋 Copy export code",
+        "set.importFile": "⬆️ Import from file", "set.importCode": "📥 Import from code",
+        "set.clearHistory": "🧹 Clear history", "set.language": "Language",
+        "set.premium": "Premium & referrals", "set.premiumBtn": "👑 Premium cats",
+        "set.referralBtn": "🎁 Referral code",
+        "pg.title": "🐾 Your progress", "pg.level": "Level", "pg.dailyGoal": "Daily goal",
+        "pg.catsToday": "cats today", "pg.streakHint": "Your streak — come back tomorrow to keep it going!",
+        "pg.days": "days", "pg.showTutorial": "▶️ Show tutorial",
+        "onb.s1t": "Welcome to CatNet!", "onb.s1p": "The cutest cats on the web are waiting. We'll show you how it works in a few seconds.",
+        "onb.s2t": "Discover cats", "onb.s2p": "Refresh the gallery and watch new cats endlessly — every click is a fresh dose of purring.",
+        "onb.s3t": "Collect favorites", "onb.s3p": "Click the heart on a photo to save the cutest cats to your collection.",
+        "onb.s4t": "Premium cats 👑", "onb.s4p": "Get a friend's referral code and unlock special premium cats from Cataas!",
+        "onb.goalCalm": "Easy", "onb.goalCalmD": "3 cats a day",
+        "onb.goalStd": "Standard", "onb.goalStdD": "10 cats a day",
+        "onb.goalHard": "Hardcore", "onb.goalHardD": "20 cats a day",
+        "onb.next": "Next", "onb.back": "Back", "onb.start": "Let's go! 🚀",
+        "toast.resetSettings": "Default settings restored", "toast.noFavs": "No favorites to remove",
+        "toast.favsCleared": "Favorite cats removed", "toast.downloaded": "Photo downloaded 🐾",
+        "toast.shareCopied": "Photo link copied 🔗", "toast.exported": "Data exported (JSON in Base64) ⬇️",
+        "toast.copied": "Export code copied 📋", "toast.imported": "Data imported ✅",
+        "toast.importErr": "Invalid code / import file ❌", "toast.historyCleared": "History cleared",
+        "toast.ipStart": "🔄 Unblocking your IP address...", "toast.ipDone": "✅ Your IP address has been successfully unblocked!",
+        "toast.goalDone": "🎯 Daily goal reached! +50 XP 🎉", "toast.levelUp": "🎉 Level {n}! Keep it up!",
+        "toast.streak1": "🔥 Streak: {n} day! +15 XP", "toast.streak": "🔥 Streak: {n} days! +15 XP",
+        "toast.onbDone": "Have fun on CatNet! 🐾 +20 XP", "toast.premiumOn": "👑 Premium mode unlocked!",
+        "blocked.title": "Can't display the cats",
+        "blocked.text": "It looks like your browser or <strong>AdBlock</strong> is blocking the connection. Turn off ad blocking and refresh the page — otherwise the cats won't load.",
+        "blocked.retry": "Try again 🔄",
+        "adblock.banner": "🚫 It looks like you have <strong>AdBlock</strong> enabled — the cats may not show up. Disable blocking and refresh the page.",
+        "lightbox.fav": "♡ Favorite", "lightbox.favOn": "♥ In favorites", "lightbox.download": "⬇️ Download", "lightbox.share": "🔗 Share",
+        "empty.favs": "You don't have any favorite cats yet. Click the heart on a photo to save them here. 🐾",
+        "premium.title": "👑 Premium cats", "premium.locked": "Premium cats from Cataas are locked. Unlock them by entering a friend's referral code!",
+        "premium.unlocked": "You have access to premium cats! 👑", "premium.show": "Show premium cats 👑",
+        "ref.title": "🎁 Referral code", "ref.yourCode": "Your referral code:",
+        "ref.share": "Share this code with friends. When someone enters it, you both get a bonus!",
+        "ref.enterLabel": "Got a code from a friend? Enter it:", "ref.redeem": "Claim bonus",
+        "ref.copy": "📋 Copy my code",
+        "toast.refCopied": "Your code copied 📋", "toast.refOwn": "That's your own code 🙂",
+        "toast.refUsed": "This code has already been used", "toast.refInvalid": "Invalid referral code",
+        "toast.refOk": "🎉 Bonus claimed! +150 XP and premium cats unlocked 👑"
+    }
 };
 
 function getSettings() {
@@ -464,33 +711,42 @@ function buildSettingsDrawer() {
     drawer.id = "settings-drawer";
     drawer.innerHTML = `
         <div class="drawer-head">
-            <h3>⚙️ Ustawienia</h3>
+            <h3>${t("set.title")}</h3>
             <button class="icon-btn" onclick="closeSettings()">✕</button>
         </div>
 
         <div class="setting-group">
-            <label>Kolor motywu</label>
+            <label>${t("set.language")}</label>
+            <div class="seg" id="lang-seg">
+                <button data-lang="auto">Auto</button>
+                <button data-lang="pl">Polski</button>
+                <button data-lang="en">English</button>
+            </div>
+        </div>
+
+        <div class="setting-group">
+            <label>${t("set.themeColor")}</label>
             <div class="swatches" id="accent-swatches">${swatches}</div>
         </div>
 
         <div class="setting-group">
-            <label>Tryb</label>
+            <label>${t("set.mode")}</label>
             <div class="seg" id="mode-seg">
-                <button data-mode="dark">🌙 Ciemny</button>
-                <button data-mode="light">☀️ Jasny</button>
+                <button data-mode="dark">${t("set.dark")}</button>
+                <button data-mode="light">${t("set.light")}</button>
             </div>
         </div>
 
         <div class="setting-group">
-            <label>Gęstość siatki</label>
+            <label>${t("set.density")}</label>
             <div class="seg" id="density-seg">
-                <button data-density="comfortable">Komfortowa</button>
-                <button data-density="dense">Gęsta</button>
+                <button data-density="comfortable">${t("set.comfortable")}</button>
+                <button data-density="dense">${t("set.dense")}</button>
             </div>
         </div>
 
         <div class="setting-group">
-            <label>Kotów na stronę (galeria)</label>
+            <label>${t("set.perPage")}</label>
             <div class="range-row">
                 <input type="range" id="perpage-range" min="4" max="20" step="1">
                 <span class="val" id="perpage-val">8</span>
@@ -499,7 +755,7 @@ function buildSettingsDrawer() {
 
         <div class="setting-group">
             <div class="switch-row">
-                <span>🎞️ Pokaz slajdów (auto)</span>
+                <span>${t("set.slideshow")}</span>
                 <label class="switch">
                     <input type="checkbox" id="autorefresh-toggle">
                     <span class="slider"></span>
@@ -508,19 +764,19 @@ function buildSettingsDrawer() {
         </div>
 
         <div class="setting-group">
-            <label>Szybkie akcje</label>
-            <button class="btn btn-ghost btn-block" onclick="surpriseCat()">🎁 Niespodzianka — losowy kot</button>
-            <button class="btn btn-ghost btn-block" onclick="clearFavorites()">🗑️ Wyczyść ulubione</button>
-            <button class="btn btn-ghost btn-block" onclick="resetSettings()">↺ Przywróć domyślne</button>
+            <label>${t("set.quickActions")}</label>
+            <button class="btn btn-ghost btn-block" onclick="surpriseCat()">${t("set.surprise")}</button>
+            <button class="btn btn-ghost btn-block" onclick="clearFavorites()">${t("set.clearFavs")}</button>
+            <button class="btn btn-ghost btn-block" onclick="resetSettings()">${t("set.reset")}</button>
         </div>
 
         <div class="setting-group">
-            <label>Dane i kopia zapasowa</label>
-            <button class="btn btn-ghost btn-block" onclick="exportData()">⬇️ Eksportuj ulubione + historię (JSON · Base64)</button>
-            <button class="btn btn-ghost btn-block" onclick="copyExport()">📋 Kopiuj kod eksportu</button>
-            <button class="btn btn-ghost btn-block" onclick="importData()">⬆️ Importuj z pliku</button>
-            <button class="btn btn-ghost btn-block" onclick="importFromText()">📥 Importuj z kodu</button>
-            <button class="btn btn-ghost btn-block" onclick="clearHistory()">🧹 Wyczyść historię</button>
+            <label>${t("set.backup")}</label>
+            <button class="btn btn-ghost btn-block" onclick="exportData()">${t("set.export")}</button>
+            <button class="btn btn-ghost btn-block" onclick="copyExport()">${t("set.copyExport")}</button>
+            <button class="btn btn-ghost btn-block" onclick="importData()">${t("set.importFile")}</button>
+            <button class="btn btn-ghost btn-block" onclick="importFromText()">${t("set.importCode")}</button>
+            <button class="btn btn-ghost btn-block" onclick="clearHistory()">${t("set.clearHistory")}</button>
             <input type="file" id="import-file" accept=".json,.txt,application/json" style="display:none" onchange="handleImportFile(this)">
         </div>
     `;
@@ -529,6 +785,9 @@ function buildSettingsDrawer() {
     document.body.appendChild(drawer);
 
     // Zdarzenia
+    drawer.querySelectorAll("[data-lang]").forEach((b) =>
+        b.addEventListener("click", () => setLang(b.dataset.lang))
+    );
     drawer.querySelectorAll("[data-accent]").forEach((b) =>
         b.addEventListener("click", () => setSetting("accent", b.dataset.accent))
     );
@@ -557,6 +816,9 @@ function buildSettingsDrawer() {
 
 function syncSettingsUI() {
     const s = getSettings();
+    document.querySelectorAll("#lang-seg button").forEach((b) =>
+        b.classList.toggle("active", b.dataset.lang === (s.lang || "auto"))
+    );
     document.querySelectorAll("#accent-swatches .swatch").forEach((b) =>
         b.classList.toggle("active", b.dataset.accent === s.accent)
     );
@@ -585,17 +847,18 @@ function closeSettings() {
 }
 
 function resetSettings() {
-    saveSettings({ ...defaultSettings });
+    const lang = getSettings().lang;
+    saveSettings({ ...defaultSettings, lang });
     applySettings();
-    showToast("Przywrócono ustawienia domyślne");
+    showToast(t("toast.resetSettings"));
 }
 
 function clearFavorites() {
     if (getFavorites().length === 0) {
-        showToast("Brak ulubionych do usunięcia");
+        showToast(t("toast.noFavs"));
         return;
     }
-    if (!confirm("Na pewno usunąć wszystkie ulubione koty?")) return;
+    if (!confirm(t("toast.favsCleared") + "?")) return;
     localStorage.removeItem("catnet_favorites");
     updateFavCounter();
     renderFavorites("fav-grid");
@@ -603,7 +866,7 @@ function clearFavorites() {
         b.classList.remove("is-fav");
         b.innerHTML = "♡";
     });
-    showToast("Usunięto ulubione koty");
+    showToast(t("toast.favsCleared"));
 }
 
 /* ===========================================================
@@ -633,9 +896,9 @@ function buildLightbox() {
         <button class="icon-btn lightbox-close" onclick="closeLightbox()">✕</button>
         <img id="lightbox-img" src="" alt="Kot w powiększeniu">
         <div class="lightbox-actions">
-            <button class="btn btn-primary" id="lightbox-fav" onclick="lightboxToggleFav()">♡ Ulubione</button>
-            <button class="btn btn-ghost" onclick="downloadImage(lightboxUrl)">⬇️ Pobierz</button>
-            <button class="btn btn-ghost" onclick="shareImage(lightboxUrl)">🔗 Udostępnij</button>
+            <button class="btn btn-primary" id="lightbox-fav" onclick="lightboxToggleFav()">${t("lightbox.fav")}</button>
+            <button class="btn btn-ghost" onclick="downloadImage(lightboxUrl)">${t("lightbox.download")}</button>
+            <button class="btn btn-ghost" onclick="shareImage(lightboxUrl)">${t("lightbox.share")}</button>
         </div>
     `;
     box.addEventListener("click", (e) => {
@@ -659,7 +922,7 @@ function updateLightboxFav() {
     const btn = document.getElementById("lightbox-fav");
     if (!btn) return;
     const fav = isFavorite(lightboxUrl);
-    btn.innerHTML = fav ? "♥ W ulubionych" : "♡ Ulubione";
+    btn.innerHTML = fav ? t("lightbox.favOn") : t("lightbox.fav");
 }
 function lightboxToggleFav() {
     toggleFavorite(lightboxUrl);
@@ -685,7 +948,7 @@ async function downloadImage(url) {
         a.download = "catnet-kot.jpg";
         a.click();
         URL.revokeObjectURL(a.href);
-        showToast("Pobrano zdjęcie 🐾");
+        showToast(t("toast.downloaded"));
     } catch {
         window.open(url, "_blank");
     }
@@ -694,13 +957,13 @@ async function downloadImage(url) {
 async function shareImage(url) {
     if (navigator.share) {
         try {
-            await navigator.share({ title: "CatNet", text: "Zobacz tego kota!", url });
+            await navigator.share({ title: "CatNet", text: "Look at this cat!", url });
             return;
         } catch { /* anulowano */ }
     }
     try {
         await navigator.clipboard.writeText(url);
-        showToast("Skopiowano link do zdjęcia 🔗");
+        showToast(t("toast.shareCopied"));
     } catch {
         window.open(url, "_blank");
     }
@@ -768,47 +1031,13 @@ function admSetLimit() {
     refreshCats();
     showToast("Limit kotów: " + v);
 }
-function admResetVip() {
-    localStorage.removeItem("catnet_rgb_unlock");
-    sessionStorage.removeItem("catnet_rgb_active");
-    document.body.classList.remove("vip-mode");
-    const box = document.getElementById("vip-box");
-    if (box) box.style.display = "";
-    clearInterval(timerInterval);
-    const btn = document.getElementById("vip-btn");
-    if (btn) { btn.disabled = false; btn.innerText = "ODBLOKUJ TRYB VIP"; }
-    const tc = document.getElementById("timer-container");
-    if (tc) tc.style.display = "none";
-    showToast("Zresetowano VIP");
-    admStats();
-}
-function admSetCountdown() {
-    const mins = parseInt(document.getElementById("adm-countdown").value) || 1;
-    const unlock = new Date().getTime() + mins * 60 * 1000;
-    localStorage.setItem("catnet_rgb_unlock", unlock);
-    startCountdown(unlock);
-    showToast("Odliczanie: " + mins + " min");
-}
-function admSetCounter() {
-    const v = document.getElementById("adm-counter").value;
-    if (v === "") return;
-    localStorage.setItem("catnet_rgb_count", v);
-    const el = document.getElementById("real-viewers");
-    if (el) el.innerText = v;
-    showToast("Licznik ustawiony: " + v);
-}
-function admToggleVipBox() {
-    const box = document.getElementById("vip-box");
-    if (!box) return;
-    box.style.display = box.style.display === "none" ? "" : "none";
-}
 function admToggleFallback(cb) {
     forceFallback = cb.checked;
     refreshCats();
     showToast(forceFallback ? "Tryb awaryjny WŁ" : "Tryb awaryjny WYŁ");
 }
 function admWipe() {
-    if (!confirm("Wyczyścić CAŁĄ pamięć lokalną (ustawienia, ulubione, VIP)?")) return;
+    if (!confirm("Wyczyścić CAŁĄ pamięć lokalną (ustawienia, ulubione, postępy)?")) return;
     localStorage.clear();
     sessionStorage.clear();
     showToast("Wyczyszczono pamięć — odświeżam...");
@@ -818,12 +1047,10 @@ function admStats() {
     const el = document.getElementById("adm-stats");
     if (!el) return;
     const s = getSettings();
-    const unlock = localStorage.getItem("catnet_rgb_unlock");
     el.innerText =
         `ulubione: ${getFavorites().length}\n` +
-        `licznik VIP: ${localStorage.getItem("catnet_rgb_count") || "-"}\n` +
-        `VIP aktywny: ${sessionStorage.getItem("catnet_rgb_active") === "true" ? "TAK" : "nie"}\n` +
-        `odblokowanie: ${unlock ? new Date(parseInt(unlock)).toLocaleString("pl-PL") : "-"}\n` +
+        `historia: ${getHistory().length}\n` +
+        `język: ${LANG} (${s.lang})\n` +
         `motyw: ${s.accent} / ${s.mode} / ${s.density}\n` +
         `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}`;
 }
@@ -849,7 +1076,7 @@ function addToHistory(url) {
 }
 function clearHistory() {
     localStorage.removeItem(HISTORY_KEY);
-    showToast("Wyczyszczono historię");
+    showToast(t("toast.historyCleared"));
 }
 
 /* ===========================================================
@@ -881,16 +1108,16 @@ function exportData() {
     a.download = "catnet-dane.json";
     a.click();
     URL.revokeObjectURL(a.href);
-    showToast("Wyeksportowano dane (JSON w Base64) ⬇️");
+    showToast(t("toast.exported"));
 }
 
 async function copyExport() {
     const b64 = toB64(JSON.stringify(buildExportPayload()));
     try {
         await navigator.clipboard.writeText(b64);
-        showToast("Skopiowano kod eksportu 📋");
+        showToast(t("toast.copied"));
     } catch {
-        prompt("Skopiuj kod eksportu (Base64):", b64);
+        prompt("Base64:", b64);
     }
 }
 
@@ -920,9 +1147,9 @@ function applyImport(b64) {
             localStorage.setItem(HISTORY_KEY, JSON.stringify(data.history));
         updateFavCounter();
         if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
-        showToast("Zaimportowano dane ✅");
+        showToast(t("toast.imported"));
     } catch {
-        showToast("Nieprawidłowy kod / plik importu ❌");
+        showToast(t("toast.importErr"));
     }
 }
 
@@ -935,10 +1162,9 @@ function showBlockedNotice(grid) {
     note.className = "blocked-notice";
     note.innerHTML = `
         <div class="blocked-emoji">🙀</div>
-        <h3>Nie można wyświetlić kotów</h3>
-        <p>Wygląda na to, że Twoja przeglądarka lub <strong>AdBlock</strong> blokuje połączenie.
-           Wyłącz blokowanie reklam i odśwież stronę — w przeciwnym razie koty się nie załadują.</p>
-        <button class="btn btn-primary" onclick="loadCats('cat-grid', currentLimit)">Spróbuj ponownie 🔄</button>
+        <h3>${t("blocked.title")}</h3>
+        <p>${t("blocked.text")}</p>
+        <button class="btn btn-primary" onclick="loadCats('cat-grid', currentLimit)">${t("blocked.retry")}</button>
     `;
     grid.appendChild(note);
 }
@@ -948,8 +1174,8 @@ function showAdblockBanner() {
     const b = document.createElement("div");
     b.id = "adblock-banner";
     b.className = "adblock-banner";
-    b.innerHTML = `🚫 Wygląda na to, że masz włączony <strong>AdBlock</strong> — przez to koty mogą się nie wyświetlać. Wyłącz blokowanie i odśwież stronę.
-        <button title="Zamknij" onclick="this.parentElement.remove()">✕</button>`;
+    b.innerHTML = `${t("adblock.banner")}
+        <button title="✕" onclick="this.parentElement.remove()">✕</button>`;
     document.body.prepend(b);
 }
 
@@ -970,28 +1196,138 @@ function detectAdblock() {
     }, 300);
 }
 
-/* „Odblokuj IP” — w stopce */
+/* „Odblokuj IP” — sekretne menu */
 function unblockIP() {
-    showToast("🔄 Trwa odblokowywanie adresu IP...");
+    showToast(t("toast.ipStart"));
     setTimeout(() => {
-        showToast("✅ Twój adres IP został pomyślnie odblokowany!");
+        showToast(t("toast.ipDone"));
         if (document.getElementById("cat-grid")) loadCats("cat-grid", currentLimit);
     }, 1800);
+}
+
+/* ---------- Pasek nawigacji: hamburger (mobile) ---------- */
+function buildNavExtras() {
+    document.querySelectorAll(".nav-tools").forEach((tools) => {
+        if (tools.querySelector(".hamburger")) return;
+        const nav = tools.querySelector(".nav-links");
+        const burger = document.createElement("button");
+        burger.className = "icon-btn hamburger";
+        burger.title = "Menu";
+        burger.innerHTML = "☰";
+        burger.addEventListener("click", () => nav.classList.toggle("open"));
+        tools.appendChild(burger);
+    });
+}
+
+/* ===========================================================
+   ONBOARDING (prosty samouczek powitalny)
+   =========================================================== */
+const ONB_KEY = "catnet_seen_onb";
+const onbSlides = [
+    { m: "🐱", h: "onb.s1t", p: "onb.s1p" },
+    { m: "🔄", h: "onb.s2t", p: "onb.s2p" },
+    { m: "❤️", h: "onb.s3t", p: "onb.s3p" }
+];
+let onbIndex = 0;
+
+function buildOnboarding() {
+    if (document.getElementById("onboarding")) return;
+    const ov = document.createElement("div");
+    ov.className = "onb-overlay";
+    ov.id = "onboarding";
+    ov.innerHTML = `<div class="onb-card" id="onb-card"></div>`;
+    document.body.appendChild(ov);
+}
+function renderOnb() {
+    const s = onbSlides[onbIndex];
+    const dots = onbSlides.map((_, i) => `<i class="${i === onbIndex ? "on" : ""}"></i>`).join("");
+    const last = onbIndex === onbSlides.length - 1;
+    document.getElementById("onb-card").innerHTML = `
+        <div class="onb-mascot">${s.m}</div>
+        <h2>${t(s.h)}</h2>
+        <p>${t(s.p)}</p>
+        <div class="onb-dots">${dots}</div>
+        <div class="onb-actions">
+            ${onbIndex > 0 ? `<button class="btn btn-ghost" onclick="onbPrev()">${t("onb.back")}</button>` : ``}
+            <button class="btn btn-primary" onclick="onbNext()">${last ? t("onb.start") : t("onb.next")}</button>
+        </div>
+    `;
+}
+function onbNext() {
+    if (onbIndex < onbSlides.length - 1) { onbIndex++; renderOnb(); }
+    else finishOnboarding();
+}
+function onbPrev() {
+    if (onbIndex > 0) { onbIndex--; renderOnb(); }
+}
+function showOnboarding() {
+    buildOnboarding();
+    onbIndex = 0;
+    renderOnb();
+    document.getElementById("onboarding").classList.add("open");
+}
+function finishOnboarding() {
+    localStorage.setItem(ONB_KEY, "1");
+    document.getElementById("onboarding").classList.remove("open");
+}
+function maybeShowOnboarding() {
+    if (!localStorage.getItem(ONB_KEY)) setTimeout(showOnboarding, 600);
+}
+
+/* ===========================================================
+   NOWOCZESNE DODATKI: szkielety, „do góry”
+   =========================================================== */
+function showSkeletons(grid, n) {
+    if (!grid) return;
+    for (let i = 0; i < n; i++) {
+        const s = document.createElement("div");
+        s.className = "cat-card skeleton";
+        grid.appendChild(s);
+    }
+}
+
+function buildBackToTop() {
+    if (document.getElementById("to-top")) return;
+    const b = document.createElement("button");
+    b.id = "to-top";
+    b.className = "to-top";
+    b.innerHTML = "↑";
+    b.title = "↑";
+    b.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    document.body.appendChild(b);
+    window.addEventListener("scroll", () => b.classList.toggle("show", window.scrollY > 400));
 }
 
 /* ===========================================================
    INICJALIZACJA WSPÓLNA
    =========================================================== */
 document.addEventListener("DOMContentLoaded", function () {
+    LANG = detectLang();
     buildSettingsDrawer();
     buildLightbox();
+    buildOnboarding();
+    buildNavExtras();
+    buildBackToTop();
     applySettings();
+    applyI18n();
     detectAdblock();
 
     const toggle = document.getElementById("settings-toggle");
     if (toggle) toggle.addEventListener("click", openSettings);
 
+    // Sekretne wejście z innej strony
+    if (sessionStorage.getItem("catnet_open_secret") === "1") {
+        sessionStorage.removeItem("catnet_open_secret");
+        setTimeout(openSecretMenu, 400);
+    }
+
+    maybeShowOnboarding();
+
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") { closeSettings(); closeLightbox(); }
+        handleSecretKey(e);
+        if (e.key === "Escape") {
+            closeSettings();
+            closeLightbox();
+        }
     });
 });

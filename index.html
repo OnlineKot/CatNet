@@ -31,10 +31,10 @@
         <a class="brand" href="index.html"><span class="paw">🐾</span>Cat<span class="brand-accent">Net</span></a>
         <div class="nav-tools">
             <nav class="nav-links">
-                <a href="index.html" class="active">Start</a>
-                <a href="galeria.html">Galeria</a>
-                <a href="fakty.html">Fakty</a>
-                <a href="o-nas.html">O nas</a>
+                <a href="index.html" class="active" data-i18n="nav.start">Start</a>
+                <a href="galeria.html" data-i18n="nav.gallery">Galeria</a>
+                <a href="fakty.html" data-i18n="nav.facts">Fakty</a>
+                <a href="o-nas.html" data-i18n="nav.about">O nas</a>
             </nav>
             <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
         </div>
@@ -43,24 +43,64 @@
     <main class="page">
 
         <section class="hero">
-            <h1>Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱</h1>
-            <p>Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty,
+            <h1 data-i18n="hero.h1">Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱</h1>
+            <p data-i18n="hero.p">Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty,
                polub swoje ulubione i wracaj po codzienną dawkę mruczenia.</p>
             <div class="hero-actions">
-                <a class="btn btn-primary" href="galeria.html">Przeglądaj galerię</a>
-                <button class="btn btn-ghost" onclick="refreshCats()">Pokaż nowe koty</button>
+                <a class="btn btn-primary" href="galeria.html" data-i18n="btn.browseGallery">Przeglądaj galerię</a>
+                <button class="btn btn-ghost" onclick="refreshCats()" data-i18n="btn.showNewCats">Pokaż nowe koty</button>
             </div>
 
             <div class="fact-card">
-                <div class="fact-label">Ciekawostka o kotach</div>
-                <div class="fact-text" id="cat-fact">Wczytywanie...</div>
+                <div class="fact-label" data-i18n="fact.label">Ciekawostka o kotach</div>
+                <div class="fact-text" id="cat-fact" data-i18n="loading">Wczytywanie...</div>
             </div>
         </section>
 
+        <div class="trust-bar">
+            <span class="trust-item">🚫 <span data-i18n="trust.noAds">Bez reklam</span></span>
+            <span class="trust-item">🙅 <span data-i18n="trust.noAccounts">Bez kont</span></span>
+            <span class="trust-item">🔒 <span data-i18n="trust.private">Prywatnie — dane tylko u Ciebie</span></span>
+            <span class="trust-item">🐾 <span data-i18n="trust.openApi">Otwarte API</span></span>
+        </div>
+
         <section>
-            <h2 class="section-title">Koty na dziś</h2>
-            <p class="section-sub">Mały podgląd tego, co czeka na Ciebie w galerii.</p>
+            <h2 class="section-title" data-i18n="home.todayTitle">Koty na dziś</h2>
+            <p class="section-sub" data-i18n="home.todaySub">Mały podgląd tego, co czeka na Ciebie w galerii.</p>
             <div id="cat-grid" class="cat-grid compact"></div>
+        </section>
+
+        <section class="trusted">
+            <h2 class="section-title" data-i18n="trusted.title">Zaufali nam ❤️</h2>
+            <p class="section-sub" data-i18n="trusted.sub">Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="num" data-i18n="trusted.s1n">12 000+</div>
+                    <div class="label" data-i18n="trusted.s1l">zadowolonych użytkowników</div>
+                </div>
+                <div class="stat">
+                    <div class="num" data-i18n="trusted.s2n">1 000 000+</div>
+                    <div class="label" data-i18n="trusted.s2l">pokazanych kotów</div>
+                </div>
+                <div class="stat">
+                    <div class="num" data-i18n="trusted.s3n">4,9/5</div>
+                    <div class="label" data-i18n="trusted.s3l">średnia ocen</div>
+                </div>
+            </div>
+            <div class="testimonials">
+                <figure class="testi">
+                    <blockquote data-i18n="trusted.q1">„Najlepsze miejsce na chwilę relaksu w ciągu dnia.”</blockquote>
+                    <figcaption data-i18n="trusted.q1a">— Ania</figcaption>
+                </figure>
+                <figure class="testi">
+                    <blockquote data-i18n="trusted.q2">„Wracam tu codziennie — koty zawsze poprawiają mi humor!”</blockquote>
+                    <figcaption data-i18n="trusted.q2a">— Marek</figcaption>
+                </figure>
+                <figure class="testi">
+                    <blockquote data-i18n="trusted.q3">„Prosto, ładnie i bez reklam. Tak ma być.”</blockquote>
+                    <figcaption data-i18n="trusted.q3a">— Kasia</figcaption>
+                </figure>
+            </div>
         </section>
 
         <div id="adm-panel">
@@ -76,22 +116,10 @@
                 <input type="checkbox" onchange="admToggleFallback(this)">
             </div>
 
-            <h4>STREFA VIP</h4>
-            <div class="adm-grid full">
-                <div class="adm-row">
-                    <label>Odliczanie (min)</label>
-                    <span><input type="number" id="adm-countdown" value="1" min="0"> <button onclick="admSetCountdown()">START</button></span>
-                </div>
-                <div class="adm-row">
-                    <label>Licznik „odebrało VIP"</label>
-                    <span><input type="number" id="adm-counter" placeholder="np. 9999"> <button onclick="admSetCounter()">SET</button></span>
-                </div>
-            </div>
+            <h4>NARZĘDZIA</h4>
             <div class="adm-grid">
-                <button onclick="forceVip()">FORCE VIP</button>
-                <button onclick="admResetVip()">RESET VIP</button>
-                <button onclick="admToggleVipBox()">UKRYJ/POKAŻ VIP</button>
                 <button onclick="admStats()">ODŚWIEŻ STATY</button>
+                <button onclick="unblockIP()">ODBLOKUJ IP</button>
             </div>
 
             <h4>MOTYW</h4>
@@ -100,6 +128,11 @@
                 <button onclick="setSetting('mode','light')">JASNY</button>
                 <button onclick="setSetting('accent','ocean')">OCEAN</button>
                 <button onclick="setSetting('accent','sunset')">SUNSET</button>
+            </div>
+
+            <h4>INNE</h4>
+            <div class="adm-grid">
+                <button onclick="showOnboarding()">SAMOUCZEK</button>
             </div>
 
             <h4>DANE / DIAGNOSTYKA</h4>
@@ -114,25 +147,11 @@
             </div>
         </div>
 
-        <section class="vip-box" id="vip-box">
-            <div class="vip-badge" id="vip-badge">1</div>
-            <h3>Strefa VIP ✨</h3>
-            <div class="real-counter">
-                OSÓB, KTÓRE ODEBRAŁY VIP: <span class="counter-number" id="real-viewers">...</span>
-            </div>
-            <button class="btn btn-primary" id="vip-btn" style="width:100%;justify-content:center;" onclick="requestVip()">ODBLOKUJ TRYB VIP</button>
-            <div class="timer-text" id="timer-container">
-                OFERTA VIP ODNAWIA SIĘ ZA:
-                <span id="countdown">00:00:00</span>
-            </div>
-        </section>
-
     </main>
 
     <footer class="footer">
-        <p>© <span id="year"></span> CatNet · Stworzone z miłości do kotów <span class="dot" onclick="triggerAdmin()">·</span></p>
-        <p><a href="index.html">Start</a> &nbsp;·&nbsp; <a href="galeria.html">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html">O nas</a></p>
-        <p><a href="#" class="unblock-ip" onclick="unblockIP();return false;">🔓 Odblokuj IP</a></p>
+        <p>© <span id="year"></span> CatNet · <span data-i18n="footer.made">Stworzone z miłości do kotów</span> <span class="dot" onclick="triggerAdmin()">·</span></p>
+        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a></p>
     </footer>
 
     <script src="script.js"></script>
@@ -140,13 +159,7 @@
         document.getElementById("year").innerText = new Date().getFullYear();
         window.onload = function () {
             showRandomFact();
-            loadCounter();
-            if (sessionStorage.getItem("catnet_rgb_active") === "true") {
-                activateVipMode();
-            } else {
-                loadCats();
-                checkVipStatus();
-            }
+            loadCats();
         };
     </script>
 
