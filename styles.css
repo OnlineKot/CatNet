@@ -953,3 +953,72 @@ select.cn-select {
     background: #ff3b5c;
     color: #fff;
 }
+
+/* ---------- Baner AdBlock ---------- */
+.adblock-banner {
+    position: relative;
+    z-index: 120;
+    background: linear-gradient(90deg, #ff3b5c, #ff8a3c);
+    color: #fff;
+    text-align: center;
+    padding: 12px 48px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.adblock-banner button {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.25);
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* ---------- Komunikat o blokadzie kotów ---------- */
+.blocked-notice {
+    grid-column: 1 / -1;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 24px;
+    backdrop-filter: blur(8px);
+}
+
+.blocked-notice .blocked-emoji {
+    font-size: 56px;
+    line-height: 1;
+}
+
+.blocked-notice h3 {
+    margin: 12px 0 8px;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.blocked-notice p {
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto 20px;
+    font-size: 16px;
+}
+
+/* ---------- Link „Odblokuj IP” w stopce ---------- */
+.unblock-ip {
+    display: inline-block;
+    margin-top: 4px;
+    font-weight: 600;
+    color: var(--accent-2) !important;
+}
+
+.unblock-ip:hover {
+    text-decoration: underline;
+}

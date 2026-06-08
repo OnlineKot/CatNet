@@ -67,6 +67,7 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
         data.forEach((cat) => createCatElement(grid, cat.url));
     } catch (err) {
         console.warn("Zabezpieczenie aktywne: TheCatAPI nie odpowiada, ładuję rezerwę.", err);
+        if (!forceFallback) showBlockedNotice(grid);
         for (let i = 0; i < limit; i++) {
             createCatElement(grid, fallbackImages[i % fallbackImages.length]);
         }
@@ -74,6 +75,7 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
 }
 
 function createCatElement(grid, url) {
+    addToHistory(url);
     const card = document.createElement("div");
     card.className = "cat-card";
 
@@ -343,16 +345,8 @@ const catFacts = [
     "A ten kot, którego właśnie oglądasz, jest po prostu najsłodszym kotem na świecie. 🐱💖"
 ];
 
-/* Własne fakty dodane przez admina */
-function getCustomFacts() {
-    try {
-        return JSON.parse(localStorage.getItem("catnet_custom_facts") || "[]");
-    } catch {
-        return [];
-    }
-}
 function getAllFacts() {
-    return catFacts.concat(getCustomFacts());
+    return catFacts.slice();
 }
 
 /* „Dozowanie” — worek losujący bez powtórek aż do wyczerpania puli */
@@ -518,6 +512,16 @@ function buildSettingsDrawer() {
             <button class="btn btn-ghost btn-block" onclick="surpriseCat()">🎁 Niespodzianka — losowy kot</button>
             <button class="btn btn-ghost btn-block" onclick="clearFavorites()">🗑️ Wyczyść ulubione</button>
             <button class="btn btn-ghost btn-block" onclick="resetSettings()">↺ Przywróć domyślne</button>
+        </div>
+
+        <div class="setting-group">
+            <label>Dane i kopia zapasowa</label>
+            <button class="btn btn-ghost btn-block" onclick="exportData()">⬇️ Eksportuj ulubione + historię (JSON · Base64)</button>
+            <button class="btn btn-ghost btn-block" onclick="copyExport()">📋 Kopiuj kod eksportu</button>
+            <button class="btn btn-ghost btn-block" onclick="importData()">⬆️ Importuj z pliku</button>
+            <button class="btn btn-ghost btn-block" onclick="importFromText()">📥 Importuj z kodu</button>
+            <button class="btn btn-ghost btn-block" onclick="clearHistory()">🧹 Wyczyść historię</button>
+            <input type="file" id="import-file" accept=".json,.txt,application/json" style="display:none" onchange="handleImportFile(this)">
         </div>
     `;
 
@@ -821,29 +825,158 @@ function admStats() {
         `VIP aktywny: ${sessionStorage.getItem("catnet_rgb_active") === "true" ? "TAK" : "nie"}\n` +
         `odblokowanie: ${unlock ? new Date(parseInt(unlock)).toLocaleString("pl-PL") : "-"}\n` +
         `motyw: ${s.accent} / ${s.mode} / ${s.density}\n` +
-        `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}\n` +
-        `własne fakty: ${getCustomFacts().length}`;
+        `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}`;
 }
 
-function admAddFact() {
-    const input = document.getElementById("adm-fact");
-    if (!input) return;
-    const txt = input.value.trim();
-    if (!txt) return;
-    const facts = getCustomFacts();
-    facts.push(txt);
-    localStorage.setItem("catnet_custom_facts", JSON.stringify(facts));
-    input.value = "";
-    factBag = []; // przebuduj pulę losowania
-    showToast("Dodano fakt do losowania");
-    admStats();
+/* ===========================================================
+   HISTORIA OGLĄDANYCH KOTÓW
+   =========================================================== */
+const HISTORY_KEY = "catnet_history";
+
+function getHistory() {
+    try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    } catch {
+        return [];
+    }
 }
-function admClearFacts() {
-    if (!confirm("Usunąć wszystkie własne fakty admina?")) return;
-    localStorage.removeItem("catnet_custom_facts");
-    factBag = [];
-    showToast("Usunięto własne fakty");
-    admStats();
+function addToHistory(url) {
+    if (!url) return;
+    let h = getHistory().filter((u) => u !== url);
+    h.unshift(url);
+    if (h.length > 200) h = h.slice(0, 200);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+}
+function clearHistory() {
+    localStorage.removeItem(HISTORY_KEY);
+    showToast("Wyczyszczono historię");
+}
+
+/* ===========================================================
+   EKSPORT / IMPORT DANYCH (JSON zakodowany w Base64)
+   =========================================================== */
+function toB64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+}
+function fromB64(b64) {
+    return decodeURIComponent(escape(atob(b64)));
+}
+
+function buildExportPayload() {
+    return {
+        app: "CatNet",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        favorites: getFavorites(),
+        history: getHistory()
+    };
+}
+
+function exportData() {
+    const json = JSON.stringify(buildExportPayload(), null, 2);
+    const b64 = toB64(json);
+    const blob = new Blob([b64], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "catnet-dane.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast("Wyeksportowano dane (JSON w Base64) ⬇️");
+}
+
+async function copyExport() {
+    const b64 = toB64(JSON.stringify(buildExportPayload()));
+    try {
+        await navigator.clipboard.writeText(b64);
+        showToast("Skopiowano kod eksportu 📋");
+    } catch {
+        prompt("Skopiuj kod eksportu (Base64):", b64);
+    }
+}
+
+function importData() {
+    document.getElementById("import-file")?.click();
+}
+function handleImportFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        applyImport(reader.result);
+        input.value = "";
+    };
+    reader.readAsText(file);
+}
+function importFromText() {
+    const b64 = prompt("Wklej kod eksportu (Base64):");
+    if (b64) applyImport(b64);
+}
+function applyImport(b64) {
+    try {
+        const data = JSON.parse(fromB64(b64.trim()));
+        if (Array.isArray(data.favorites))
+            localStorage.setItem("catnet_favorites", JSON.stringify(data.favorites));
+        if (Array.isArray(data.history))
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(data.history));
+        updateFavCounter();
+        if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
+        showToast("Zaimportowano dane ✅");
+    } catch {
+        showToast("Nieprawidłowy kod / plik importu ❌");
+    }
+}
+
+/* ===========================================================
+   BLOKADA STRONY / ADBLOCK
+   =========================================================== */
+function showBlockedNotice(grid) {
+    if (!grid || grid.querySelector(".blocked-notice")) return;
+    const note = document.createElement("div");
+    note.className = "blocked-notice";
+    note.innerHTML = `
+        <div class="blocked-emoji">🙀</div>
+        <h3>Nie można wyświetlić kotów</h3>
+        <p>Wygląda na to, że Twoja przeglądarka lub <strong>AdBlock</strong> blokuje połączenie.
+           Wyłącz blokowanie reklam i odśwież stronę — w przeciwnym razie koty się nie załadują.</p>
+        <button class="btn btn-primary" onclick="loadCats('cat-grid', currentLimit)">Spróbuj ponownie 🔄</button>
+    `;
+    grid.appendChild(note);
+}
+
+function showAdblockBanner() {
+    if (document.getElementById("adblock-banner")) return;
+    const b = document.createElement("div");
+    b.id = "adblock-banner";
+    b.className = "adblock-banner";
+    b.innerHTML = `🚫 Wygląda na to, że masz włączony <strong>AdBlock</strong> — przez to koty mogą się nie wyświetlać. Wyłącz blokowanie i odśwież stronę.
+        <button title="Zamknij" onclick="this.parentElement.remove()">✕</button>`;
+    document.body.prepend(b);
+}
+
+function detectAdblock() {
+    const bait = document.createElement("div");
+    bait.className = "adsbox ad-banner ads ad-placement pub_300x250 adsbygoogle";
+    bait.style.cssText = "position:absolute;left:-9999px;top:-9999px;height:10px;width:10px;";
+    bait.innerHTML = "&nbsp;";
+    document.body.appendChild(bait);
+    setTimeout(() => {
+        const blocked =
+            bait.offsetHeight === 0 ||
+            bait.clientHeight === 0 ||
+            getComputedStyle(bait).display === "none" ||
+            getComputedStyle(bait).visibility === "hidden";
+        bait.remove();
+        if (blocked) showAdblockBanner();
+    }, 300);
+}
+
+/* „Odblokuj IP” — w stopce */
+function unblockIP() {
+    showToast("🔄 Trwa odblokowywanie adresu IP...");
+    setTimeout(() => {
+        showToast("✅ Twój adres IP został pomyślnie odblokowany!");
+        if (document.getElementById("cat-grid")) loadCats("cat-grid", currentLimit);
+    }, 1800);
 }
 
 /* ===========================================================
@@ -853,6 +986,7 @@ document.addEventListener("DOMContentLoaded", function () {
     buildSettingsDrawer();
     buildLightbox();
     applySettings();
+    detectAdblock();
 
     const toggle = document.getElementById("settings-toggle");
     if (toggle) toggle.addEventListener("click", openSettings);

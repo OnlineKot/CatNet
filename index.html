@@ -102,17 +102,6 @@
                 <button onclick="setSetting('accent','sunset')">SUNSET</button>
             </div>
 
-            <h4>FAKTY O KOTACH</h4>
-            <div class="adm-grid full">
-                <div class="adm-row">
-                    <label>Dodaj własny fakt</label>
-                    <span><input type="text" id="adm-fact" placeholder="treść faktu" style="width:140px;"> <button onclick="admAddFact()">DODAJ</button></span>
-                </div>
-            </div>
-            <div class="adm-grid">
-                <button onclick="admClearFacts()">WYCZYŚĆ WŁASNE FAKTY</button>
-            </div>
-
             <h4>DANE / DIAGNOSTYKA</h4>
             <div id="adm-stats">...</div>
             <div class="adm-grid">
@@ -143,6 +132,7 @@
     <footer class="footer">
         <p>© <span id="year"></span> CatNet · Stworzone z miłości do kotów <span class="dot" onclick="triggerAdmin()">·</span></p>
         <p><a href="index.html">Start</a> &nbsp;·&nbsp; <a href="galeria.html">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html">O nas</a></p>
+        <p><a href="#" class="unblock-ip" onclick="unblockIP();return false;">🔓 Odblokuj IP</a></p>
     </footer>
 
     <script src="script.js"></script>
