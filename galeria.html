@@ -28,11 +28,14 @@
 
     <header class="navbar">
         <a class="brand" href="index.html"><span class="paw">🐾</span>Cat<span class="brand-accent">Net</span></a>
-        <nav class="nav-links">
-            <a href="index.html">Start</a>
-            <a href="galeria.html" class="active">Galeria</a>
-            <a href="o-nas.html">O nas</a>
-        </nav>
+        <div class="nav-tools">
+            <nav class="nav-links">
+                <a href="index.html">Start</a>
+                <a href="galeria.html" class="active">Galeria</a>
+                <a href="o-nas.html">O nas</a>
+            </nav>
+            <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
+        </div>
     </header>
 
     <main class="page">
@@ -41,7 +44,13 @@
         <p class="section-sub">Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.</p>
 
         <div class="grid-toolbar">
-            <button class="btn btn-primary" onclick="refreshCats('cat-grid')">Nowe koty 🔄</button>
+            <div class="toolbar-controls">
+                <button class="btn btn-primary" onclick="refreshCats('cat-grid')">Nowe koty 🔄</button>
+                <button class="btn btn-ghost" onclick="surpriseCat()">🎁 Niespodzianka</button>
+                <select class="cn-select" id="breed-filter" title="Filtruj po rasie">
+                    <option value="">Wszystkie rasy</option>
+                </select>
+            </div>
             <span class="fav-counter">Twoje ulubione: <b id="fav-count">0</b></span>
         </div>
 
@@ -62,10 +71,12 @@
     <script>
         document.getElementById("year").innerText = new Date().getFullYear();
         window.onload = function () {
-            currentLimit = 8;
+            currentLimit = getSettings().perPage;
             loadCats("cat-grid", currentLimit);
+            loadBreeds("breed-filter");
             updateFavCounter();
             renderFavorites("fav-grid");
+            if (getSettings().autoRefresh) startAutoRefresh();
         };
     </script>
 
