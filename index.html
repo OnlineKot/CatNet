@@ -31,10 +31,10 @@
         <a class="brand" href="index.html"><span class="paw">🐾</span>Cat<span class="brand-accent">Net</span></a>
         <div class="nav-tools">
             <nav class="nav-links">
-                <a href="index.html" class="active">Start</a>
-                <a href="galeria.html">Galeria</a>
-                <a href="fakty.html">Fakty</a>
-                <a href="o-nas.html">O nas</a>
+                <a href="index.html" class="active" data-i18n="nav.start">Start</a>
+                <a href="galeria.html" data-i18n="nav.gallery">Galeria</a>
+                <a href="fakty.html" data-i18n="nav.facts">Fakty</a>
+                <a href="o-nas.html" data-i18n="nav.about">O nas</a>
             </nav>
             <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
         </div>
@@ -43,23 +43,23 @@
     <main class="page">
 
         <section class="hero">
-            <h1>Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱</h1>
-            <p>Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty,
+            <h1 data-i18n="hero.h1">Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱</h1>
+            <p data-i18n="hero.p">Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty,
                polub swoje ulubione i wracaj po codzienną dawkę mruczenia.</p>
             <div class="hero-actions">
-                <a class="btn btn-primary" href="galeria.html">Przeglądaj galerię</a>
-                <button class="btn btn-ghost" onclick="refreshCats()">Pokaż nowe koty</button>
+                <a class="btn btn-primary" href="galeria.html" data-i18n="btn.browseGallery">Przeglądaj galerię</a>
+                <button class="btn btn-ghost" onclick="refreshCats()" data-i18n="btn.showNewCats">Pokaż nowe koty</button>
             </div>
 
             <div class="fact-card">
-                <div class="fact-label">Ciekawostka o kotach</div>
-                <div class="fact-text" id="cat-fact">Wczytywanie...</div>
+                <div class="fact-label" data-i18n="fact.label">Ciekawostka o kotach</div>
+                <div class="fact-text" id="cat-fact" data-i18n="loading">Wczytywanie...</div>
             </div>
         </section>
 
         <section>
-            <h2 class="section-title">Koty na dziś</h2>
-            <p class="section-sub">Mały podgląd tego, co czeka na Ciebie w galerii.</p>
+            <h2 class="section-title" data-i18n="home.todayTitle">Koty na dziś</h2>
+            <p class="section-sub" data-i18n="home.todaySub">Mały podgląd tego, co czeka na Ciebie w galerii.</p>
             <div id="cat-grid" class="cat-grid compact"></div>
         </section>
 
@@ -90,11 +90,11 @@
                 <button onclick="setSetting('accent','sunset')">SUNSET</button>
             </div>
 
-            <h4>GRYWALIZACJA</h4>
+            <h4>INNE</h4>
             <div class="adm-grid">
-                <button onclick="awardXp(100)">+100 XP</button>
                 <button onclick="showOnboarding()">SAMOUCZEK</button>
-                <button class="danger" onclick="admResetGame()">RESET POSTĘPÓW</button>
+                <button onclick="setPremium();showToast('premium ON')">FORCE PREMIUM</button>
+                <button onclick="openReferral()">KOD POLECAJĄCY</button>
             </div>
 
             <h4>DANE / DIAGNOSTYKA</h4>
@@ -112,8 +112,8 @@
     </main>
 
     <footer class="footer">
-        <p>© <span id="year"></span> CatNet · Stworzone z miłości do kotów <span class="dot" onclick="triggerAdmin()">·</span></p>
-        <p><a href="index.html">Start</a> &nbsp;·&nbsp; <a href="galeria.html">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html">O nas</a></p>
+        <p>© <span id="year"></span> CatNet · <span data-i18n="footer.made">Stworzone z miłości do kotów</span> <span class="dot" onclick="triggerAdmin()">·</span></p>
+        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a></p>
     </footer>
 
     <script src="script.js"></script>

@@ -1242,3 +1242,117 @@ select.cn-select {
     font-weight: 500;
     opacity: 0.8;
 }
+
+/* ===========================================================
+   NOWOCZESNE DODATKI: szkielety, konfetti, „do góry”, polecenia
+   =========================================================== */
+.cat-card.skeleton {
+    background: linear-gradient(100deg, var(--surface) 30%, rgba(255, 255, 255, 0.14) 50%, var(--surface) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+    border: 1px solid var(--border);
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.confetti-bit {
+    position: fixed;
+    top: -14px;
+    width: 10px;
+    height: 14px;
+    border-radius: 2px;
+    z-index: 400;
+    pointer-events: none;
+    animation: confettiFall 2.6s linear forwards;
+}
+
+@keyframes confettiFall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0.15; }
+}
+
+.to-top {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent-grad);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: all 0.25s ease;
+    z-index: 140;
+    box-shadow: var(--shadow);
+}
+
+.to-top.show {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+.ref-code-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.ref-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+}
+
+.ref-code {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin: 6px 0 12px;
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ref-share {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 4px 0 14px;
+}
+
+.ref-redeem {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.ref-redeem label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.ref-redeem input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
