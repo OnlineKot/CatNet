@@ -128,7 +128,7 @@ function renderFavorites(gridId = "fav-grid") {
 let tClicks = 0;
 function triggerAdmin() {
     tClicks++;
-    if (tClicks === 17) openSecretMenu();
+    if (tClicks === 5) openSecretMenu();
 }
 
 /* Otwiera sekretne menu (panel admina). Jeśli go nie ma na tej stronie,
@@ -152,7 +152,7 @@ let catClicks = 0;
 let keyBuffer = "";
 function registerCatClick() {
     catClicks++;
-    if (catClicks >= 15) openSecretMenu();
+    if (catClicks >= 8) openSecretMenu();
 }
 function handleSecretKey(e) {
     if (e.key && e.key.length === 1) {
@@ -495,6 +495,7 @@ const translations = {
         "gallery.title": "Galeria kotów 🐱",
         "gallery.sub": "Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.",
         "btn.newCats": "Nowe koty 🔄", "btn.surprise": "🎁 Niespodzianka", "btn.premium": "👑 Koty premium",
+        "btn.pro": "🐱 Koty PRO (za darmo)", "toast.pro": "Załadowano koty PRO 🐱✨",
         "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
         "gallery.favTitle": "Twoje ulubione ♥", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
         "facts.title": 'Fakty o <span class="grad">kotach</span> 🐾',
@@ -581,6 +582,7 @@ const translations = {
         "gallery.title": "Cat gallery 🐱",
         "gallery.sub": "Refresh as much as you like — there are endless cats. Click the heart to save your favorites.",
         "btn.newCats": "New cats 🔄", "btn.surprise": "🎁 Surprise", "btn.premium": "👑 Premium cats",
+        "btn.pro": "🐱 PRO cats (free)", "toast.pro": "PRO cats loaded 🐱✨",
         "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
         "gallery.favTitle": "Your favorites ♥", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
         "facts.title": 'Facts about <span class="grad">cats</span> 🐾',
@@ -1036,6 +1038,11 @@ function admToggleFallback(cb) {
     refreshCats();
     showToast(forceFallback ? "Tryb awaryjny WŁ" : "Tryb awaryjny WYŁ");
 }
+function admToggleFallbackBtn() {
+    forceFallback = !forceFallback;
+    refreshCats();
+    showToast(forceFallback ? "Tryb awaryjny: WŁ" : "Tryb awaryjny: WYŁ");
+}
 function admWipe() {
     if (!confirm("Wyczyścić CAŁĄ pamięć lokalną (ustawienia, ulubione, postępy)?")) return;
     localStorage.clear();
@@ -1284,6 +1291,33 @@ function showSkeletons(grid, n) {
         s.className = "cat-card skeleton";
         grid.appendChild(s);
     }
+}
+
+/* Koty PRO (Cataas) — za darmo dla wszystkich */
+async function loadProCats(gridId = "cat-grid", limit = currentLimit) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = "";
+    showSkeletons(grid, limit);
+    try {
+        const skip = Math.floor(Math.random() * 300);
+        const res = await fetch(`https://cataas.com/api/cats?limit=${limit}&skip=${skip}`);
+        const data = await res.json();
+        if (!data || !data.length) throw new Error("Cataas pusto");
+        grid.innerHTML = "";
+        data.forEach((c) => createCatElement(grid, `https://cataas.com/cat/${c._id || c.id}`));
+    } catch {
+        grid.innerHTML = "";
+        for (let i = 0; i < limit; i++) createCatElement(grid, `https://cataas.com/cat?ts=${Date.now() + i}`);
+    }
+    showToast(t("toast.pro"));
+}
+function showProCats() {
+    if (!document.getElementById("cat-grid")) {
+        location.href = "galeria.html";
+        return;
+    }
+    loadProCats("cat-grid", currentLimit);
 }
 
 function buildBackToTop() {
