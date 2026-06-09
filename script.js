@@ -408,20 +408,13 @@ function showRandomFact(elId = "cat-fact") {
     }, 120);
 }
 
-/* Najsłodszy kot na świecie (sekcja na stronie Fakty) */
-async function loadSweetCat() {
+/* Najsłodszy kot na świecie — prawdziwy Freud */
+const FREUD_IMG = "freud.jpeg";
+function loadSweetCat() {
     const grid = document.getElementById("sweet-grid");
     if (!grid) return;
-    let url;
-    try {
-        const res = await fetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
-        const data = await res.json();
-        url = data[0].url;
-    } catch {
-        url = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
-    }
     grid.innerHTML = "";
-    createCatElement(grid, url);
+    createCatElement(grid, FREUD_IMG);
 }
 
 /* ===========================================================
@@ -501,14 +494,14 @@ const translations = {
         "gallery.title": "Galeria kotów 🐱",
         "gallery.sub": "Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.",
         "btn.newCats": "Nowe koty 🔄", "btn.surprise": "🎁 Niespodzianka", "btn.premium": "👑 Koty premium",
-        "btn.pro": "🐱 Koty PRO (za darmo)", "toast.pro": "Załadowano koty PRO 🐱✨",
+        "btn.pro": "Koty BIO", "toast.pro": "Załadowano koty BIO (naturalne zdjęcia)",
         "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
         "gallery.favTitle": "Twoje ulubione ♥", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
         "facts.title": 'Fakty o <span class="grad">kotach</span> 🐾',
         "facts.sub": "Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.",
         "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt ✨",
-        "facts.sweetTitle": "Freud — najsłodszy kot na świecie 🐱💖",
-        "facts.sweetSub": "Poznaj Freuda. To on jest, przy okazji, po prostu najsłodszym kotem na świecie.",
+        "facts.sweetTitle": "Freud",
+        "facts.sweetSub": "Freud to czarny kot o wielkim sercu i jeszcze większym apetycie na drzemki. Mieszka tam, gdzie trawa jest najwyższa, a słońce najcieplejsze, i każdy dzień zaczyna od porządnego przeciągnięcia się oraz obchodu swojego terytorium. Najbardziej lubi spacery po ogrodzie, polowanie na liście niesione wiatrem, wylegiwanie się w nagrzanej trawie i obserwowanie ptaków zza szyby. Ma miękkie, lśniące futro, spokojne spojrzenie i charakter, który topi serca wszystkich dookoła — potrafi być niezależnym łowcą, a chwilę później największym przytulasem pod słońcem. Gdy Freud mruczy, nawet najgorszy dzień robi się od razu znośniejszy. Nie potrzebuje filtrów, studia ani profesjonalnej sesji — jest najsłodszym kotem na świecie w każdych, najzupełniej naturalnych warunkach. I właśnie dlatego trafił tutaj, na honorowe miejsce w CatNet.",
         "btn.anotherSweet": "Pokaż innego uroczego kota 🐾", "loading": "Wczytywanie...",
         "about.title": "O CatNet 🐾",
         "about.p1": "CatNet powstał z prostego przekonania: świat jest piękniejszy, gdy jest w nim więcej kotów. To miejsce, w którym jednym kliknięciem odkryjesz nieskończoną galerię uroczych pyszczków — bez logowania, bez opłat, bez końca.",
@@ -591,14 +584,14 @@ const translations = {
         "gallery.title": "Cat gallery 🐱",
         "gallery.sub": "Refresh as much as you like — there are endless cats. Click the heart to save your favorites.",
         "btn.newCats": "New cats 🔄", "btn.surprise": "🎁 Surprise", "btn.premium": "👑 Premium cats",
-        "btn.pro": "🐱 PRO cats (free)", "toast.pro": "PRO cats loaded 🐱✨",
+        "btn.pro": "BIO cats", "toast.pro": "Loaded BIO cats (natural photos)",
         "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
         "gallery.favTitle": "Your favorites ♥", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
         "facts.title": 'Facts about <span class="grad">cats</span> 🐾',
         "facts.sub": "Click and discover — something new about our purring friends every time.",
         "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact ✨",
-        "facts.sweetTitle": "Freud — the cutest cat in the world 🐱💖",
-        "facts.sweetSub": "Meet Freud. He is, by the way, simply the cutest cat in the world.",
+        "facts.sweetTitle": "Freud",
+        "facts.sweetSub": "Freud is a black cat with a huge heart and an even bigger appetite for naps. He lives where the grass is tallest and the sun is warmest, and he starts every day with a proper stretch and a patrol of his territory. His favourite things are wandering the garden, hunting leaves carried by the wind, lounging in the warm grass and watching birds through the window. He has soft, glossy fur, a calm gaze and a personality that melts everyone's heart — one moment an independent hunter, the next the biggest cuddler under the sun. When Freud purrs, even the worst day instantly gets better. He needs no filters, no studio and no professional photoshoot — he is the cutest cat in the world in the most natural conditions imaginable. And that's exactly why he earned his place of honour here on CatNet.",
         "btn.anotherSweet": "Show another adorable cat 🐾", "loading": "Loading...",
         "about.title": "About CatNet 🐾",
         "about.p1": "CatNet was born from a simple belief: the world is more beautiful with more cats in it. It's a place where one click reveals an endless gallery of adorable faces — no login, no fees, no end.",
