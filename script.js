@@ -85,6 +85,7 @@ function createCatElement(grid, url) {
     img.src = url;
     img.alt = "Losowy kot z CatNet";
     img.loading = "lazy";
+    img.decoding = "async";
     img.style.cursor = "zoom-in";
     img.addEventListener("click", () => { registerCatClick(); openLightbox(url); });
 
@@ -1225,9 +1226,19 @@ function buildNavExtras() {
         const nav = tools.querySelector(".nav-links");
         const burger = document.createElement("button");
         burger.className = "icon-btn hamburger";
-        burger.title = "Menu";
-        burger.innerHTML = "☰";
-        burger.addEventListener("click", () => nav.classList.toggle("open"));
+        burger.setAttribute("aria-label", "Menu");
+        burger.innerHTML = '<span class="bars"></span>';
+        burger.addEventListener("click", () => {
+            const open = nav.classList.toggle("open");
+            burger.classList.toggle("open", open);
+        });
+        // Zamknij menu po kliknięciu w link
+        nav.querySelectorAll("a").forEach((a) =>
+            a.addEventListener("click", () => {
+                nav.classList.remove("open");
+                burger.classList.remove("open");
+            })
+        );
         tools.appendChild(burger);
     });
 }
