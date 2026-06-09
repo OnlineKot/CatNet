@@ -408,20 +408,13 @@ function showRandomFact(elId = "cat-fact") {
     }, 120);
 }
 
-/* Najsłodszy kot na świecie (sekcja na stronie Fakty) */
-async function loadSweetCat() {
+/* Najsłodszy kot na świecie — prawdziwy Freud */
+const FREUD_IMG = "freud.jpeg";
+function loadSweetCat() {
     const grid = document.getElementById("sweet-grid");
     if (!grid) return;
-    let url;
-    try {
-        const res = await fetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
-        const data = await res.json();
-        url = data[0].url;
-    } catch {
-        url = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
-    }
     grid.innerHTML = "";
-    createCatElement(grid, url);
+    createCatElement(grid, FREUD_IMG);
 }
 
 /* ===========================================================
