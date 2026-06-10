@@ -87,7 +87,11 @@ function createCatElement(grid, url) {
     img.loading = "lazy";
     img.decoding = "async";
     img.style.cursor = "zoom-in";
-    img.addEventListener("click", () => { registerCatClick(); openLightbox(url); });
+    img.addEventListener("click", () => {
+        if (getSettings().meow) playMeow();
+        registerCatClick();
+        openLightbox(url);
+    });
 
     const fav = document.createElement("button");
     fav.className = "fav-btn" + (isFavorite(url) ? " is-fav" : "");
@@ -130,7 +134,7 @@ function renderFavorites(gridId = "fav-grid") {
 let tClicks = 0;
 function triggerAdmin() {
     tClicks++;
-    if (tClicks === 5) openSecretMenu();
+    if (tClicks === 8) openSecretMenu();
 }
 
 /* Otwiera sekretne menu (panel admina). Jeśli go nie ma na tej stronie,
@@ -439,6 +443,7 @@ const defaultSettings = {
     density: "comfortable",
     perPage: 8,
     autoRefresh: false,
+    meow: false,
     lang: "auto"
 };
 
@@ -549,7 +554,7 @@ const translations = {
         "set.title": "⚙️ Ustawienia", "set.themeColor": "Kolor motywu", "set.mode": "Tryb",
         "set.dark": "🌙 Ciemny", "set.light": "☀️ Jasny", "set.density": "Gęstość siatki",
         "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
-        "set.slideshow": "🎞️ Pokaz slajdów (auto)", "set.quickActions": "Szybkie akcje",
+        "set.slideshow": "🎞️ Pokaz slajdów (auto)", "set.meow": "🔊 Meow Mode (miau przy kliknięciu)", "set.quickActions": "Szybkie akcje",
         "set.surprise": "🎁 Niespodzianka — losowy kot", "set.clearFavs": "🗑️ Wyczyść ulubione",
         "set.reset": "↺ Przywróć domyślne", "set.backup": "Dane i kopia zapasowa",
         "set.export": "⬇️ Eksportuj ulubione + historię (JSON · Base64)", "set.copyExport": "📋 Kopiuj kod eksportu",
@@ -658,7 +663,7 @@ const translations = {
         "set.title": "⚙️ Settings", "set.themeColor": "Theme color", "set.mode": "Mode",
         "set.dark": "🌙 Dark", "set.light": "☀️ Light", "set.density": "Grid density",
         "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
-        "set.slideshow": "🎞️ Slideshow (auto)", "set.quickActions": "Quick actions",
+        "set.slideshow": "🎞️ Slideshow (auto)", "set.meow": "🔊 Meow Mode (meow on click)", "set.quickActions": "Quick actions",
         "set.surprise": "🎁 Surprise — random cat", "set.clearFavs": "🗑️ Clear favorites",
         "set.reset": "↺ Restore defaults", "set.backup": "Data & backup",
         "set.export": "⬇️ Export favorites + history (JSON · Base64)", "set.copyExport": "📋 Copy export code",
@@ -807,6 +812,13 @@ function buildSettingsDrawer() {
                     <span class="slider"></span>
                 </label>
             </div>
+            <div class="switch-row">
+                <span>${t("set.meow")}</span>
+                <label class="switch">
+                    <input type="checkbox" id="meow-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
 
         <div class="setting-group">
@@ -858,6 +870,10 @@ function buildSettingsDrawer() {
         setSetting("autoRefresh", e.target.checked);
         e.target.checked ? startAutoRefresh() : stopAutoRefresh();
     });
+    drawer.querySelector("#meow-toggle").addEventListener("change", (e) => {
+        setSetting("meow", e.target.checked);
+        if (e.target.checked) playMeow();
+    });
 }
 
 function syncSettingsUI() {
@@ -881,6 +897,8 @@ function syncSettingsUI() {
     }
     const auto = document.getElementById("autorefresh-toggle");
     if (auto) auto.checked = s.autoRefresh;
+    const meow = document.getElementById("meow-toggle");
+    if (meow) meow.checked = s.meow;
 }
 
 function openSettings() {
@@ -1247,13 +1265,82 @@ function detectAdblock() {
     }, 300);
 }
 
-/* „Odblokuj IP” — sekretne menu */
-function unblockIP() {
-    showToast(t("toast.ipStart"));
-    setTimeout(() => {
-        showToast(t("toast.ipDone"));
-        if (document.getElementById("cat-grid")) loadCats("cat-grid", currentLimit);
-    }, 1800);
+/* ===========================================================
+   KREATOR STRONY POWITALNEJ (link z imieniem w b64) + Meow Mode
+   =========================================================== */
+function welcomeLinkFor(name) {
+    const base = location.origin + location.pathname.replace(/[^/]*$/, "") + "index.html";
+    return base + "?hi=" + encodeURIComponent(toB64(name));
+}
+function admMakeWelcome() {
+    const name = (document.getElementById("adm-welcome-name")?.value || "").trim();
+    if (!name) { showToast("Wpisz imię gościa"); return; }
+    const link = welcomeLinkFor(name);
+    const out = document.getElementById("adm-welcome-link");
+    if (out) out.value = link;
+    showToast("Link powitalny gotowy 💌");
+}
+function admCopyWelcome() {
+    const out = document.getElementById("adm-welcome-link");
+    if (!out || !out.value) { admMakeWelcome(); return; }
+    navigator.clipboard?.writeText(out.value).then(
+        () => showToast("Skopiowano link 📋"),
+        () => { out.select(); }
+    );
+}
+function admOpenWelcome() {
+    const out = document.getElementById("adm-welcome-link");
+    if (!out || !out.value) { admMakeWelcome(); }
+    if (out && out.value) window.open(out.value, "_blank");
+}
+
+/* Spersonalizowane powitanie, gdy w adresie jest ?hi=<b64(imię)> */
+function checkWelcomeParam() {
+    try {
+        const hi = new URLSearchParams(location.search).get("hi");
+        if (!hi) return;
+        const name = fromB64(decodeURIComponent(hi)).slice(0, 40);
+        if (!name) return;
+        const el = document.getElementById("hero-greet");
+        if (el) el.innerText = (LANG === "en" ? `Hi ${name}! 👋 Welcome to CatNet` : `Cześć ${name}! 👋 Witaj w CatNet`);
+        setTimeout(() => showToast(LANG === "en" ? `Welcome, ${name}! 🐾` : `Witaj, ${name}! 🐾`), 500);
+    } catch {}
+}
+
+/* Meow Mode — klik w kota odtwarza syntezowane „miau” */
+let audioCtx = null;
+function playMeow() {
+    try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = audioCtx;
+        if (ctx.state === "suspended") ctx.resume();
+        const now = ctx.currentTime;
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        const lp = ctx.createBiquadFilter();
+        lp.type = "lowpass";
+        lp.frequency.value = 2200;
+        o.type = "sawtooth";
+        o.frequency.setValueAtTime(620, now);
+        o.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        o.frequency.exponentialRampToValueAtTime(520, now + 0.42);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.22, now + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+        const lfo = ctx.createOscillator();
+        const lg = ctx.createGain();
+        lfo.frequency.value = 16;
+        lg.gain.value = 22;
+        lfo.connect(lg);
+        lg.connect(o.frequency);
+        o.connect(lp);
+        lp.connect(g);
+        g.connect(ctx.destination);
+        o.start(now);
+        lfo.start(now);
+        o.stop(now + 0.52);
+        lfo.stop(now + 0.52);
+    } catch {}
 }
 
 /* ---------- Pasek nawigacji: hamburger (mobile) ---------- */
@@ -1656,6 +1743,7 @@ document.addEventListener("DOMContentLoaded", function () {
     applySettings();
     applyI18n();
     heroGreeting();
+    checkWelcomeParam();
     fillMarquee();
     initReveal();
     detectAdblock();
