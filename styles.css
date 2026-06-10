@@ -4,19 +4,19 @@
    =========================================================== */
 
 :root {
-    --bg-1: #0f1226;
-    --bg-2: #1a1f3c;
-    --surface: rgba(255, 255, 255, 0.06);
-    --surface-solid: #161a33;
-    --border: rgba(255, 255, 255, 0.12);
-    --text: #f4f6ff;
-    --text-muted: #aab1d6;
-    --accent: #7c5cff;
-    --accent-2: #ff5ca8;
-    --accent-grad: linear-gradient(120deg, #7c5cff 0%, #5cc8ff 50%, #ff5ca8 100%);
-    --radius: 18px;
-    --shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
-    --font: "Poppins", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --bg-1: #000000;
+    --bg-2: #060606;
+    --surface: rgba(255, 255, 255, 0.05);
+    --surface-solid: #1c1c1e;
+    --border: rgba(255, 255, 255, 0.14);
+    --text: #f5f5f7;
+    --text-muted: #a1a1a6;
+    --accent: #2997ff;
+    --accent-2: #2997ff;
+    --accent-grad: linear-gradient(120deg, #2997ff, #5ac8fa);
+    --radius: 20px;
+    --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 * {
@@ -25,6 +25,8 @@
 
 html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -32,12 +34,10 @@ body {
     min-height: 100vh;
     font-family: var(--font);
     color: var(--text);
-    background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(124, 92, 255, 0.25), transparent 60%),
-        radial-gradient(1000px 500px at 100% 0%, rgba(255, 92, 168, 0.18), transparent 55%),
-        linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    background: var(--bg-2);
     background-repeat: no-repeat;
-    line-height: 1.55;
+    line-height: 1.47;
+    letter-spacing: -0.01em;
 }
 
 /* ---------- Nawigacja ---------- */
@@ -464,20 +464,21 @@ body {
    ROZSZERZENIA: motywy, ustawienia, lightbox, narzędzia
    =========================================================== */
 
-/* ---------- Tryb jasny ---------- */
+/* ---------- Tryb jasny (Apple) ---------- */
 body.light {
-    --bg-1: #f3f5ff;
-    --bg-2: #e7ebff;
-    --surface: rgba(20, 24, 60, 0.05);
+    --bg-1: #ffffff;
+    --bg-2: #f5f5f7;
+    --surface: #ffffff;
     --surface-solid: #ffffff;
-    --border: rgba(20, 24, 60, 0.12);
-    --text: #161a33;
-    --text-muted: #5a6188;
-    --shadow: 0 18px 45px rgba(60, 70, 130, 0.18);
+    --border: rgba(0, 0, 0, 0.1);
+    --text: #1d1d1f;
+    --text-muted: #6e6e73;
+    --shadow: 0 10px 40px rgba(0, 0, 0, 0.10);
 }
 
 body.light .navbar {
-    background: rgba(243, 245, 255, 0.78);
+    background: rgba(255, 255, 255, 0.72);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 
 /* ---------- Gęstość siatki ---------- */
@@ -1928,4 +1929,164 @@ img {
     gap: 12px;
     justify-content: center;
     flex-wrap: wrap;
+}
+
+/* ===========================================================
+   APPLE-STYLE REDESIGN  —  nadrzędne wykończenie
+   Systemowy font SF, dużo światła, spokojne kolory, pełna
+   pigułka na przyciskach, slim translucentny navbar.
+   (Blok celowo na końcu, by wygrywać kaskadę.)
+   =========================================================== */
+
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.022em; }
+
+/* ---- Navbar ---- */
+.navbar {
+    height: 48px;
+    padding: 0 clamp(18px, 5vw, 40px);
+    background: rgba(6, 6, 6, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+.brand { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; }
+.brand .paw { font-size: 16px; margin-right: 4px; }
+.brand .brand-accent {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: inherit;
+}
+.nav-links { gap: 2px; }
+.nav-links a {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    padding: 6px 11px;
+    border-radius: 8px;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+.nav-links a:hover { color: var(--text); background: transparent; }
+.nav-links a.active { color: var(--text); background: transparent; font-weight: 500; }
+.icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    font-size: 15px;
+    background: transparent;
+    border-color: transparent;
+}
+.icon-btn:hover { background: var(--surface); transform: none; }
+
+/* ---- Sekcje: rytm i wyśrodkowanie ---- */
+.page > section { margin-top: clamp(64px, 9vw, 120px); }
+.section-title {
+    text-align: center;
+    font-size: clamp(30px, 4.6vw, 48px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+}
+.section-sub {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: clamp(17px, 2vw, 21px);
+    color: var(--text-muted);
+    margin-bottom: clamp(36px, 5vw, 54px);
+}
+
+/* ---- Hero ---- */
+.hero { margin-top: 0; padding: clamp(64px, 12vw, 128px) 0 clamp(40px, 7vw, 72px); }
+.hero-floats { display: none; }
+.hero h1 {
+    font-size: clamp(40px, 7.5vw, 76px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+}
+.hero h1 .grad, .grad {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: var(--accent);
+}
+.hero p {
+    font-size: clamp(19px, 2.4vw, 26px);
+    line-height: 1.4;
+    font-weight: 400;
+    color: var(--text);
+    max-width: 680px;
+}
+.hero-greet { color: var(--accent); font-weight: 500; }
+.hero-badge {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 980px;
+    padding: 6px 16px;
+}
+.hero-badge:hover { transform: none; box-shadow: none; }
+
+/* ---- Przyciski ---- */
+.btn {
+    font-weight: 400;
+    font-size: 17px;
+    padding: 12px 24px;
+    border-radius: 980px;
+    letter-spacing: -0.01em;
+}
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: none;
+    background-size: auto;
+    animation: none;
+}
+.btn-primary:hover { filter: brightness(1.08); box-shadow: none; transform: none; }
+.btn-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--accent);
+    padding: 12px 16px;
+}
+.btn-ghost:hover { background: transparent; text-decoration: underline; }
+.hero-actions .btn-ghost::after { content: "\00A0›"; }
+
+/* ---- Karty (koty, fakty, opinie) ---- */
+.cat-card { border-radius: var(--radius); box-shadow: var(--shadow); }
+.cat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.16); }
+body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
+
+.fact-card { box-shadow: var(--shadow); border-radius: var(--radius); }
+.fact-card .fact-label {
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-size: 12px;
+    font-weight: 600;
+}
+.testi figcaption { color: var(--text-muted); }
+
+/* ---- Trust bar: subtelny tekst zamiast pigułek ---- */
+.trust-item {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+/* ---- Quiz CTA: czysta karta ---- */
+.quiz-cta-inner { border-radius: 28px; }
+.quiz-cta-inner::before { display: none; }
+
+/* ---- Marquee: bardzo subtelny ---- */
+.marquee { border: none; background: transparent; opacity: 0.8; }
+
+/* ---- Footer ---- */
+.footer { font-size: 12px; color: var(--text-muted); }
+
+@media (max-width: 720px) {
+    .hero h1 { font-size: clamp(34px, 11vw, 52px); }
 }
