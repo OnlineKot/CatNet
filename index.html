@@ -36,6 +36,7 @@
                 <a href="index.html" class="active" data-i18n="nav.start">Start</a>
                 <a href="galeria.html" data-i18n="nav.gallery">Galeria</a>
                 <a href="fakty.html" data-i18n="nav.facts">Fakty</a>
+                <a href="quiz.html" data-i18n="nav.quiz">Quiz</a>
                 <a href="o-nas.html" data-i18n="nav.about">O nas</a>
             </nav>
             <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
@@ -54,9 +55,10 @@
                 <span class="hf hf6">🐾</span>
             </div>
             <a class="hero-badge reveal" href="galeria.html" data-i18n="hero.badge">🎉 Nowość: Koty BIO i strona Faktów!</a>
+            <p class="hero-greet reveal" id="hero-greet"></p>
             <h1 class="reveal" data-i18n="hero.h1">Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱</h1>
-            <p class="reveal" data-i18n="hero.p">Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty,
-               polub swoje ulubione i wracaj po codzienną dawkę mruczenia.</p>
+            <p class="reveal" data-i18n="hero.p">Cześć! 👋 Tu CatNet — miejsce, w którym zawsze czeka na Ciebie
+               świeża porcja mruczących cudaków. Klikasz, oglądasz, uśmiechasz się. Tyle.</p>
             <div class="hero-actions reveal">
                 <a class="btn btn-primary btn-shine" href="galeria.html" data-i18n="btn.browseGallery">Przeglądaj galerię</a>
                 <button class="btn btn-ghost" onclick="refreshCats()" data-i18n="btn.showNewCats">Pokaż nowe koty</button>
@@ -86,46 +88,12 @@
             <div id="cat-grid" class="cat-grid compact"></div>
         </section>
 
-        <section class="roadmap reveal">
-            <h2 class="section-title" data-i18n="rm.title">Co dalej? Mapa mruczeń 🚀</h2>
-            <p class="section-sub" data-i18n="rm.sub">CatNet dopiero się rozkręca. Oto, nad czym pracujemy — każda aktualizacja będzie większa od poprzedniej.</p>
-            <div class="roadmap-grid">
-                <div class="rm-card">
-                    <span class="rm-soon" data-i18n="rm.soon">WKRÓTCE</span>
-                    <div class="rm-icon">🔊</div>
-                    <h3 data-i18n="rm1t">Meow Mode</h3>
-                    <p data-i18n="rm1d">Kliknij kota i usłysz prawdziwe miau. Tryb, którego nikt nie potrzebował, a każdy chce.</p>
-                </div>
-                <div class="rm-card">
-                    <span class="rm-soon" data-i18n="rm.soon">WKRÓTCE</span>
-                    <div class="rm-icon">📅</div>
-                    <h3 data-i18n="rm2t">Kot Dnia</h3>
-                    <p data-i18n="rm2d">Codziennie o północy nowy wyjątkowy kot. Wpadasz, oglądasz, dzień od razu lepszy.</p>
-                </div>
-                <div class="rm-card">
-                    <span class="rm-soon" data-i18n="rm.soon">WKRÓTCE</span>
-                    <div class="rm-icon">🧩</div>
-                    <h3 data-i18n="rm3t">Quiz: Jakim kotem jesteś?</h3>
-                    <p data-i18n="rm3d">Kilka pytań i poznasz swoje kocie alter ego. Wyniki idealne do wysłania znajomym.</p>
-                </div>
-                <div class="rm-card">
-                    <span class="rm-soon" data-i18n="rm.soon">WKRÓTCE</span>
-                    <div class="rm-icon">🖼️</div>
-                    <h3 data-i18n="rm4t">Tapety z kotami</h3>
-                    <p data-i18n="rm4d">Najlepsze koty w wysokiej jakości — jedno kliknięcie i masz nową tapetę na telefon.</p>
-                </div>
-                <div class="rm-card">
-                    <span class="rm-soon" data-i18n="rm.soon">WKRÓTCE</span>
-                    <div class="rm-icon">📲</div>
-                    <h3 data-i18n="rm5t">CatNet w kieszeni</h3>
-                    <p data-i18n="rm5d">Zainstaluj CatNet jak aplikację i miej koty zawsze przy sobie — nawet bez internetu.</p>
-                </div>
-                <div class="rm-card">
-                    <span class="rm-soon" data-i18n="rm.soon">WKRÓTCE</span>
-                    <div class="rm-icon">👑</div>
-                    <h3 data-i18n="rm6t">Galeria Freuda</h3>
-                    <p data-i18n="rm6d">Więcej zdjęć najsłodszego kota na świecie. Tego chcieliście — to dostaniecie.</p>
-                </div>
+        <section class="quiz-cta reveal">
+            <div class="quiz-cta-inner">
+                <div class="quiz-cta-emoji">🧩</div>
+                <h2 class="section-title" data-i18n="quizcta.title">Jakim kotem jesteś?</h2>
+                <p class="section-sub" data-i18n="quizcta.sub">Pięć pytań i poznasz swoje kocie alter ego. Wynik aż prosi się, by wysłać go znajomym.</p>
+                <a class="btn btn-primary btn-shine" href="quiz.html" data-i18n="quizcta.btn">Rozwiąż quiz</a>
             </div>
         </section>
 
@@ -208,7 +176,7 @@
 
     <footer class="footer">
         <p>© <span id="year"></span> CatNet · <span data-i18n="footer.made">Stworzone z miłości do kotów</span> <span class="dot" onclick="triggerAdmin()">·</span></p>
-        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a></p>
+        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;·&nbsp; <a href="quiz.html" data-i18n="nav.quiz">Quiz</a> &nbsp;·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a></p>
     </footer>
 
     <script src="script.js"></script>
