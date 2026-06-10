@@ -493,9 +493,9 @@ function setLang(v) {
 const translations = {
     pl: {
         "nav.start": "Start", "nav.gallery": "Galeria", "nav.facts": "Fakty", "nav.quiz": "Quiz", "nav.about": "O nas",
-        "quizcta.title": "Jakim kotem jesteś?",
-        "quizcta.sub": "Pięć pytań i poznasz swoje kocie alter ego. Wynik aż prosi się, by wysłać go znajomym.",
-        "quizcta.btn": "Rozwiąż quiz",
+        "quizcta.title": "Czy jesteś kotem?",
+        "quizcta.sub": "Sześć pytań o całkiem ludzkie nawyki, a na końcu poznasz, ile procent kota w Tobie siedzi. Wynik aż prosi się, by wysłać go znajomym.",
+        "quizcta.btn": "Sprawdź się",
         "footer.made": "Stworzone z miłości do kotów",
         "hero.badge": "🎉 Nowość: Koty BIO i strona Faktów!",
         "marquee.items": "Zatrzymaj się na chwilę i pooglądaj koty.  ·  Każde odświeżenie to nowy pyszczek.  ·  Cieszymy się, że tu zajrzałeś.  ·  ",
@@ -601,9 +601,9 @@ const translations = {
     },
     en: {
         "nav.start": "Home", "nav.gallery": "Gallery", "nav.facts": "Facts", "nav.quiz": "Quiz", "nav.about": "About",
-        "quizcta.title": "Which cat are you?",
-        "quizcta.sub": "Five questions and you'll meet your feline alter ego. A result made for sharing with friends.",
-        "quizcta.btn": "Take the quiz",
+        "quizcta.title": "Are you a cat?",
+        "quizcta.sub": "Six questions about your very human habits, and in the end you'll learn what percent cat you are. A result made for sharing with friends.",
+        "quizcta.btn": "Test yourself",
         "footer.made": "Made with love for cats",
         "hero.badge": "🎉 New: BIO cats & the Facts page!",
         "marquee.items": "Take a moment and just look at some cats.  ·  Every refresh brings a new little face.  ·  We're glad you stopped by.  ·  ",
@@ -1515,97 +1515,109 @@ function buildBackToTop() {
    =========================================================== */
 const QUIZ = {
     pl: {
-        title: "Jakim kotem jesteś?",
-        sub: "Pięć pytań i poznasz swoje kocie alter ego.",
-        start: "Zaczynamy 🐾",
+        title: "Czy jesteś kotem?",
+        sub: "Sześć pytań o całkiem ludzkie sprawy — a my policzymy, ile procent kota w Tobie siedzi.",
+        start: "Sprawdźmy 🐾",
         of: "z",
         again: "Rozwiąż jeszcze raz",
         share: "Udostępnij wynik 🔗",
         copied: "Skopiowano wynik 🔗",
-        resultLabel: "Jesteś...",
+        resultLabel: "Werdykt:",
+        scoreLabel: "Jesteś kotem w",
         q: [
-            { q: "Idealny poranek to...", a: [
-                { t: "Drzemka aż do południa", k: "lazy" },
-                { t: "Wyprawa badawcza po okolicy", k: "hunter" },
-                { t: "Przytulanie w cieplutkim łóżku", k: "cuddler" },
-                { t: "Inspekcja całego terytorium", k: "ruler" } ] },
-            { q: "Twój ulubiony dźwięk?", a: [
-                { t: "Cisza — śpię", k: "lazy" },
-                { t: "Szelest w krzakach", k: "hunter" },
-                { t: "Czyjeś ciche „kici kici”", k: "cuddler" },
-                { t: "Otwierana puszka (dla mnie)", k: "ruler" } ] },
-            { q: "Gdzie najchętniej jesteś?", a: [
-                { t: "Wtopiony w kanapę", k: "lazy" },
-                { t: "Na dachu albo drzewie", k: "hunter" },
-                { t: "Na czyichś kolanach", k: "cuddler" },
-                { t: "Na najwyższej półce, z widokiem na wszystko", k: "ruler" } ] },
-            { q: "Obcy w domu — Twoja reakcja?", a: [
-                { t: "Nie przerywam drzemki", k: "lazy" },
-                { t: "Muszę wszystko obwąchać", k: "hunter" },
-                { t: "Przytulam się od razu", k: "cuddler" },
-                { t: "Niech najpierw zasłużą", k: "ruler" } ] },
-            { q: "Wieczorem najczęściej...", a: [
-                { t: "Już dawno śpię", k: "lazy" },
-                { t: "Poluję na cienie i zabawki", k: "hunter" },
-                { t: "Szukam najcieplejszych kolan", k: "cuddler" },
-                { t: "Rządzę domem żelazną łapą", k: "ruler" } ] }
+            { q: "Jak zwykle zaczynasz dzień?", a: [
+                { t: "Zrywam się skoro świt, pełen energii", v: 0 },
+                { t: "Powoli — kawa i porządne przeciąganie", v: 2 },
+                { t: "Zależy od humoru, różnie bywa", v: 1 },
+                { t: "Wyłączam budzik i śpię dalej", v: 3 } ] },
+            { q: "Ktoś niezapowiedziany dzwoni do drzwi:", a: [
+                { t: "Otwieram od razu, super wizyta!", v: 0 },
+                { t: "Sprawdzam, kto to, zanim zdecyduję", v: 1 },
+                { t: "Niech chwilę poczekają", v: 2 },
+                { t: "Udaję, że mnie nie ma", v: 3 } ] },
+            { q: "Twój idealny sposób na popołudnie?", a: [
+                { t: "Spotkanie ze znajomymi w mieście", v: 0 },
+                { t: "Spacer i trochę ruchu", v: 1 },
+                { t: "Kanapa, koc i przekąska", v: 2 },
+                { t: "Drzemka w plamie słońca przy oknie", v: 3 } ] },
+            { q: "Jak wygląda Twoje jedzenie w ciągu dnia?", a: [
+                { t: "Stałe pory, wszystko zaplanowane", v: 0 },
+                { t: "Regularnie, ale uwielbiam smakołyki", v: 1 },
+                { t: "Jem głównie wtedy, gdy ktoś mi poda", v: 2 },
+                { t: "Podjadam cały dzień, kiedy mam ochotę", v: 3 } ] },
+            { q: "Widzisz puste pudełko po paczce:", a: [
+                { t: "Składam i od razu wyrzucam", v: 0 },
+                { t: "Odkładam, może się przyda", v: 1 },
+                { t: "Muszę zajrzeć do środka", v: 2 },
+                { t: "Mam ogromną ochotę w nim usiąść", v: 3 } ] },
+            { q: "Jak okazujesz bliskim uczucia?", a: [
+                { t: "Mówię wprost i ściskam na powitanie", v: 0 },
+                { t: "Lubię towarzystwo, gdy mam nastrój", v: 1 },
+                { t: "Drobnymi gestami, bez wielkich słów", v: 2 },
+                { t: "Jestem blisko, ale wyłącznie na swoich zasadach", v: 3 } ] }
         ],
-        r: {
-            lazy: { e: "😴", n: "Leniwy Wylegiwacz", d: "Mistrz relaksu. Twoje motto: po co biegać, skoro można leżeć w słońcu? Życie to jedna wielka, błoga drzemka — i bardzo dobrze." },
-            hunter: { e: "🐯", n: "Łowca Przygód", d: "Ciekawość to Twoje drugie imię. Każdy kąt trzeba zbadać, każdy liść upolować. Słowo „nuda” po prostu dla Ciebie nie istnieje." },
-            cuddler: { e: "🥰", n: "Czuły Przytulak", d: "Chodzące serduszko. Najlepsze miejsce na świecie to czyjeś kolana, a mruczysz, zanim ktokolwiek zdąży Cię pogłaskać." },
-            ruler: { e: "👑", n: "Niezależny Władca", d: "Dom jest Twój, ludzie to personel. Uwagę okazujesz wyłącznie na własnych warunkach — i każdy i tak Cię uwielbia." }
-        }
+        tiers: [
+            { min: 80, e: "🐱", n: "Zdecydowanie kot", d: "Nie ma żadnych wątpliwości — w środku jesteś kotem w niemal stu procentach. Drzemki, niezależność i ciepłe miejsca to Twój żywioł. Brakuje Ci tylko ogona i wąsów." },
+            { min: 55, e: "😼", n: "Kot w ludzkim ciele", d: "Ludzka powłoka, kocia dusza. Robisz swoje, komfort cenisz ponad wszystko, a uczucia okazujesz wyłącznie na własnych warunkach. Mruczenie masz w zasięgu ręki." },
+            { min: 30, e: "🙂", n: "Pół-kot, pół-człowiek", d: "Piękna równowaga. Lubisz ludzi i odrobinę ruchu, ale dobra drzemka i chwila tylko dla siebie też potrafią Cię uszczęśliwić. Kot w Tobie czasem mruga." },
+            { min: 0,  e: "🧍", n: "Człowiek (na razie)", d: "Energiczny, towarzyski, poukładany — bardzo ludzkie cechy. Ale spokojnie: jeszcze kilka drzemek na słońcu i parę pudełek, a dołączysz do kociego klubu." }
+        ]
     },
     en: {
-        title: "Which cat are you?",
-        sub: "Five questions and you'll meet your feline alter ego.",
-        start: "Let's go 🐾",
+        title: "Are you a cat?",
+        sub: "Six questions about very human things — and we'll work out what percent cat you really are.",
+        start: "Let's find out 🐾",
         of: "of",
         again: "Take it again",
         share: "Share result 🔗",
         copied: "Result copied 🔗",
-        resultLabel: "You are...",
+        resultLabel: "The verdict:",
+        scoreLabel: "You are",
         q: [
-            { q: "The perfect morning is...", a: [
-                { t: "A nap until noon", k: "lazy" },
-                { t: "An exploration of the neighbourhood", k: "hunter" },
-                { t: "Cuddles in a warm bed", k: "cuddler" },
-                { t: "An inspection of the whole territory", k: "ruler" } ] },
-            { q: "Your favourite sound?", a: [
-                { t: "Silence — I'm sleeping", k: "lazy" },
-                { t: "A rustle in the bushes", k: "hunter" },
-                { t: "Someone's gentle „here kitty”", k: "cuddler" },
-                { t: "A can opening (for me)", k: "ruler" } ] },
-            { q: "Where do you love to be?", a: [
-                { t: "Melted into the sofa", k: "lazy" },
-                { t: "On the roof or up a tree", k: "hunter" },
-                { t: "On someone's lap", k: "cuddler" },
-                { t: "On the highest shelf, overseeing everything", k: "ruler" } ] },
-            { q: "A stranger at home — your reaction?", a: [
-                { t: "I don't interrupt my nap", k: "lazy" },
-                { t: "I must sniff everything", k: "hunter" },
-                { t: "I cuddle up right away", k: "cuddler" },
-                { t: "They must earn it first", k: "ruler" } ] },
-            { q: "In the evening you usually...", a: [
-                { t: "Have been asleep for ages", k: "lazy" },
-                { t: "Hunt shadows and toys", k: "hunter" },
-                { t: "Seek out the warmest lap", k: "cuddler" },
-                { t: "Rule the house with an iron paw", k: "ruler" } ] }
+            { q: "How do you usually start your day?", a: [
+                { t: "Up at dawn, full of energy", v: 0 },
+                { t: "Slowly — coffee and a proper stretch", v: 2 },
+                { t: "Depends on my mood, it varies", v: 1 },
+                { t: "Turn off the alarm and sleep on", v: 3 } ] },
+            { q: "Someone rings the doorbell unannounced:", a: [
+                { t: "I open right away, great visit!", v: 0 },
+                { t: "I check who it is before deciding", v: 1 },
+                { t: "Let them wait a moment", v: 2 },
+                { t: "I pretend I'm not home", v: 3 } ] },
+            { q: "Your perfect way to spend an afternoon?", a: [
+                { t: "Meeting friends in town", v: 0 },
+                { t: "A walk and a bit of movement", v: 1 },
+                { t: "Couch, blanket and a snack", v: 2 },
+                { t: "A nap in a patch of sun by the window", v: 3 } ] },
+            { q: "What does your eating look like during the day?", a: [
+                { t: "Fixed times, all planned out", v: 0 },
+                { t: "Regular, but I love treats", v: 1 },
+                { t: "Mostly when someone serves me", v: 2 },
+                { t: "I snack all day, whenever I feel like it", v: 3 } ] },
+            { q: "You spot an empty cardboard box:", a: [
+                { t: "Flatten it and bin it right away", v: 0 },
+                { t: "Keep it, might be useful", v: 1 },
+                { t: "I have to look inside", v: 2 },
+                { t: "I really want to sit in it", v: 3 } ] },
+            { q: "How do you show affection?", a: [
+                { t: "I say it outright and hug hello", v: 0 },
+                { t: "I enjoy company when I'm in the mood", v: 1 },
+                { t: "Small gestures, no big words", v: 2 },
+                { t: "I stay close, but strictly on my own terms", v: 3 } ] }
         ],
-        r: {
-            lazy: { e: "😴", n: "The Lazy Lounger", d: "A master of relaxation. Your motto: why run when you can lie in the sun? Life is one big, blissful nap — and that's perfect." },
-            hunter: { e: "🐯", n: "The Adventurer", d: "Curiosity is your middle name. Every corner must be explored, every leaf hunted. The word „boredom” simply doesn't exist for you." },
-            cuddler: { e: "🥰", n: "The Cuddle Bug", d: "A walking heart. The best place in the world is someone's lap, and you start purring before anyone even reaches to pet you." },
-            ruler: { e: "👑", n: "The Independent Ruler", d: "The house is yours, the humans are staff. You give attention strictly on your own terms — and everyone adores you anyway." }
-        }
+        tiers: [
+            { min: 80, e: "🐱", n: "Definitely a cat", d: "No doubt about it — inside, you're very nearly one hundred percent cat. Naps, independence and warm spots are your element. You're only missing a tail and whiskers." },
+            { min: 55, e: "😼", n: "A cat in a human body", d: "Human shell, feline soul. You do your own thing, prize comfort above all, and show affection strictly on your own terms. Purring is well within reach." },
+            { min: 30, e: "🙂", n: "Half cat, half human", d: "A lovely balance. You like people and a little activity, but a good nap and a moment to yourself make you just as happy. The cat in you winks now and then." },
+            { min: 0,  e: "🧍", n: "Human (for now)", d: "Energetic, sociable, organised — very human traits. But relax: a few more naps in the sun and a couple of boxes and you'll join the cat club." }
+        ]
     }
 };
 
-let quizState = { step: -1, scores: {} };
+let quizState = { step: -1, score: 0 };
 
 function startQuiz() {
-    quizState = { step: -1, scores: { lazy: 0, hunter: 0, cuddler: 0, ruler: 0 } };
+    quizState = { step: -1, score: 0 };
     renderQuiz();
 }
 
@@ -1621,7 +1633,7 @@ function renderQuiz() {
     if (quizState.step === -1) {
         app.innerHTML = `
             <div class="quiz-card quiz-intro">
-                <div class="quiz-emoji">🧩</div>
+                <div class="quiz-emoji">🐱</div>
                 <h1>${d.title}</h1>
                 <p>${d.sub}</p>
                 <button class="btn btn-primary btn-shine" onclick="quizNext()">${d.start}</button>
@@ -1639,7 +1651,7 @@ function renderQuiz() {
             <div class="quiz-card">
                 <h2 class="quiz-q">${item.q}</h2>
                 <div class="quiz-options">
-                    ${item.a.map((o, idx) => `<button class="quiz-opt" onclick="quizPick('${o.k}')" style="animation-delay:${idx * 0.05}s">${o.t}</button>`).join("")}
+                    ${item.a.map((o, idx) => `<button class="quiz-opt" onclick="quizPick(${o.v})" style="animation-delay:${idx * 0.05}s">${o.t}</button>`).join("")}
                 </div>
             </div>`;
         return;
@@ -1653,31 +1665,38 @@ function quizNext() {
     renderQuiz();
 }
 
-function quizPick(key) {
-    quizState.scores[key] = (quizState.scores[key] || 0) + 1;
+function quizPick(v) {
+    quizState.score += Number(v) || 0;
     quizState.step++;
     renderQuiz();
 }
 
-function quizResultKey() {
-    const s = quizState.scores;
-    return Object.keys(s).reduce((best, k) => (s[k] > s[best] ? k : best), "lazy");
+function quizCatPercent() {
+    const d = quizData();
+    const max = d.q.length * 3;
+    return Math.max(0, Math.min(100, Math.round((quizState.score / max) * 100)));
+}
+
+function quizTier(pct) {
+    const d = quizData();
+    return d.tiers.find((t) => pct >= t.min) || d.tiers[d.tiers.length - 1];
 }
 
 function renderQuizResult() {
     const app = document.getElementById("quiz-app");
     const d = quizData();
-    const key = quizResultKey();
-    const r = d.r[key];
+    const pct = quizCatPercent();
+    const r = quizTier(pct);
     app.innerHTML = `
         <div class="quiz-card quiz-result">
             <div class="quiz-result-emoji">${r.e}</div>
+            <div class="quiz-score">${d.scoreLabel} <span class="grad">${pct}%</span></div>
             <div class="quiz-result-label">${d.resultLabel}</div>
             <h1 class="grad">${r.n}</h1>
             <p>${r.d}</p>
             <div id="quiz-cat" class="cat-grid" style="max-width:340px;margin:8px auto 18px;"></div>
             <div class="quiz-result-actions">
-                <button class="btn btn-primary btn-shine" onclick="shareQuizResult('${r.e}', \`${r.n}\`)">${d.share}</button>
+                <button class="btn btn-primary btn-shine" onclick="shareQuizResult('${r.e}', \`${r.n}\`, ${pct})">${d.share}</button>
                 <button class="btn btn-ghost" onclick="startQuiz()">${d.again}</button>
             </div>
         </div>`;
@@ -1698,10 +1717,10 @@ async function loadQuizCat() {
     createCatElement(grid, url);
 }
 
-async function shareQuizResult(emoji, name) {
+async function shareQuizResult(emoji, name, pct) {
     const text = (LANG === "en"
-        ? `${emoji} I'm "${name}" on CatNet! Which cat are you?`
-        : `${emoji} Jestem „${name}” na CatNet! A Ty jakim kotem jesteś?`);
+        ? `${emoji} I'm ${pct}% cat on CatNet (${name})! Are you a cat?`
+        : `${emoji} Jestem kotem w ${pct}% (${name}) na CatNet! A Ty — jesteś kotem?`);
     const url = location.href;
     if (navigator.share) {
         try { await navigator.share({ title: "CatNet", text, url }); return; } catch {}
