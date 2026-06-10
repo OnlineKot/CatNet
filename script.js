@@ -98,6 +98,7 @@ function createCatElement(grid, url) {
         const added = toggleFavorite(url);
         fav.classList.toggle("is-fav", added);
         fav.innerHTML = added ? "♥" : "♡";
+        if (added) heartBurst(card);
         // Odśwież sekcję ulubionych, jeśli jest na stronie
         if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
     });
@@ -499,7 +500,11 @@ const translations = {
         "rm5t": "CatNet w kieszeni", "rm5d": "Zainstaluj CatNet jak aplikację i miej koty zawsze przy sobie — nawet bez internetu.",
         "rm6t": "Galeria Freuda", "rm6d": "Więcej zdjęć najsłodszego kota na świecie. Tego chcieliście — to dostaniecie.",
         "hero.h1": 'Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱',
-        "hero.p": "Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty, polub swoje ulubione i wracaj po codzienną dawkę mruczenia.",
+        "hero.p": "Cześć! 👋 Tu CatNet — miejsce, w którym zawsze czeka na Ciebie świeża porcja mruczących cudaków. Klikasz, oglądasz, uśmiechasz się. Tyle.",
+        "greet.morning": "Dzień dobry! ☀️ Idealna pora na pierwszego kota.",
+        "greet.day": "Hej! 😺 Przerwa na kota jeszcze nikomu nie zaszkodziła.",
+        "greet.evening": "Dobry wieczór! 🌙 Czas na wieczorną porcję mruczenia.",
+        "greet.night": "Nie śpisz? 🦉 Koty też nie. Idealnie się składa.",
         "btn.browseGallery": "Przeglądaj galerię", "btn.showNewCats": "Pokaż nowe koty",
         "fact.label": "Ciekawostka o kotach",
         "home.todayTitle": "Koty na dziś", "home.todaySub": "Mały podgląd tego, co czeka na Ciebie w galerii.",
@@ -600,7 +605,11 @@ const translations = {
         "rm5t": "CatNet in your pocket", "rm5d": "Install CatNet like an app and keep cats with you — even offline.",
         "rm6t": "Freud's gallery", "rm6d": "More photos of the cutest cat in the world. You asked — you'll get it.",
         "hero.h1": 'The cutest <span class="grad">cats</span><br>on the whole web 🐱',
-        "hero.p": "Welcome to CatNet! Refresh the gallery to discover new adorable cats, like your favorites and come back for your daily dose of purring.",
+        "hero.p": "Hi! 👋 This is CatNet — a place where a fresh batch of purring cuties is always waiting for you. You click, you look, you smile. That's it.",
+        "greet.morning": "Good morning! ☀️ The perfect time for your first cat.",
+        "greet.day": "Hey! 😺 A cat break never hurt anybody.",
+        "greet.evening": "Good evening! 🌙 Time for your evening dose of purring.",
+        "greet.night": "Can't sleep? 🦉 Neither can the cats. Perfect match.",
         "btn.browseGallery": "Browse gallery", "btn.showNewCats": "Show new cats",
         "fact.label": "Cat fact",
         "home.todayTitle": "Cats for today", "home.todaySub": "A little preview of what's waiting for you in the gallery.",
@@ -1359,6 +1368,29 @@ function showProCats() {
     loadProCats("cat-grid", currentLimit);
 }
 
+/* Powitanie zależne od pory dnia — bardziej po ludzku */
+function heroGreeting() {
+    const el = document.getElementById("hero-greet");
+    if (!el) return;
+    const h = new Date().getHours();
+    const key = h < 5 ? "greet.night" : h < 12 ? "greet.morning" : h < 18 ? "greet.day" : "greet.evening";
+    el.innerText = t(key);
+}
+
+/* Serduszko wystrzeliwuje z karty przy polubieniu */
+function heartBurst(card) {
+    if (!card) return;
+    for (let i = 0; i < 3; i++) {
+        const s = document.createElement("span");
+        s.className = "heart-burst";
+        s.textContent = "♥";
+        s.style.left = 35 + Math.random() * 30 + "%";
+        s.style.animationDelay = i * 0.08 + "s";
+        card.appendChild(s);
+        setTimeout(() => s.remove(), 1100);
+    }
+}
+
 /* Marquee — przewijany pasek haseł (zawartość 2x dla pętli) */
 function fillMarquee() {
     const track = document.getElementById("marquee-track");
@@ -1413,6 +1445,7 @@ document.addEventListener("DOMContentLoaded", function () {
     buildBackToTop();
     applySettings();
     applyI18n();
+    heroGreeting();
     fillMarquee();
     initReveal();
     detectAdblock();
