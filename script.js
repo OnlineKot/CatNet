@@ -497,7 +497,7 @@ const translations = {
         "quizcta.btn": "Rozwiąż quiz",
         "footer.made": "Stworzone z miłości do kotów",
         "hero.badge": "🎉 Nowość: Koty BIO i strona Faktów!",
-        "marquee.items": "KOTY · MRUCZENIE · DOBRY HUMOR · ULUBIONE · FREUD · KOTY BIO · FAKTY · ",
+        "marquee.items": "Zatrzymaj się na chwilę i pooglądaj koty.  ·  Każde odświeżenie to nowy pyszczek.  ·  Cieszymy się, że tu zajrzałeś.  ·  ",
         "rm.title": "Co dalej? Mapa mruczeń 🚀",
         "rm.sub": "CatNet dopiero się rozkręca. Oto, nad czym pracujemy — każda aktualizacja będzie większa od poprzedniej.",
         "rm.soon": "WKRÓTCE",
@@ -605,7 +605,7 @@ const translations = {
         "quizcta.btn": "Take the quiz",
         "footer.made": "Made with love for cats",
         "hero.badge": "🎉 New: BIO cats & the Facts page!",
-        "marquee.items": "CATS · PURRING · GOOD VIBES · FAVORITES · FREUD · BIO CATS · FACTS · ",
+        "marquee.items": "Take a moment and just look at some cats.  ·  Every refresh brings a new little face.  ·  We're glad you stopped by.  ·  ",
         "rm.title": "What's next? The purr roadmap 🚀",
         "rm.sub": "CatNet is just getting started. Here's what we're working on — every update will be bigger than the last.",
         "rm.soon": "SOON",
@@ -1488,30 +1488,13 @@ function heartBurst(card) {
 function fillMarquee() {
     const track = document.getElementById("marquee-track");
     if (!track) return;
-    const phrase = t("marquee.items").replace(/FREUD/g, '<span class="grad">FREUD</span>');
-    track.innerHTML = (phrase.repeat(4) + phrase.repeat(4));
+    const phrase = t("marquee.items");
+    track.innerHTML = (phrase.repeat(3) + phrase.repeat(3));
 }
 
-/* Scroll reveal — sekcje wjeżdżają przy przewijaniu */
+/* Scroll reveal usunięty — sekcje są widoczne od razu (bez „odsłaniania”) */
 function initReveal() {
-    const els = document.querySelectorAll(".reveal");
-    if (!els.length) return;
-    if (!("IntersectionObserver" in window)) {
-        els.forEach((el) => el.classList.add("in"));
-        return;
-    }
-    const io = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((e) => {
-                if (e.isIntersecting) {
-                    e.target.classList.add("in");
-                    io.unobserve(e.target);
-                }
-            });
-        },
-        { threshold: 0.12 }
-    );
-    els.forEach((el) => io.observe(el));
+    document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"));
 }
 
 function buildBackToTop() {
