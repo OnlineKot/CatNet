@@ -34,10 +34,16 @@ body {
     min-height: 100vh;
     font-family: var(--font);
     color: var(--text);
-    background: var(--bg-2);
+    background-color: #000;
+    background-image: radial-gradient(900px 520px at 50% -160px, rgba(10, 132, 255, 0.12), transparent 60%);
     background-repeat: no-repeat;
+    background-attachment: fixed;
     line-height: 1.47;
     letter-spacing: -0.01em;
+}
+body.light {
+    background-color: var(--bg-2);
+    background-image: none;
 }
 
 /* ---------- Nawigacja ---------- */
@@ -2100,3 +2106,105 @@ body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
 @media (max-width: 720px) {
     .hero h1 { font-size: clamp(34px, 11vw, 52px); }
 }
+
+/* ===========================================================
+   KONTO / LOGOWANIE / PRO / WERSJA PRÓBNA
+   =========================================================== */
+
+/* Przycisk konta w navbarze */
+.account-btn { width: auto; gap: 6px; padding: 0 10px; font-size: 14px; font-weight: 500; }
+.account-btn .acc-label { font-size: 14px; }
+.account-btn.logged {
+    padding: 0 6px 0 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+}
+.account-btn .acc-ini {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--accent);
+    background-size: cover; background-position: center;
+    color: #fff; font-size: 13px; font-weight: 700;
+}
+.account-btn .acc-pro {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.5px;
+    color: var(--accent);
+}
+
+/* Plakietka PRO */
+.pro-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 800; letter-spacing: 1px;
+    color: #fff; background: var(--accent);
+    padding: 2px 9px; border-radius: 980px;
+}
+.pro-badge.big { font-size: 13px; padding: 4px 14px; margin: 6px auto; }
+
+/* Modal logowania / konta */
+.auth-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.auth-overlay.open { opacity: 1; pointer-events: auto; }
+.auth-card {
+    position: relative;
+    width: 100%; max-width: 380px;
+    background: var(--surface-solid);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 34px 28px 26px;
+    text-align: center;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    transform: translateY(8px) scale(0.98);
+    transition: transform 0.25s ease;
+}
+.auth-overlay.open .auth-card { transform: none; }
+.auth-x {
+    position: absolute; top: 14px; right: 14px;
+    width: 30px; height: 30px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: var(--surface); color: var(--text-muted);
+    font-size: 14px;
+}
+.auth-logo { font-size: 44px; line-height: 1; }
+.auth-card h2 { margin: 10px 0 6px; font-size: 24px; }
+.auth-sub { color: var(--text-muted); font-size: 15px; margin: 0 0 18px; }
+.auth-card input {
+    width: 100%; margin-bottom: 10px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: inherit; font-size: 16px;
+}
+.auth-card input:focus { outline: none; border-color: var(--accent); }
+.auth-card .auth-go { width: 100%; justify-content: center; margin-top: 4px; }
+.auth-note { color: var(--text-muted); font-size: 12px; line-height: 1.45; margin: 14px 0 0; }
+.auth-avatar {
+    width: 84px; height: 84px; border-radius: 50%;
+    object-fit: cover; margin: 0 auto;
+    border: 2px solid var(--border);
+}
+.account-stat { color: var(--text-muted); font-size: 15px; margin: 8px 0 16px; }
+.account-stat b { color: var(--text); }
+.auth-card .btn { width: 100%; justify-content: center; margin-top: 8px; }
+
+/* Baner wersji próbnej nad siatką kotów */
+.trial-note {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap;
+    margin: 0 0 22px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    font-size: 15px; color: var(--text-muted);
+}
+.trial-note .btn { padding: 9px 18px; font-size: 15px; flex-shrink: 0; }
