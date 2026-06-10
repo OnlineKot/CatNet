@@ -156,10 +156,23 @@
             </div>
 
             <div class="adm-sec">
+                <h5>💌 Kreator strony powitalnej</h5>
+                <div class="adm-limit">
+                    <span>Imię gościa</span>
+                    <input type="text" id="adm-welcome-name" placeholder="np. Ania">
+                    <button class="adm-btn" onclick="admMakeWelcome()">GENERUJ LINK</button>
+                </div>
+                <input type="text" id="adm-welcome-link" readonly placeholder="tu pojawi się link z zakodowanym imieniem (b64)" style="width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:ui-monospace,monospace;font-size:12px;">
+                <div class="adm-actions" style="margin-top:8px;">
+                    <button class="adm-btn" onclick="admCopyWelcome()">📋 Kopiuj link</button>
+                    <button class="adm-btn" onclick="admOpenWelcome()">👁️ Podgląd</button>
+                </div>
+            </div>
+
+            <div class="adm-sec">
                 <h5>🛠️ Narzędzia</h5>
                 <div class="adm-actions">
                     <button class="adm-btn" onclick="showOnboarding()">▶️ Samouczek</button>
-                    <button class="adm-btn" onclick="unblockIP()">🔓 Odblokuj IP</button>
                     <button class="adm-btn" onclick="admStats()">📊 Staty</button>
                     <button class="adm-btn" onclick="location.reload()">↻ Przeładuj</button>
                     <button class="adm-btn danger" onclick="admWipe()">💥 WIPE ALL</button>
