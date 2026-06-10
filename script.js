@@ -428,6 +428,7 @@ function loadSweetCat() {
    =========================================================== */
 
 const ACCENTS = {
+    apple:  { a: "#0071e3", b: "#0071e3", grad: "linear-gradient(120deg,#0071e3,#42a1ec)" },
     aurora: { a: "#7c5cff", b: "#ff5ca8", grad: "linear-gradient(120deg,#7c5cff 0%,#5cc8ff 50%,#ff5ca8 100%)" },
     ocean:  { a: "#2bb7ff", b: "#5cf0d0", grad: "linear-gradient(120deg,#2bb7ff,#5cf0d0)" },
     sunset: { a: "#ff8a3c", b: "#ff4d6d", grad: "linear-gradient(120deg,#ff8a3c,#ff4d6d)" },
@@ -438,8 +439,8 @@ const ACCENTS = {
 
 const SETTINGS_KEY = "catnet_settings";
 const defaultSettings = {
-    accent: "aurora",
-    mode: "dark",
+    accent: "apple",
+    mode: "light",
     density: "comfortable",
     perPage: 8,
     autoRefresh: false,
