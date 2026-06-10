@@ -487,6 +487,17 @@ const translations = {
     pl: {
         "nav.start": "Start", "nav.gallery": "Galeria", "nav.facts": "Fakty", "nav.about": "O nas",
         "footer.made": "Stworzone z miłości do kotów",
+        "hero.badge": "🎉 Nowość: Koty BIO i strona Faktów!",
+        "marquee.items": "KOTY · MRUCZENIE · DOBRY HUMOR · ULUBIONE · FREUD · KOTY BIO · FAKTY · ",
+        "rm.title": "Co dalej? Mapa mruczeń 🚀",
+        "rm.sub": "CatNet dopiero się rozkręca. Oto, nad czym pracujemy — każda aktualizacja będzie większa od poprzedniej.",
+        "rm.soon": "WKRÓTCE",
+        "rm1t": "Meow Mode", "rm1d": "Kliknij kota i usłysz prawdziwe miau. Tryb, którego nikt nie potrzebował, a każdy chce.",
+        "rm2t": "Kot Dnia", "rm2d": "Codziennie o północy nowy wyjątkowy kot. Wpadasz, oglądasz, dzień od razu lepszy.",
+        "rm3t": "Quiz: Jakim kotem jesteś?", "rm3d": "Kilka pytań i poznasz swoje kocie alter ego. Wyniki idealne do wysłania znajomym.",
+        "rm4t": "Tapety z kotami", "rm4d": "Najlepsze koty w wysokiej jakości — jedno kliknięcie i masz nową tapetę na telefon.",
+        "rm5t": "CatNet w kieszeni", "rm5d": "Zainstaluj CatNet jak aplikację i miej koty zawsze przy sobie — nawet bez internetu.",
+        "rm6t": "Galeria Freuda", "rm6d": "Więcej zdjęć najsłodszego kota na świecie. Tego chcieliście — to dostaniecie.",
         "hero.h1": 'Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱',
         "hero.p": "Witaj w CatNet! Odśwież galerię, by odkrywać nowe urocze koty, polub swoje ulubione i wracaj po codzienną dawkę mruczenia.",
         "btn.browseGallery": "Przeglądaj galerię", "btn.showNewCats": "Pokaż nowe koty",
@@ -577,6 +588,17 @@ const translations = {
     en: {
         "nav.start": "Home", "nav.gallery": "Gallery", "nav.facts": "Facts", "nav.about": "About",
         "footer.made": "Made with love for cats",
+        "hero.badge": "🎉 New: BIO cats & the Facts page!",
+        "marquee.items": "CATS · PURRING · GOOD VIBES · FAVORITES · FREUD · BIO CATS · FACTS · ",
+        "rm.title": "What's next? The purr roadmap 🚀",
+        "rm.sub": "CatNet is just getting started. Here's what we're working on — every update will be bigger than the last.",
+        "rm.soon": "SOON",
+        "rm1t": "Meow Mode", "rm1d": "Click a cat and hear a real meow. The mode nobody needed and everybody wants.",
+        "rm2t": "Cat of the Day", "rm2d": "A new special cat every midnight. Drop by, take a look, day instantly better.",
+        "rm3t": "Quiz: Which cat are you?", "rm3d": "A few questions and you'll meet your feline alter ego. Results made for sharing.",
+        "rm4t": "Cat wallpapers", "rm4d": "The best cats in high quality — one click and you've got a new phone wallpaper.",
+        "rm5t": "CatNet in your pocket", "rm5d": "Install CatNet like an app and keep cats with you — even offline.",
+        "rm6t": "Freud's gallery", "rm6d": "More photos of the cutest cat in the world. You asked — you'll get it.",
         "hero.h1": 'The cutest <span class="grad">cats</span><br>on the whole web 🐱',
         "hero.p": "Welcome to CatNet! Refresh the gallery to discover new adorable cats, like your favorites and come back for your daily dose of purring.",
         "btn.browseGallery": "Browse gallery", "btn.showNewCats": "Show new cats",
@@ -1337,6 +1359,36 @@ function showProCats() {
     loadProCats("cat-grid", currentLimit);
 }
 
+/* Marquee — przewijany pasek haseł (zawartość 2x dla pętli) */
+function fillMarquee() {
+    const track = document.getElementById("marquee-track");
+    if (!track) return;
+    const phrase = t("marquee.items").replace(/FREUD/g, '<span class="grad">FREUD</span>');
+    track.innerHTML = (phrase.repeat(4) + phrase.repeat(4));
+}
+
+/* Scroll reveal — sekcje wjeżdżają przy przewijaniu */
+function initReveal() {
+    const els = document.querySelectorAll(".reveal");
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) {
+        els.forEach((el) => el.classList.add("in"));
+        return;
+    }
+    const io = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((e) => {
+                if (e.isIntersecting) {
+                    e.target.classList.add("in");
+                    io.unobserve(e.target);
+                }
+            });
+        },
+        { threshold: 0.12 }
+    );
+    els.forEach((el) => io.observe(el));
+}
+
 function buildBackToTop() {
     if (document.getElementById("to-top")) return;
     const b = document.createElement("button");
@@ -1361,6 +1413,8 @@ document.addEventListener("DOMContentLoaded", function () {
     buildBackToTop();
     applySettings();
     applyI18n();
+    fillMarquee();
+    initReveal();
     detectAdblock();
 
     const toggle = document.getElementById("settings-toggle");
