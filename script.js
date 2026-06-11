@@ -716,6 +716,7 @@ const translations = {
         "catagram.captionPh": "Dodaj podpis... (np. „Mój Mruczek po obiedzie”)",
         "catagram.namePh": "Twoje imię (opcjonalnie)",
         "catagram.publish": "Opublikuj 🐾",
+        "catagram.uploading": "Wysyłanie… ⏳",
         "catagram.feedTitle": "Świeże koty od społeczności",
         "catagram.feedSub": "Posty:",
         "catagram.empty": "Nie ma jeszcze żadnych kotów. Bądź pierwszy — wrzuć swojego pupila! 🐾",
@@ -858,6 +859,7 @@ const translations = {
         "catagram.captionPh": "Add a caption... (e.g. \"My Whiskers after lunch\")",
         "catagram.namePh": "Your name (optional)",
         "catagram.publish": "Publish 🐾",
+        "catagram.uploading": "Uploading… ⏳",
         "catagram.feedTitle": "Fresh cats from the community",
         "catagram.feedSub": "Posts:",
         "catagram.empty": "No cats here yet. Be the first — upload your buddy! 🐾",
@@ -2052,6 +2054,68 @@ const CG_MINE = "catnet_catagram_mine";    // moje id (do usuwania)
 const CG_SEED_FLAG = "catnet_catagram_seeded";
 let cgPending = null;                       // skompresowane zdjęcie czekające na publikację
 
+/* ---- Wspólna tablica w chmurze (Supabase) ----
+   Pusty URL/klucz = tryb lokalny (posty tylko w tej przeglądarce).
+   Po wklejeniu kluczy Catagram automatycznie staje się wspólny dla wszystkich. */
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
+const CG_BUCKET = "catagram";
+let sbClient = null;
+
+function cgCloudOn() { return !!(SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase); }
+function cgClient() {
+    if (!sbClient && cgCloudOn()) sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return sbClient;
+}
+
+function cgDataUrlToBlob(dataUrl) {
+    const [meta, b64] = dataUrl.split(",");
+    const mime = (meta.match(/:(.*?);/) || [])[1] || "image/jpeg";
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+}
+
+async function cgCloudFetch() {
+    const sb = cgClient();
+    const { data, error } = await sb.from("catagram_posts")
+        .select("*").order("created_at", { ascending: false }).limit(100);
+    if (error) throw error;
+    return (data || []).map((r) => ({
+        id: r.id, img: r.image_url, image_path: r.image_path,
+        caption: r.caption, author: r.author,
+        ts: new Date(r.created_at).getTime(), likes: r.likes || 0
+    }));
+}
+
+async function cgCloudPublish(author, caption, dataUrl) {
+    const sb = cgClient();
+    const blob = cgDataUrlToBlob(dataUrl);
+    const name = Date.now() + "_" + Math.random().toString(36).slice(2, 8) + ".jpg";
+    const up = await sb.storage.from(CG_BUCKET).upload(name, blob, { contentType: "image/jpeg" });
+    if (up.error) throw up.error;
+    const { data: pub } = sb.storage.from(CG_BUCKET).getPublicUrl(name);
+    const ins = await sb.from("catagram_posts")
+        .insert({ author, caption, image_url: pub.publicUrl, image_path: name, likes: 0 })
+        .select().single();
+    if (ins.error) throw ins.error;
+    return ins.data.id;
+}
+
+async function cgCloudLike(id, newLikes) {
+    await cgClient().from("catagram_posts").update({ likes: newLikes }).eq("id", id);
+}
+
+async function cgCloudDelete(id, path) {
+    const sb = cgClient();
+    await sb.from("catagram_posts").delete().eq("id", id);
+    if (path) await sb.storage.from(CG_BUCKET).remove([path]);
+}
+
+/* Cache postów z chmury (do polubień/usuwania bez ponownego pobrania) */
+let cgCloudCache = [];
+
 function escapeHtml(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
         ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -2121,21 +2185,35 @@ function handleCatagramFile(file) {
     reader.readAsDataURL(file);
 }
 
-function catagramPublish() {
+async function catagramPublish() {
     if (!cgPending) { showToast(t("toast.catagramNoImg")); return; }
     const caption = (document.getElementById("cg-caption")?.value || "").trim().slice(0, 200);
     let author = (document.getElementById("cg-name")?.value || "").trim().slice(0, 40);
     if (!author) { const u = getUser(); author = u && u.name ? u.name : t("catagram.anon"); }
 
-    const post = {
-        id: "cg_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        img: cgPending, caption, author, ts: Date.now(), likes: 0
-    };
-    const posts = getCatagramPosts();
-    posts.unshift(post);
-    if (!catagramSave(posts)) { showToast(t("toast.catagramFull")); return; }
+    const btn = document.querySelector("#cg-form button[type=submit]");
+    let newId;
 
-    const mine = cgGetMine(); mine.push(post.id);
+    if (cgCloudOn()) {
+        if (btn) { btn.disabled = true; btn.dataset.label = btn.innerHTML; btn.innerHTML = t("catagram.uploading"); }
+        try {
+            newId = await cgCloudPublish(author, caption, cgPending);
+        } catch (err) {
+            console.warn("Catagram cloud upload failed", err);
+            showToast(t("toast.catagramFull"));
+            if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label; }
+            return;
+        }
+        if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.label; }
+    } else {
+        newId = "cg_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        const post = { id: newId, img: cgPending, caption, author, ts: Date.now(), likes: 0 };
+        const posts = getCatagramPosts();
+        posts.unshift(post);
+        if (!catagramSave(posts)) { showToast(t("toast.catagramFull")); return; }
+    }
+
+    const mine = cgGetMine(); mine.push(newId);
     localStorage.setItem(CG_MINE, JSON.stringify(mine));
 
     cgPending = null;
@@ -2144,31 +2222,43 @@ function catagramPublish() {
     if (prev) { prev.style.display = "none"; prev.src = ""; }
     document.getElementById("cg-drop")?.classList.remove("has-img");
 
-    renderCatagram();
+    await renderCatagram();
     showToast(t("toast.catagramPosted"));
     document.getElementById("catagram-feed")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function catagramLike(id, card) {
     const liked = cgGetLikes();
-    const posts = getCatagramPosts();
-    const p = posts.find((x) => x.id === id);
-    if (!p) return;
     const i = liked.indexOf(id);
-    let on;
-    if (i >= 0) { liked.splice(i, 1); p.likes = Math.max(0, (p.likes || 0) - 1); on = false; }
-    else { liked.push(id); p.likes = (p.likes || 0) + 1; on = true; if (card) heartBurst(card); }
+    const on = i < 0;
+
+    // Źródło prawdy o liczbie: chmura (cache) albo lokalny zapis
+    const store = cgCloudOn() ? cgCloudCache : getCatagramPosts();
+    const p = store.find((x) => String(x.id) === String(id));
+    if (!p) return;
+
+    if (on) { liked.push(id); p.likes = (p.likes || 0) + 1; if (card) heartBurst(card); }
+    else { liked.splice(i, 1); p.likes = Math.max(0, (p.likes || 0) - 1); }
     localStorage.setItem(CG_LIKES, JSON.stringify(liked));
-    catagramSave(posts);
+
+    if (cgCloudOn()) cgCloudLike(id, p.likes).catch((e) => console.warn("like sync failed", e));
+    else catagramSave(store);
+
     const btn = card && card.querySelector(".cg-like");
     if (btn) { btn.classList.toggle("on", on); btn.innerHTML = `${on ? "♥" : "♡"} <b>${p.likes}</b>`; }
 }
 
-function catagramDelete(id) {
+async function catagramDelete(id) {
     if (!confirm(t("catagram.deleteConfirm"))) return;
-    catagramSave(getCatagramPosts().filter((p) => p.id !== id));
-    localStorage.setItem(CG_MINE, JSON.stringify(cgGetMine().filter((x) => x !== id)));
-    renderCatagram();
+    if (cgCloudOn()) {
+        const p = cgCloudCache.find((x) => String(x.id) === String(id));
+        try { await cgCloudDelete(id, p && p.image_path); }
+        catch (e) { console.warn("delete failed", e); }
+    } else {
+        catagramSave(getCatagramPosts().filter((p) => p.id !== id));
+    }
+    localStorage.setItem(CG_MINE, JSON.stringify(cgGetMine().filter((x) => String(x) !== String(id))));
+    await renderCatagram();
     showToast(t("toast.catagramDeleted"));
 }
 
@@ -2182,10 +2272,22 @@ function catagramAgo(ts) {
     return new Date(ts).toLocaleDateString(en ? "en-US" : "pl-PL");
 }
 
-function renderCatagram() {
+async function renderCatagram() {
     const feed = document.getElementById("catagram-feed");
     if (!feed) return;
-    const posts = getCatagramPosts();
+
+    let posts;
+    if (cgCloudOn()) {
+        feed.innerHTML = `<p class="empty-hint">${t("loading")}</p>`;
+        try { posts = await cgCloudFetch(); cgCloudCache = posts; }
+        catch (err) {
+            console.warn("Catagram cloud fetch failed, falling back to local", err);
+            posts = getCatagramPosts();
+        }
+    } else {
+        posts = getCatagramPosts();
+    }
+
     const countEl = document.getElementById("cg-count");
     if (countEl) countEl.textContent = posts.length;
 
@@ -2226,6 +2328,7 @@ function renderCatagram() {
 
 /* Pierwszy raz: dorzucamy kilka powitalnych postów, żeby feed nie był pusty */
 function catagramSeed() {
+    if (cgCloudOn()) return;   // w trybie wspólnym nie zaśmiecamy bazy demo-postami
     if (localStorage.getItem(CG_SEED_FLAG)) return;
     localStorage.setItem(CG_SEED_FLAG, "1");
     if (getCatagramPosts().length) return;
