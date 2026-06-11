@@ -708,7 +708,24 @@ function setLang(v) {
 
 const translations = {
     pl: {
-        "nav.start": "Start", "nav.gallery": "Galeria", "nav.facts": "Fakty", "nav.quiz": "Quiz", "nav.about": "O nas",
+        "nav.start": "Start", "nav.gallery": "Galeria", "nav.catagram": "Catagram", "nav.facts": "Fakty", "nav.quiz": "Quiz", "nav.about": "O nas",
+        "catagram.title": 'Catagram <span class="grad">📸</span>',
+        "catagram.sub": "Kocia tablica CatNet — wrzuć zdjęcie swojego kota, dorzuć podpis i zobacz mruczki innych. Wszystko zostaje w Twojej przeglądarce.",
+        "catagram.uploadTitle": "Wrzuć własnego kota 🐱",
+        "catagram.dropHint": "Kliknij lub przeciągnij tu zdjęcie kota",
+        "catagram.captionPh": "Dodaj podpis... (np. „Mój Mruczek po obiedzie”)",
+        "catagram.namePh": "Twoje imię (opcjonalnie)",
+        "catagram.publish": "Opublikuj 🐾",
+        "catagram.feedTitle": "Świeże koty od społeczności",
+        "catagram.feedSub": "Posty:",
+        "catagram.empty": "Nie ma jeszcze żadnych kotów. Bądź pierwszy — wrzuć swojego pupila! 🐾",
+        "catagram.delete": "Usuń post",
+        "catagram.deleteConfirm": "Usunąć ten post na zawsze?",
+        "catagram.anon": "Anonimowy kociarz",
+        "toast.catagramPosted": "Opublikowano! Twój kot jest na tablicy 🎉",
+        "toast.catagramDeleted": "Post usunięty 🗑️",
+        "toast.catagramNoImg": "Najpierw wybierz zdjęcie kota 🐱",
+        "toast.catagramFull": "Brak miejsca w przeglądarce — usuń kilka starszych postów.",
         "quizcta.title": "Czy jesteś kotem?",
         "quizcta.sub": "Sześć pytań o całkiem ludzkie nawyki, a na końcu poznasz, ile procent kota w Tobie siedzi. Wynik aż prosi się, by wysłać go znajomym.",
         "quizcta.btn": "Sprawdź się",
@@ -833,7 +850,24 @@ const translations = {
         "toast.refOk": "🎉 Bonus odebrany! +150 XP i koty premium odblokowane 👑"
     },
     en: {
-        "nav.start": "Home", "nav.gallery": "Gallery", "nav.facts": "Facts", "nav.quiz": "Quiz", "nav.about": "About",
+        "nav.start": "Home", "nav.gallery": "Gallery", "nav.catagram": "Catagram", "nav.facts": "Facts", "nav.quiz": "Quiz", "nav.about": "About",
+        "catagram.title": 'Catagram <span class="grad">📸</span>',
+        "catagram.sub": "CatNet's cat board — upload a photo of your cat, add a caption and browse everyone else's furballs. Everything stays in your browser.",
+        "catagram.uploadTitle": "Upload your own cat 🐱",
+        "catagram.dropHint": "Click or drag a cat photo here",
+        "catagram.captionPh": "Add a caption... (e.g. \"My Whiskers after lunch\")",
+        "catagram.namePh": "Your name (optional)",
+        "catagram.publish": "Publish 🐾",
+        "catagram.feedTitle": "Fresh cats from the community",
+        "catagram.feedSub": "Posts:",
+        "catagram.empty": "No cats here yet. Be the first — upload your buddy! 🐾",
+        "catagram.delete": "Delete post",
+        "catagram.deleteConfirm": "Delete this post for good?",
+        "catagram.anon": "Anonymous cat lover",
+        "toast.catagramPosted": "Published! Your cat is on the board 🎉",
+        "toast.catagramDeleted": "Post deleted 🗑️",
+        "toast.catagramNoImg": "Pick a cat photo first 🐱",
+        "toast.catagramFull": "Browser storage is full — delete a few older posts.",
         "quizcta.title": "Are you a cat?",
         "quizcta.sub": "Six questions about your very human habits, and in the end you'll learn what percent cat you are. A result made for sharing with friends.",
         "quizcta.btn": "Test yourself",
@@ -2007,6 +2041,235 @@ async function shareQuizResult(emoji, name, pct) {
 /* ===========================================================
    INICJALIZACJA WSPÓLNA
    =========================================================== */
+/* ===========================================================
+   CATAGRAM — galeria, w której każdy wrzuca własnego kota
+   Wszystko działa lokalnie (localStorage): zdjęcia jako data URL,
+   polubienia i „moje posty" zapisane w przeglądarce użytkownika.
+   =========================================================== */
+const CG_KEY = "catnet_catagram";          // lista postów
+const CG_LIKES = "catnet_catagram_likes";  // polubione id (per przeglądarka)
+const CG_MINE = "catnet_catagram_mine";    // moje id (do usuwania)
+const CG_SEED_FLAG = "catnet_catagram_seeded";
+let cgPending = null;                       // skompresowane zdjęcie czekające na publikację
+
+function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function getCatagramPosts() {
+    try { return JSON.parse(localStorage.getItem(CG_KEY) || "[]"); }
+    catch { return []; }
+}
+function cgGetLikes() {
+    try { return JSON.parse(localStorage.getItem(CG_LIKES) || "[]"); } catch { return []; }
+}
+function cgGetMine() {
+    try { return JSON.parse(localStorage.getItem(CG_MINE) || "[]"); } catch { return []; }
+}
+
+/* Zapis z obsługą przepełnienia localStorage — w razie braku miejsca
+   przycinamy najstarsze posty, aż się zmieści. */
+function catagramSave(posts) {
+    try {
+        localStorage.setItem(CG_KEY, JSON.stringify(posts));
+        return true;
+    } catch {
+        const trimmed = posts.slice();
+        while (trimmed.length > 1) {
+            trimmed.pop();
+            try { localStorage.setItem(CG_KEY, JSON.stringify(trimmed)); return true; }
+            catch { /* próbuj dalej */ }
+        }
+        return false;
+    }
+}
+
+/* Zmniejsza i kompresuje zdjęcie przez canvas, by zmieściło się w localStorage */
+function cgDownscale(src, cb) {
+    const img = new Image();
+    img.onload = () => {
+        const max = 1200;
+        let w = img.width, h = img.height;
+        if (w > max || h > max) {
+            const r = Math.min(max / w, max / h);
+            w = Math.round(w * r); h = Math.round(h * r);
+        }
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        let q = 0.85, out = c.toDataURL("image/jpeg", q);
+        while (out.length > 900000 && q > 0.4) { q -= 0.1; out = c.toDataURL("image/jpeg", q); }
+        cb(out);
+    };
+    img.onerror = () => showToast(t("toast.catagramNoImg"));
+    img.src = src;
+}
+
+function handleCatagramFile(file) {
+    if (!file || !file.type || !file.type.startsWith("image/")) {
+        showToast(t("toast.catagramNoImg"));
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => cgDownscale(e.target.result, (dataUrl) => {
+        cgPending = dataUrl;
+        const prev = document.getElementById("cg-preview");
+        if (prev) { prev.src = dataUrl; prev.style.display = "block"; }
+        document.getElementById("cg-drop")?.classList.add("has-img");
+    });
+    reader.readAsDataURL(file);
+}
+
+function catagramPublish() {
+    if (!cgPending) { showToast(t("toast.catagramNoImg")); return; }
+    const caption = (document.getElementById("cg-caption")?.value || "").trim().slice(0, 200);
+    let author = (document.getElementById("cg-name")?.value || "").trim().slice(0, 40);
+    if (!author) { const u = getUser(); author = u && u.name ? u.name : t("catagram.anon"); }
+
+    const post = {
+        id: "cg_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        img: cgPending, caption, author, ts: Date.now(), likes: 0
+    };
+    const posts = getCatagramPosts();
+    posts.unshift(post);
+    if (!catagramSave(posts)) { showToast(t("toast.catagramFull")); return; }
+
+    const mine = cgGetMine(); mine.push(post.id);
+    localStorage.setItem(CG_MINE, JSON.stringify(mine));
+
+    cgPending = null;
+    document.getElementById("cg-form")?.reset();
+    const prev = document.getElementById("cg-preview");
+    if (prev) { prev.style.display = "none"; prev.src = ""; }
+    document.getElementById("cg-drop")?.classList.remove("has-img");
+
+    renderCatagram();
+    showToast(t("toast.catagramPosted"));
+    document.getElementById("catagram-feed")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function catagramLike(id, card) {
+    const liked = cgGetLikes();
+    const posts = getCatagramPosts();
+    const p = posts.find((x) => x.id === id);
+    if (!p) return;
+    const i = liked.indexOf(id);
+    let on;
+    if (i >= 0) { liked.splice(i, 1); p.likes = Math.max(0, (p.likes || 0) - 1); on = false; }
+    else { liked.push(id); p.likes = (p.likes || 0) + 1; on = true; if (card) heartBurst(card); }
+    localStorage.setItem(CG_LIKES, JSON.stringify(liked));
+    catagramSave(posts);
+    const btn = card && card.querySelector(".cg-like");
+    if (btn) { btn.classList.toggle("on", on); btn.innerHTML = `${on ? "♥" : "♡"} <b>${p.likes}</b>`; }
+}
+
+function catagramDelete(id) {
+    if (!confirm(t("catagram.deleteConfirm"))) return;
+    catagramSave(getCatagramPosts().filter((p) => p.id !== id));
+    localStorage.setItem(CG_MINE, JSON.stringify(cgGetMine().filter((x) => x !== id)));
+    renderCatagram();
+    showToast(t("toast.catagramDeleted"));
+}
+
+function catagramAgo(ts) {
+    const s = Math.floor((Date.now() - ts) / 1000);
+    const en = LANG === "en";
+    if (s < 60) return en ? "just now" : "przed chwilą";
+    const m = Math.floor(s / 60); if (m < 60) return m + (en ? " min ago" : " min temu");
+    const h = Math.floor(m / 60); if (h < 24) return h + (en ? " h ago" : " godz. temu");
+    const d = Math.floor(h / 24); if (d < 7) return d + (en ? " d ago" : " dni temu");
+    return new Date(ts).toLocaleDateString(en ? "en-US" : "pl-PL");
+}
+
+function renderCatagram() {
+    const feed = document.getElementById("catagram-feed");
+    if (!feed) return;
+    const posts = getCatagramPosts();
+    const countEl = document.getElementById("cg-count");
+    if (countEl) countEl.textContent = posts.length;
+
+    if (!posts.length) {
+        feed.innerHTML = `<p class="empty-hint">${t("catagram.empty")}</p>`;
+        return;
+    }
+    const liked = cgGetLikes();
+    const mine = cgGetMine();
+    feed.innerHTML = "";
+    posts.forEach((p) => {
+        const card = document.createElement("article");
+        card.className = "cg-card";
+        const isLiked = liked.includes(p.id);
+        const isMine = mine.includes(p.id);
+        const initial = ((p.author || "🐱").trim().charAt(0) || "🐱").toUpperCase();
+        card.innerHTML = `
+            <div class="cg-head">
+                <span class="cg-avatar">${escapeHtml(initial)}</span>
+                <span class="cg-author">${escapeHtml(p.author || t("catagram.anon"))}</span>
+                <span class="cg-time">${catagramAgo(p.ts)}</span>
+            </div>
+            <div class="cg-imgwrap"><img class="cg-img" src="${p.img}" alt="${escapeHtml(p.caption || "Kot")}" loading="lazy" decoding="async"></div>
+            <div class="cg-body">
+                <div class="cg-actions">
+                    <button class="cg-like${isLiked ? " on" : ""}" type="button" aria-label="Polub">${isLiked ? "♥" : "♡"} <b>${p.likes || 0}</b></button>
+                    ${isMine ? `<button class="cg-del" type="button" title="${t("catagram.delete")}" aria-label="${t("catagram.delete")}">🗑️</button>` : ""}
+                </div>
+                ${p.caption ? `<p class="cg-caption">${escapeHtml(p.caption)}</p>` : ""}
+            </div>`;
+        card.querySelector(".cg-img").addEventListener("click", () => openLightbox(p.img));
+        card.querySelector(".cg-like").addEventListener("click", () => catagramLike(p.id, card));
+        const del = card.querySelector(".cg-del");
+        if (del) del.addEventListener("click", () => catagramDelete(p.id));
+        feed.appendChild(card);
+    });
+}
+
+/* Pierwszy raz: dorzucamy kilka powitalnych postów, żeby feed nie był pusty */
+function catagramSeed() {
+    if (localStorage.getItem(CG_SEED_FLAG)) return;
+    localStorage.setItem(CG_SEED_FLAG, "1");
+    if (getCatagramPosts().length) return;
+    const en = LANG === "en";
+    const now = Date.now();
+    const demo = [
+        { author: "Freud", img: "freud.jpeg",
+          caption: en ? "Sunbathing champion since forever ☀️" : "Mistrz opalania od zawsze ☀️", likes: 23, ts: now - 1000 * 60 * 60 * 5 },
+        { author: en ? "CatNet team" : "Zespół CatNet", img: fallbackImages[0],
+          caption: en ? "Welcome to Catagram! Upload your own cat 🐾" : "Witaj w Catagramie! Wrzuć własnego kota 🐾", likes: 41, ts: now - 1000 * 60 * 60 * 26 },
+        { author: en ? "CatNet team" : "Zespół CatNet", img: fallbackImages[2],
+          caption: en ? "Caught mid-zoomies 💨" : "Złapany w trakcie szaleństwa 💨", likes: 17, ts: now - 1000 * 60 * 60 * 50 }
+    ].map((d, i) => ({ id: "cg_seed_" + i, ...d }));
+    catagramSave(demo);
+}
+
+function initCatagram() {
+    const feed = document.getElementById("catagram-feed");
+    if (!feed) return;
+    catagramSeed();
+
+    const nameInput = document.getElementById("cg-name");
+    const u = getUser();
+    if (nameInput && u && u.name && !nameInput.value) nameInput.value = u.name;
+
+    const file = document.getElementById("cg-file");
+    const drop = document.getElementById("cg-drop");
+    if (drop && file) {
+        drop.addEventListener("click", () => file.click());
+        drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("drag"); });
+        drop.addEventListener("dragleave", () => drop.classList.remove("drag"));
+        drop.addEventListener("drop", (e) => {
+            e.preventDefault(); drop.classList.remove("drag");
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) handleCatagramFile(e.dataTransfer.files[0]);
+        });
+    }
+    if (file) file.addEventListener("change", () => { if (file.files[0]) handleCatagramFile(file.files[0]); });
+
+    const form = document.getElementById("cg-form");
+    if (form) form.addEventListener("submit", (e) => { e.preventDefault(); catagramPublish(); });
+
+    renderCatagram();
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     LANG = detectLang();
     buildSettingsDrawer();
@@ -2021,6 +2284,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkWelcomeParam();
     fillMarquee();
     initReveal();
+    initCatagram();
     detectAdblock();
 
     // Trwała sesja: jeśli ktoś już zalogowany, mapujemy go po mailu (Clarity)
