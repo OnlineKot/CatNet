@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fakty o kotach — CatNet</title>
-    <meta name="description" content="Odkrywaj zaskakujące fakty o kotach — za każdym kliknięciem coś nowego.">
+    <title>Catagram — wrzuć własnego kota — CatNet</title>
+    <meta name="description" content="Catagram to kocia tablica CatNet — wrzuć zdjęcie swojego kota, dodaj podpis i zobacz mruczki innych.">
 
-    <meta property="og:title" content="Fakty o kotach — CatNet">
+    <meta property="og:title" content="Catagram — CatNet">
+    <meta property="og:description" content="Wrzuć zdjęcie swojego kota na kocią tablicę CatNet.">
     <meta property="og:image" content="https://onlinekot.github.io/CatNet/CatNet.PNG">
     <meta property="og:type" content="website">
 
@@ -31,8 +32,8 @@
             <nav class="nav-links">
                 <a href="index.html" data-i18n="nav.start">Start</a>
                 <a href="galeria.html" data-i18n="nav.gallery">Galeria</a>
-                <a href="catagram.html" data-i18n="nav.catagram">Catagram</a>
-                <a href="fakty.html" class="active" data-i18n="nav.facts">Fakty</a>
+                <a href="catagram.html" class="active" data-i18n="nav.catagram">Catagram</a>
+                <a href="fakty.html" data-i18n="nav.facts">Fakty</a>
                 <a href="quiz.html" data-i18n="nav.quiz">Quiz</a>
                 <a href="o-nas.html" data-i18n="nav.about">O nas</a>
             </nav>
@@ -42,27 +43,32 @@
 
     <main class="page">
 
-        <section class="hero">
-            <h1 data-i18n="facts.title">Fakty o <span class="grad">kotach</span> 🐾</h1>
-            <p data-i18n="facts.sub">Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.</p>
+        <h1 class="section-title" data-i18n="catagram.title">Catagram 📸</h1>
+        <p class="section-sub" data-i18n="catagram.sub">Kocia tablica CatNet — wrzuć zdjęcie swojego kota, dorzuć podpis i zobacz mruczki innych. Wszystko zostaje w Twojej przeglądarce.</p>
 
-            <div class="fact-card" style="max-width:660px;">
-                <div class="fact-label" data-i18n="facts.didYouKnow">Czy wiesz, że...</div>
-                <div class="fact-text" id="fact-text" data-i18n="loading">Wczytywanie...</div>
-            </div>
-
-            <div class="hero-actions" style="margin-top:26px;">
-                <button class="btn btn-primary" onclick="showRandomFact('fact-text')" data-i18n="btn.nextFact">Następny fakt ✨</button>
-            </div>
+        <section class="cg-upload">
+            <h2 class="cg-upload-title" data-i18n="catagram.uploadTitle">Wrzuć własnego kota 🐱</h2>
+            <form id="cg-form" class="cg-form">
+                <label class="cg-drop" id="cg-drop">
+                    <input type="file" id="cg-file" accept="image/*" hidden>
+                    <img id="cg-preview" class="cg-preview" alt="" style="display:none;">
+                    <span class="cg-drop-icon">📷</span>
+                    <span class="cg-drop-hint" data-i18n="catagram.dropHint">Kliknij lub przeciągnij tu zdjęcie kota</span>
+                </label>
+                <div class="cg-fields">
+                    <input type="text" id="cg-name" class="cg-input" maxlength="40" data-i18n-ph="catagram.namePh" placeholder="Twoje imię (opcjonalnie)">
+                    <textarea id="cg-caption" class="cg-input cg-textarea" maxlength="200" data-i18n-ph="catagram.captionPh" placeholder="Dodaj podpis..."></textarea>
+                    <button type="submit" class="btn btn-primary btn-shine" data-i18n="catagram.publish">Opublikuj 🐾</button>
+                </div>
+            </form>
         </section>
 
-        <section style="text-align:center;">
-            <h2 class="section-title" data-i18n="facts.sweetTitle">Freud</h2>
-            <p class="section-sub" style="margin-left:auto;margin-right:auto;" data-i18n="facts.sweetSub">
-                Freud to czarny kot o wielkim sercu i jeszcze większym apetycie na drzemki. Mieszka tam, gdzie trawa jest najwyższa, a słońce najcieplejsze, i każdy dzień zaczyna od porządnego przeciągnięcia się oraz obchodu swojego terytorium. Najbardziej lubi spacery po ogrodzie, polowanie na liście niesione wiatrem, wylegiwanie się w nagrzanej trawie i obserwowanie ptaków zza szyby. Ma miękkie, lśniące futro, spokojne spojrzenie i charakter, który topi serca wszystkich dookoła. Gdy Freud mruczy, nawet najgorszy dzień robi się od razu znośniejszy. Jest najsłodszym kotem na świecie w każdych, najzupełniej naturalnych warunkach.
-            </p>
-            <div id="sweet-grid" class="cat-grid" style="max-width:420px;margin:0 auto;"></div>
-        </section>
+        <div class="grid-toolbar" style="margin-top:48px;">
+            <h2 class="section-title" style="margin:0;" data-i18n="catagram.feedTitle">Świeże koty od społeczności</h2>
+            <span class="fav-counter"><span data-i18n="catagram.feedSub">Posty:</span> <b id="cg-count">0</b></span>
+        </div>
+
+        <div id="catagram-feed" class="cg-feed"></div>
 
     </main>
 
@@ -74,10 +80,6 @@
     <script src="script.js"></script>
     <script>
         document.getElementById("year").innerText = new Date().getFullYear();
-        window.onload = function () {
-            showRandomFact("fact-text");
-            loadSweetCat();
-        };
     </script>
 
 </body>
