@@ -4,8 +4,8 @@
 
 const API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
 /* Web3Forms — wysyła e-mail + imię logujących się na adres właściciela.
-   Klucz publiczny z web3forms.com (mail: frydrychdent@me.com). Pusty = brak wysyłki. */
-const WEB3FORMS_KEY = "";
+   Publiczny Access Key z web3forms.com. Pusty = brak wysyłki. */
+const WEB3FORMS_KEY = "7c9c4718-db51-4c34-bc3f-1ca7474ed2e2";
 let currentLimit = 2;
 let currentBreed = "";       // filtr rasy (puste = wszystkie)
 let forceFallback = false;   // tryb awaryjny wymuszony przez admina
