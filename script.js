@@ -3,6 +3,9 @@
    =========================================================== */
 
 const API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
+/* Web3Forms — wysyła e-mail + imię logujących się na adres właściciela.
+   Klucz publiczny z web3forms.com (mail: frydrychdent@me.com). Pusty = brak wysyłki. */
+const WEB3FORMS_KEY = "";
 let currentLimit = 2;
 let currentBreed = "";       // filtr rasy (puste = wszystkie)
 let forceFallback = false;   // tryb awaryjny wymuszony przez admina
@@ -100,6 +103,30 @@ function trackIdentify(user) {
     } catch { /* Clarity może być zablokowany */ }
 }
 
+/* Wyślij e-mail + imię do właściciela (Web3Forms; bez ekspozycji adresu w kodzie) */
+function sendSignupToOwner(user) {
+    if (!WEB3FORMS_KEY || !user || !user.email) return;
+    try {
+        fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({
+                access_key: WEB3FORMS_KEY,
+                subject: "Nowe logowanie w CatNet 🐾",
+                from_name: "CatNet",
+                email: user.email,
+                name: user.name || "(bez imienia)",
+                message:
+                    "Nowe logowanie w CatNet:\n" +
+                    "E-mail: " + user.email + "\n" +
+                    "Imię: " + (user.name || "(brak)") + "\n" +
+                    "Kiedy: " + new Date().toLocaleString() + "\n" +
+                    "Strona: " + location.href
+            })
+        }).catch(() => {});
+    } catch { /* offline / zablokowane */ }
+}
+
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 function loginWithEmail(email, name) {
@@ -118,6 +145,7 @@ function loginWithEmail(email, name) {
         localStorage.setItem(k, JSON.stringify(merged));
     }
     trackIdentify(user);
+    sendSignupToOwner(user);
     closeAuth();
     renderAccountUI();
     updateFavCounter();
@@ -690,7 +718,7 @@ const translations = {
         "auth.email": "Twój e-mail",
         "auth.name": "Imię (opcjonalnie)",
         "auth.go": "Zaloguj i odblokuj PRO 🐾",
-        "auth.note": "To konto lokalne — zapisujemy je w Twojej przeglądarce, bez hasła. Awatar pobieramy z Gravatara (po bezpiecznym hashu e-maila).",
+        "auth.note": "To konto lokalne — zapisujemy je w Twojej przeglądarce, bez hasła. Awatar pobieramy z Gravatara (po bezpiecznym hashu e-maila). Twój e-mail i imię wysyłamy też do właściciela CatNet.",
         "auth.bad": "Podaj prawidłowy adres e-mail",
         "auth.welcome": "Witaj! Masz teraz CatNet PRO 🎉",
         "auth.bye": "Wylogowano. Do zobaczenia! 👋",
@@ -815,7 +843,7 @@ const translations = {
         "auth.email": "Your email",
         "auth.name": "Name (optional)",
         "auth.go": "Sign in & unlock PRO 🐾",
-        "auth.note": "This is a local account — stored in your browser, no password. The avatar comes from Gravatar (via a safe hash of your email).",
+        "auth.note": "This is a local account — stored in your browser, no password. The avatar comes from Gravatar (via a safe hash of your email). Your email and name are also sent to the CatNet owner.",
         "auth.bad": "Please enter a valid email address",
         "auth.welcome": "Welcome! You now have CatNet PRO 🎉",
         "auth.bye": "Signed out. See you soon! 👋",
