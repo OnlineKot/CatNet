@@ -2152,3 +2152,25 @@ body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
 }
 .lang-toggle button.on { background: var(--accent-grad); color: #fff; }
 .lang-toggle button:not(.on):hover { color: var(--text); }
+
+/* Przełącznik źródła kotów w galerii */
+.src-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 4px 3px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+}
+.src-label { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-right: 2px; }
+.src-toggle button {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit; font-size: 13px; font-weight: 600;
+    padding: 6px 11px; border-radius: 999px; cursor: pointer; line-height: 1;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.src-toggle button.on { background: var(--accent-grad); color: #fff; }
+.src-toggle button:not(.on):hover { color: var(--text); }
