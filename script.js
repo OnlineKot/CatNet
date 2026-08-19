@@ -5,6 +5,7 @@
 const API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
 let currentLimit = 2;
 let currentBreed = "";       // filtr rasy (puste = wszystkie)
+let catSource = "standard";  // źródło kotów: "standard" (TheCatAPI) | "community" (Cataas) | "deluxe" (miks 2 API)
 let forceFallback = false;   // tryb awaryjny wymuszony przez admina
 let autoRefreshTimer = null;  // pokaz slajdów / auto-odświeżanie
 
@@ -115,7 +116,32 @@ function createCatElement(grid, url) {
 }
 
 function refreshCats(gridId = "cat-grid") {
-    loadCats(gridId);
+    // W galerii (z przełącznikiem źródła) odświeżamy z aktywnego źródła
+    if (document.getElementById("src-toggle")) loadActive(gridId, currentLimit);
+    else loadCats(gridId);
+}
+
+/* Ładuje koty z aktualnie wybranego źródła (przełącznik w galerii) */
+function loadActive(gridId = "cat-grid", limit = currentLimit) {
+    if (catSource === "community") loadProCats(gridId, limit);
+    else if (catSource === "deluxe") loadDeluxeCats(gridId, limit);
+    else loadCats(gridId, limit);
+}
+
+/* Ustawia źródło z przełącznika i przeładowuje galerię */
+function setCatSource(src) {
+    catSource = src;
+    const box = document.getElementById("src-toggle");
+    if (box) box.querySelectorAll("button").forEach((b) =>
+        b.classList.toggle("on", b.getAttribute("data-src") === src));
+    loadActive("cat-grid", currentLimit);
+}
+
+function initSourceToggle() {
+    const box = document.getElementById("src-toggle");
+    if (!box) return;
+    box.querySelectorAll("button").forEach((b) =>
+        b.addEventListener("click", () => setCatSource(b.getAttribute("data-src"))));
 }
 
 /* ---------- Galeria ulubionych ---------- */
@@ -499,7 +525,7 @@ const translations = {
         "quizcta.sub": "Sześć pytań o całkiem ludzkie nawyki, a na końcu poznasz, ile procent kota w Tobie siedzi. Wynik aż prosi się, by wysłać go znajomym.",
         "quizcta.btn": "Sprawdź się",
         "footer.made": "Stworzone z miłości do kotów",
-        "hero.badge": "🎉 Nowość: Koty BIO i strona Faktów!",
+        "hero.badge": "🎉 Nowość: Koty od społeczności, Deluxe i małe koty!",
         "marquee.items": "Zatrzymaj się na chwilę i pooglądaj koty.  ·  Każde odświeżenie to nowy pyszczek.  ·  Cieszymy się, że tu zajrzałeś.  ·  ",
         "rm.title": "Co dalej? Mapa mruczeń 🚀",
         "rm.sub": "CatNet dopiero się rozkręca. Oto, nad czym pracujemy — każda aktualizacja będzie większa od poprzedniej.",
@@ -522,7 +548,10 @@ const translations = {
         "gallery.title": "Galeria kotów 🐱",
         "gallery.sub": "Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.",
         "btn.newCats": "Nowe koty 🔄", "btn.surprise": "🎁 Niespodzianka", "btn.premium": "👑 Koty premium",
-        "btn.pro": "Koty BIO", "toast.pro": "Załadowano koty BIO (naturalne zdjęcia)",
+        "btn.pro": "Koty od społeczności", "toast.pro": "Załadowano koty od społeczności (Cataas)",
+        "btn.kittens": "🐱 Małe koty", "toast.kittens": "Załadowano małe koty — kocięta 🐱",
+        "toast.deluxe": "Załadowano Koty Deluxe — miks z 2 API 💎",
+        "src.label": "Źródło:", "src.standard": "TheCatAPI", "src.community": "Społeczność", "src.deluxe": "Deluxe 💎",
         "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
         "gallery.favTitle": "Twoje ulubione ♥", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
         "facts.title": 'Fakty o <span class="grad">kotach</span> 🐾',
@@ -626,7 +655,7 @@ const translations = {
         "quizcta.sub": "Six questions about your very human habits, and in the end you'll learn what percent cat you are. A result made for sharing with friends.",
         "quizcta.btn": "Test yourself",
         "footer.made": "Made with love for cats",
-        "hero.badge": "🎉 New: BIO cats & the Facts page!",
+        "hero.badge": "🎉 New: Community, Deluxe & kitten cats!",
         "marquee.items": "Take a moment and just look at some cats.  ·  Every refresh brings a new little face.  ·  We're glad you stopped by.  ·  ",
         "rm.title": "What's next? The purr roadmap 🚀",
         "rm.sub": "CatNet is just getting started. Here's what we're working on — every update will be bigger than the last.",
@@ -649,7 +678,10 @@ const translations = {
         "gallery.title": "Cat gallery 🐱",
         "gallery.sub": "Refresh as much as you like — there are endless cats. Click the heart to save your favorites.",
         "btn.newCats": "New cats 🔄", "btn.surprise": "🎁 Surprise", "btn.premium": "👑 Premium cats",
-        "btn.pro": "BIO cats", "toast.pro": "Loaded BIO cats (natural photos)",
+        "btn.pro": "Community cats", "toast.pro": "Loaded community cats (Cataas)",
+        "btn.kittens": "🐱 Kittens", "toast.kittens": "Loaded kittens 🐱",
+        "toast.deluxe": "Loaded Deluxe cats — a mix of 2 APIs 💎",
+        "src.label": "Source:", "src.standard": "TheCatAPI", "src.community": "Community", "src.deluxe": "Deluxe 💎",
         "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
         "gallery.favTitle": "Your favorites ♥", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
         "facts.title": 'Facts about <span class="grad">cats</span> 🐾',
@@ -1110,7 +1142,9 @@ async function loadBreeds(selectId = "breed-filter") {
     }
     sel.addEventListener("change", () => {
         currentBreed = sel.value;
-        loadCats("cat-grid", currentLimit);
+        // Filtr ras działa na TheCatAPI — wracamy do źródła standardowego
+        if (document.getElementById("src-toggle")) setCatSource("standard");
+        else loadCats("cat-grid", currentLimit);
     });
 }
 
@@ -1527,6 +1561,62 @@ function showProCats() {
     loadProCats("cat-grid", currentLimit);
 }
 
+/* Małe koty — kocięta (Cataas, tag „kitten") */
+async function loadKittens(gridId = "cat-grid", limit = currentLimit) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = "";
+    showSkeletons(grid, limit);
+    try {
+        const skip = Math.floor(Math.random() * 60);
+        const res = await fetch(`https://cataas.com/api/cats?tags=kitten&limit=${limit}&skip=${skip}`);
+        const data = await res.json();
+        if (!data || !data.length) throw new Error("Cataas pusto");
+        grid.innerHTML = "";
+        data.forEach((c) => createCatElement(grid, `https://cataas.com/cat/${c._id || c.id}`));
+    } catch {
+        grid.innerHTML = "";
+        for (let i = 0; i < limit; i++) createCatElement(grid, `https://cataas.com/cat/kitten?ts=${Date.now() + i}`);
+    }
+    showToast(t("toast.kittens"));
+}
+
+/* Koty Deluxe — miks z 2 API naraz (TheCatAPI + Cataas) */
+async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = "";
+    showSkeletons(grid, limit);
+    const half = Math.ceil(limit / 2);
+    const fromCat = [];
+    const fromCataas = [];
+    try {
+        const r = await fetch(`https://api.thecatapi.com/v1/images/search?limit=${half}&api_key=${API_KEY}`);
+        const d = await r.json();
+        (d || []).forEach((c) => fromCat.push(c.url));
+    } catch { /* pomijamy to źródło */ }
+    try {
+        const skip = Math.floor(Math.random() * 300);
+        const r = await fetch(`https://cataas.com/api/cats?limit=${limit - half}&skip=${skip}`);
+        const d = await r.json();
+        (d || []).forEach((c) => fromCataas.push(`https://cataas.com/cat/${c._id || c.id}`));
+    } catch { /* pomijamy to źródło */ }
+
+    // Przeplatamy oba źródła, żeby miks był widoczny
+    const mixed = [];
+    for (let i = 0; i < Math.max(fromCat.length, fromCataas.length); i++) {
+        if (fromCat[i]) mixed.push(fromCat[i]);
+        if (fromCataas[i]) mixed.push(fromCataas[i]);
+    }
+    grid.innerHTML = "";
+    if (!mixed.length) {
+        for (let i = 0; i < limit; i++) createCatElement(grid, fallbackImages[i % fallbackImages.length]);
+    } else {
+        mixed.slice(0, limit).forEach((u) => createCatElement(grid, u));
+    }
+    showToast(t("toast.deluxe"));
+}
+
 /* Powitanie zależne od pory dnia — bardziej po ludzku */
 function heroGreeting() {
     const el = document.getElementById("hero-greet");
@@ -1814,6 +1904,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkWelcomeParam();
     fillMarquee();
     initReveal();
+    initSourceToggle();
     detectAdblock();
 
     const toggle = document.getElementById("settings-toggle");

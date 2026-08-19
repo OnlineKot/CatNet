@@ -40,7 +40,13 @@
             <div class="toolbar-controls">
                 <button class="btn btn-primary" onclick="refreshCats('cat-grid')" data-i18n="btn.newCats">Nowe koty 🔄</button>
                 <button class="btn btn-ghost" onclick="surpriseCat()" data-i18n="btn.surprise">🎁 Niespodzianka</button>
-                <button class="btn btn-ghost" onclick="showProCats()" data-i18n="btn.pro" title="Zdjęcia kotów zrobione w naturalnych warunkach">Koty BIO</button>
+                <button class="btn btn-ghost" onclick="loadKittens('cat-grid')" data-i18n="btn.kittens">🐱 Małe koty</button>
+                <div class="src-toggle" id="src-toggle" role="group" aria-label="Źródło zdjęć">
+                    <span class="src-label" data-i18n="src.label">Źródło:</span>
+                    <button type="button" data-src="standard" class="on" data-i18n="src.standard">TheCatAPI</button>
+                    <button type="button" data-src="community" data-i18n="src.community">Społeczność</button>
+                    <button type="button" data-src="deluxe" data-i18n="src.deluxe">Deluxe 💎</button>
+                </div>
                 <select class="cn-select" id="breed-filter" title="Filtruj po rasie">
                     <option value="" data-i18n="gallery.allBreeds">Wszystkie rasy</option>
                 </select>
