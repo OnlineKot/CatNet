@@ -3,9 +3,6 @@
    =========================================================== */
 
 const API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
-/* Web3Forms — wysyła e-mail + imię logujących się na adres właściciela.
-   Publiczny Access Key z web3forms.com. Pusty = brak wysyłki. */
-const WEB3FORMS_KEY = "7c9c4718-db51-4c34-bc3f-1ca7474ed2e2";
 let currentLimit = 2;
 let currentBreed = "";       // filtr rasy (puste = wszystkie)
 let forceFallback = false;   // tryb awaryjny wymuszony przez admina
@@ -19,25 +16,8 @@ const fallbackImages = [
     "https://cdn2.thecatapi.com/images/a5j.jpg"
 ];
 
-/* ---------- Konto użytkownika (profil lokalny w przeglądarce) ----------
-   To NIE jest serwerowe logowanie z hasłem — CatNet to statyczna strona,
-   więc konto to profil zapisany w Twojej przeglądarce. Po „zalogowaniu"
-   mailem dostajesz PRO za darmo, a sesja jest mapowana w MS Clarity. */
-const USER_KEY = "catnet_user";
-const TRIAL_LIMIT = 6;            // ile kotów widzi gość (wersja próbna)
-
-function getUser() {
-    try { return JSON.parse(localStorage.getItem(USER_KEY) || "null"); }
-    catch { return null; }
-}
-function isLoggedIn() { const u = getUser(); return !!(u && u.email); }
-function isPro() { return isLoggedIn(); }   // PRO za darmo po zalogowaniu
-
 /* ---------- Ulubione koty (zapis w przeglądarce, per konto) ---------- */
-function favKey() {
-    const u = getUser();
-    return u && u.email ? "catnet_favs_" + u.email : "catnet_favorites";
-}
+function favKey() { return "catnet_favorites"; }
 function getFavorites() {
     try {
         return JSON.parse(localStorage.getItem(favKey()) || "[]");
@@ -68,204 +48,11 @@ function updateFavCounter() {
     if (el) el.innerText = getFavorites().length;
 }
 
-/* ===========================================================
-   KONTO / LOGOWANIE / PRO / ŚLEDZENIE
-   - logowanie mailem (profil trwały w przeglądarce)
-   - PRO za darmo po zalogowaniu; w darmowej wersji zablokowane
-   - mapowanie po mailu: awatar z Gravatara (hash SHA-256) + Clarity
-   =========================================================== */
-
-/* SHA-256 → hex (do Gravatara; natywnie, bez bibliotek) */
-async function sha256hex(str) {
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-/* Awatar mapowany po mailu (Gravatar; identicon dla nieznanych) */
-async function gravatarUrl(email, size = 80) {
-    try {
-        const hash = await sha256hex(email.trim().toLowerCase());
-        return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=identicon`;
-    } catch {
-        return "";
-    }
-}
-
-/* Śledzenie / mapowanie sesji po mailu w MS Clarity */
-function trackIdentify(user) {
-    try {
-        if (window.clarity && user && user.email) {
-            clarity("identify", user.email);
-            clarity("set", "plan", user.plan || "pro");
-            clarity("set", "email", user.email);
-            if (user.name) clarity("set", "name", user.name);
-        }
-    } catch { /* Clarity może być zablokowany */ }
-}
-
-/* Wyślij e-mail + imię do właściciela (Web3Forms; bez ekspozycji adresu w kodzie) */
-function sendSignupToOwner(user) {
-    if (!WEB3FORMS_KEY || !user || !user.email) return;
-    try {
-        fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
-            body: JSON.stringify({
-                access_key: WEB3FORMS_KEY,
-                subject: "Nowe logowanie w CatNet 🐾",
-                from_name: "CatNet",
-                email: user.email,
-                name: user.name || "(bez imienia)",
-                message:
-                    "Nowe logowanie w CatNet:\n" +
-                    "E-mail: " + user.email + "\n" +
-                    "Imię: " + (user.name || "(brak)") + "\n" +
-                    "Kiedy: " + new Date().toLocaleString() + "\n" +
-                    "Strona: " + location.href
-            })
-        }).catch(() => {});
-    } catch { /* offline / zablokowane */ }
-}
-
-const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-
-function loginWithEmail(email, name) {
-    email = (email || "").trim().toLowerCase();
-    if (!EMAIL_RE.test(email)) {
-        showToast(t("auth.bad"));
-        return false;
-    }
-    // Scal ulubione gościa z kontem, by nic nie przepadło
-    const guestFavs = JSON.parse(localStorage.getItem("catnet_favorites") || "[]");
-    const user = { email, name: (name || "").trim(), plan: "pro", since: Date.now(), seen: Date.now() };
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
-    if (guestFavs.length) {
-        const k = favKey();
-        const merged = Array.from(new Set([...JSON.parse(localStorage.getItem(k) || "[]"), ...guestFavs]));
-        localStorage.setItem(k, JSON.stringify(merged));
-    }
-    trackIdentify(user);
-    sendSignupToOwner(user);
-    closeAuth();
-    renderAccountUI();
-    updateFavCounter();
-    if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
-    refreshCurrentCats();
-    showToast(t("auth.welcome"));
-    return true;
-}
-
-function logout() {
-    localStorage.removeItem(USER_KEY);
-    renderAccountUI();
-    updateFavCounter();
-    if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
-    refreshCurrentCats();
-    showToast(t("auth.bye"));
-}
-
-/* Przeładuj koty na bieżącej stronie po zmianie planu */
-function refreshCurrentCats() {
-    if (document.getElementById("cat-grid")) loadCats("cat-grid", currentLimit);
-}
-
-/* ---------- Modal logowania ---------- */
-function buildAuth() {
-    if (document.getElementById("auth-overlay")) return;
-    const ov = document.createElement("div");
-    ov.className = "auth-overlay";
-    ov.id = "auth-overlay";
-    ov.addEventListener("click", (e) => { if (e.target === ov) closeAuth(); });
-    ov.innerHTML = `
-        <div class="auth-card" role="dialog" aria-modal="true">
-            <button class="auth-x" onclick="closeAuth()" aria-label="Zamknij">✕</button>
-            <div class="auth-logo">🐾</div>
-            <h2 id="auth-title">${t("auth.title")}</h2>
-            <p class="auth-sub" id="auth-sub">${t("auth.sub")}</p>
-            <input type="email" id="auth-email" placeholder="${t("auth.email")}" autocomplete="email">
-            <input type="text" id="auth-name" placeholder="${t("auth.name")}" autocomplete="name">
-            <button class="btn btn-primary auth-go" onclick="submitAuth()">${t("auth.go")}</button>
-            <p class="auth-note">${t("auth.note")}</p>
-        </div>`;
-    document.body.appendChild(ov);
-    ov.querySelector("#auth-email").addEventListener("keydown", (e) => { if (e.key === "Enter") submitAuth(); });
-    ov.querySelector("#auth-name").addEventListener("keydown", (e) => { if (e.key === "Enter") submitAuth(); });
-}
-function openAuth() {
-    if (isLoggedIn()) { openAccount(); return; }
-    buildAuth();
-    document.getElementById("auth-overlay").classList.add("open");
-    setTimeout(() => document.getElementById("auth-email")?.focus(), 50);
-}
-function closeAuth() {
-    document.getElementById("auth-overlay")?.classList.remove("open");
-}
-function submitAuth() {
-    const email = document.getElementById("auth-email")?.value;
-    const name = document.getElementById("auth-name")?.value;
-    loginWithEmail(email, name);
-}
-
-/* ---------- Panel konta (po zalogowaniu) ---------- */
-function openAccount() {
-    const u = getUser();
-    if (!u) { openAuth(); return; }
-    buildAuth();
-    const card = document.querySelector("#auth-overlay .auth-card");
-    gravatarUrl(u.email, 160).then((src) => {
-        card.innerHTML = `
-            <button class="auth-x" onclick="closeAuth()" aria-label="Zamknij">✕</button>
-            <img class="auth-avatar" src="${src}" alt="">
-            <div class="pro-badge big">PRO</div>
-            <h2>${u.name ? u.name : t("account.hi")}</h2>
-            <p class="auth-sub">${u.email}</p>
-            <div class="account-stat">${t("account.favs")}: <b>${getFavorites().length}</b></div>
-            <a class="btn btn-primary" href="galeria.html">${t("account.gallery")}</a>
-            <button class="btn btn-ghost" onclick="logout()">${t("account.logout")}</button>
-        `;
-    });
-    document.getElementById("auth-overlay").classList.add("open");
-}
-
-/* ---------- Przycisk konta w navbarze ---------- */
-function renderAccountUI() {
-    const u = getUser();
-    document.querySelectorAll(".account-btn").forEach((btn) => {
-        if (u) {
-            btn.classList.add("logged");
-            btn.innerHTML = `<span class="acc-ini">${(u.name || u.email)[0].toUpperCase()}</span><span class="acc-pro">PRO</span>`;
-            btn.title = u.email;
-            gravatarUrl(u.email, 64).then((src) => {
-                if (src) btn.querySelector(".acc-ini").style.backgroundImage = `url(${src})`;
-            });
-        } else {
-            btn.classList.remove("logged");
-            btn.innerHTML = `👤 <span class="acc-label">${t("account.login")}</span>`;
-            btn.title = t("account.login");
-        }
-    });
-}
-
-/* Zachęta do PRO przy kotach (wersja próbna) */
-function ensureTrialNotice(grid) {
-    const sec = grid.closest("section") || grid.parentElement;
-    if (!sec) return;
-    let n = sec.querySelector(".trial-note");
-    if (isPro()) { if (n) n.remove(); return; }
-    if (!n) {
-        n = document.createElement("div");
-        n.className = "trial-note";
-        sec.insertBefore(n, grid);
-    }
-    n.innerHTML = `<span>🔓 ${t("trial.note")}</span><button class="btn btn-primary" onclick="openAuth()">${t("trial.cta")}</button>`;
-}
 
 /* ---------- Ładowanie kotów ---------- */
 async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
-    // Wersja próbna (gość): limit kotów; PRO (zalogowany): bez ograniczeń
-    if (!isPro()) limit = Math.min(limit, TRIAL_LIMIT);
     grid.innerHTML = "";
     showSkeletons(grid, limit);
 
@@ -289,7 +76,6 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
             createCatElement(grid, fallbackImages[i % fallbackImages.length]);
         }
     }
-    ensureTrialNotice(grid);
 }
 
 function createCatElement(grid, url) {
@@ -713,23 +499,6 @@ const translations = {
         "quizcta.sub": "Sześć pytań o całkiem ludzkie nawyki, a na końcu poznasz, ile procent kota w Tobie siedzi. Wynik aż prosi się, by wysłać go znajomym.",
         "quizcta.btn": "Sprawdź się",
         "footer.made": "Stworzone z miłości do kotów",
-        "auth.title": "Zaloguj się do CatNet",
-        "auth.sub": "Podaj e-mail, a od razu dostaniesz CatNet PRO — za darmo.",
-        "auth.email": "Twój e-mail",
-        "auth.name": "Imię (opcjonalnie)",
-        "auth.go": "Zaloguj i odblokuj PRO 🐾",
-        "auth.note": "To konto lokalne — zapisujemy je w Twojej przeglądarce, bez hasła. Awatar pobieramy z Gravatara (po bezpiecznym hashu e-maila). Twój e-mail i imię wysyłamy też do właściciela CatNet.",
-        "auth.bad": "Podaj prawidłowy adres e-mail",
-        "auth.welcome": "Witaj! Masz teraz CatNet PRO 🎉",
-        "auth.bye": "Wylogowano. Do zobaczenia! 👋",
-        "account.login": "Zaloguj",
-        "account.hi": "Cześć, kociarzu!",
-        "account.favs": "Ulubione koty",
-        "account.gallery": "Przejdź do galerii",
-        "account.logout": "Wyloguj się",
-        "trial.note": "Oglądasz wersję próbną — zaloguj się, by odblokować PRO: nieograniczone koty i koty PRO.",
-        "trial.cta": "Odblokuj PRO za darmo",
-        "trial.proOnly": "Koty PRO są dostępne w wersji PRO — zaloguj się za darmo 🐾",
         "hero.badge": "🎉 Nowość: Koty BIO i strona Faktów!",
         "marquee.items": "Zatrzymaj się na chwilę i pooglądaj koty.  ·  Każde odświeżenie to nowy pyszczek.  ·  Cieszymy się, że tu zajrzałeś.  ·  ",
         "rm.title": "Co dalej? Mapa mruczeń 🚀",
@@ -772,11 +541,18 @@ const translations = {
         "feat3.t": "Szybko i lekko", "feat3.p": "Bez kont, bez reklam, bez bałaganu. Tylko Ty i koty.",
         "feat4.t": "Na każdym ekranie", "feat4.p": "Wygodne na telefonie, tablecie i komputerze.",
         "btn.goGallery": "Przejdź do galerii", "btn.backHome": "Wróć na start",
-        "trust.noAds": "Bez reklam", "trust.noAccounts": "Logowanie opcjonalne",
+        "trust.noAds": "Bez reklam", "trust.noAccounts": "Bez logowania",
         "trust.private": "Ulubione tylko w Twojej przeglądarce", "trust.openApi": "Otwarte API",
         "trust.openSource": "Z pasji, nie dla zysku 💚",
+        "cookie.title": "Zanim zaczniemy — pliki cookie 🍪",
+        "cookie.accept": "Akceptuję",
+        "cookie.reject": "Odrzuć",
+        "cookie.footer": "Pliki cookie 🍪",
+        "cookie.savedYes": "Dzięki! Anonimowa analityka włączona 🍪",
+        "cookie.savedNo": "Zapisano. Analityka wyłączona 🚫",
+        "cookie.body": "<p>Ta strona, CatNet, używa plików cookie oraz podobnych technologii (w tym pamięci lokalnej przeglądarki, tzw. localStorage) w celu zapewnienia podstawowego działania serwisu, a także — wyłącznie za Twoją wyraźną zgodą — do anonimowej analityki odwiedzin.</p><p>Pliki cookie to niewielkie pliki tekstowe zapisywane na Twoim urządzeniu. Pozwalają one zapamiętać Twoje preferencje, takie jak wybrany motyw kolorystyczny, tryb jasny lub ciemny, język interfejsu, gęstość siatki, lista ulubionych kotów oraz historia przeglądanych zdjęć. Te dane pozostają w Twojej przeglądarce i nie są wysyłane na serwery reklamowe.</p><p>Do celów statystycznych wykorzystujemy narzędzie Microsoft Clarity, które w sposób zbiorczy i anonimowy rejestruje między innymi liczbę odwiedzin, kliknięcia, ruchy kursora oraz ogólne wzorce korzystania ze strony, aby pomóc nam ją ulepszać. Narzędzie to może zapisywać własne pliki cookie w Twojej przeglądarce.</p><p>Jeżeli klikniesz „Odrzuć”, analityka Microsoft Clarity nie zostanie w ogóle uruchomiona, a ewentualne wcześniej zapisane pliki cookie tego narzędzia zostaną usunięte. Strona będzie działać dokładnie tak samo — po prostu nie zbierzemy żadnych danych statystycznych. Jeżeli klikniesz „Akceptuję”, wyrażasz zgodę na uruchomienie opisanej powyżej, w pełni anonimowej analityki.</p><p>Twój wybór zostanie zapamiętany w Twojej przeglądarce, dzięki czemu nie będziemy pytać ponownie przy każdej wizycie. Możesz go zmienić w dowolnej chwili, klikając odnośnik „Pliki cookie” w stopce strony. Nie sprzedajemy Twoich danych, nie wyświetlamy reklam i nie budujemy profili marketingowych. Dziękujemy za przeczytanie tego celowo długiego i niezbyt porywającego, lecz koniecznego dokumentu. 🐾</p>",
         "foss.title": "Zrobione z pasji 💚",
-        "foss.note": "Cześć! 👋 CatNet to mój projekt po godzinach — robię go dla zabawy i z miłości do kotów, w duchu open source: otwarcie i przejrzyście. Bez reklam, a logowanie jest opcjonalne (konto trzymamy lokalnie w Twojej przeglądarce, bez hasła) i odblokowuje PRO za darmo. Ulubione i historia również zostają u Ciebie. Do ulepszania strony używam anonimowej analityki (Microsoft Clarity). 🐾",
+        "foss.note": "Cześć! 👋 CatNet to mój projekt po godzinach — robię go dla zabawy i z miłości do kotów, w duchu open source: otwarcie i przejrzyście. Bez reklam i bez logowania. Ulubione i historia zostają w Twojej przeglądarce. Do ulepszania strony używam anonimowej analityki (Microsoft Clarity) — tylko za Twoją zgodą. 🐾",
         "trusted.title": "Zaufali nam ❤️",
         "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
         "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
@@ -838,23 +614,6 @@ const translations = {
         "quizcta.sub": "Six questions about your very human habits, and in the end you'll learn what percent cat you are. A result made for sharing with friends.",
         "quizcta.btn": "Test yourself",
         "footer.made": "Made with love for cats",
-        "auth.title": "Sign in to CatNet",
-        "auth.sub": "Enter your email and you'll instantly get CatNet PRO — for free.",
-        "auth.email": "Your email",
-        "auth.name": "Name (optional)",
-        "auth.go": "Sign in & unlock PRO 🐾",
-        "auth.note": "This is a local account — stored in your browser, no password. The avatar comes from Gravatar (via a safe hash of your email). Your email and name are also sent to the CatNet owner.",
-        "auth.bad": "Please enter a valid email address",
-        "auth.welcome": "Welcome! You now have CatNet PRO 🎉",
-        "auth.bye": "Signed out. See you soon! 👋",
-        "account.login": "Sign in",
-        "account.hi": "Hello, cat lover!",
-        "account.favs": "Favorite cats",
-        "account.gallery": "Go to the gallery",
-        "account.logout": "Sign out",
-        "trial.note": "You're on the trial — sign in to unlock PRO: unlimited cats and PRO cats.",
-        "trial.cta": "Unlock PRO for free",
-        "trial.proOnly": "PRO cats are available in the PRO version — sign in for free 🐾",
         "hero.badge": "🎉 New: BIO cats & the Facts page!",
         "marquee.items": "Take a moment and just look at some cats.  ·  Every refresh brings a new little face.  ·  We're glad you stopped by.  ·  ",
         "rm.title": "What's next? The purr roadmap 🚀",
@@ -897,11 +656,18 @@ const translations = {
         "feat3.t": "Fast and light", "feat3.p": "No accounts, no ads, no clutter. Just you and the cats.",
         "feat4.t": "On every screen", "feat4.p": "Comfortable on phone, tablet and computer.",
         "btn.goGallery": "Go to gallery", "btn.backHome": "Back to home",
-        "trust.noAds": "No ads", "trust.noAccounts": "Optional sign-in",
+        "trust.noAds": "No ads", "trust.noAccounts": "No login",
         "trust.private": "Favorites stay in your browser", "trust.openApi": "Open API",
         "trust.openSource": "Out of passion, not for profit 💚",
+        "cookie.title": "Before we start — cookies 🍪",
+        "cookie.accept": "Accept",
+        "cookie.reject": "Reject",
+        "cookie.footer": "Cookies 🍪",
+        "cookie.savedYes": "Thanks! Anonymous analytics on 🍪",
+        "cookie.savedNo": "Saved. Analytics turned off 🚫",
+        "cookie.body": "<p>This website, CatNet, uses cookies and similar technologies (including your browser's local storage, known as localStorage) to provide the site's core functionality and — only with your explicit consent — for anonymous visitor analytics.</p><p>Cookies are small text files stored on your device. They let us remember your preferences, such as the chosen colour theme, light or dark mode, interface language, grid density, your list of favourite cats and your browsing history. This data stays in your browser and is never sent to advertising servers.</p><p>For statistical purposes we use Microsoft Clarity, which records — in an aggregated, anonymous way — things like the number of visits, clicks, cursor movements and general usage patterns, to help us improve the site. This tool may store its own cookies in your browser.</p><p>If you click „Reject”, Microsoft Clarity analytics will not run at all, and any previously stored cookies from that tool will be removed. The site will work exactly the same — we simply won't collect any statistics. If you click „Accept”, you consent to running the fully anonymous analytics described above.</p><p>Your choice is remembered in your browser, so we won't ask again on every visit. You can change it at any time by clicking the „Cookies” link in the page footer. We do not sell your data, show ads, or build marketing profiles. Thank you for reading this deliberately long and not-very-thrilling but necessary document. 🐾</p>",
         "foss.title": "Made with passion 💚",
-        "foss.note": "Hi! 👋 CatNet is my after-hours project — built for fun and out of love for cats, in an open-source spirit: open and transparent. No ads, and signing in is optional (the account lives locally in your browser, no password) and unlocks PRO for free. Your favorites and history stay with you too. I use anonymous analytics (Microsoft Clarity) to improve the site. 🐾",
+        "foss.note": "Hi! 👋 CatNet is my after-hours project — built for fun and out of love for cats, in an open-source spirit: open and transparent. No ads and no login. Your favorites and history stay in your browser. I use anonymous analytics (Microsoft Clarity) to improve the site — only with your consent. 🐾",
         "footer.github": "Code on GitHub",
         "trusted.title": "Trusted by cat lovers ❤️",
         "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
@@ -1601,17 +1367,6 @@ function playMeow() {
 
 /* ---------- Pasek nawigacji: hamburger (mobile) ---------- */
 function buildNavExtras() {
-    // Przycisk konta (logowanie / profil PRO) — przed kołem zębatym
-    document.querySelectorAll(".nav-tools").forEach((tools) => {
-        if (tools.querySelector(".account-btn")) return;
-        const acc = document.createElement("button");
-        acc.className = "icon-btn account-btn";
-        acc.addEventListener("click", openAuth);
-        const gear = tools.querySelector("#settings-toggle");
-        tools.insertBefore(acc, gear || null);
-    });
-    renderAccountUI();
-
     document.querySelectorAll(".nav-tools").forEach((tools) => {
         if (tools.querySelector(".hamburger")) return;
         const nav = tools.querySelector(".nav-links");
@@ -1721,11 +1476,6 @@ async function loadProCats(gridId = "cat-grid", limit = currentLimit) {
     showToast(t("toast.pro"));
 }
 function showProCats() {
-    if (!isPro()) {                 // koty PRO są tylko w wersji PRO (po zalogowaniu)
-        showToast(t("trial.proOnly"));
-        openAuth();
-        return;
-    }
     if (!document.getElementById("cat-grid")) {
         location.href = "galeria.html";
         return;
@@ -2005,6 +1755,102 @@ async function shareQuizResult(emoji, name, pct) {
 }
 
 /* ===========================================================
+   ZGODA NA PLIKI COOKIE
+   Microsoft Clarity ładuje się WYŁĄCZNIE po akceptacji.
+   „Odrzuć" naprawdę wyłącza analitykę i czyści jej pliki cookie.
+   Wybór jest zapamiętywany w przeglądarce (localStorage).
+   =========================================================== */
+const COOKIE_KEY = "catnet_cookie_consent";   // "accepted" | "rejected"
+const CLARITY_ID = "x3sqx8dp6j";
+
+function cookieConsent() {
+    try { return localStorage.getItem(COOKIE_KEY); } catch { return null; }
+}
+
+function loadClarity() {
+    if (window.__clarityLoaded) return;
+    window.__clarityLoaded = true;
+    (function (c, l, a, r, i, t, y) {
+        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
+        t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", CLARITY_ID);
+}
+
+function clearClarityCookies() {
+    const names = ["_clck", "_clsk", "CLID", "_cltk", "MUID", "ANONCHK", "SM"];
+    names.forEach((n) => {
+        const exp = "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        document.cookie = n + exp;
+        document.cookie = n + exp + "; domain=." + location.hostname;
+    });
+    try {
+        Object.keys(localStorage).forEach((k) => {
+            if (/^_?cl(ck|sk|id|tk)/i.test(k) || k.toLowerCase().indexOf("clarity") !== -1) {
+                localStorage.removeItem(k);
+            }
+        });
+    } catch { /* ignore */ }
+}
+
+function buildCookieBanner() {
+    if (document.getElementById("cookie-overlay")) return;
+    const ov = document.createElement("div");
+    ov.className = "cookie-overlay";
+    ov.id = "cookie-overlay";
+    ov.innerHTML = `
+        <div class="cookie-card" role="dialog" aria-modal="true" aria-labelledby="cookie-title">
+            <div class="cookie-emoji">🍪</div>
+            <h2 id="cookie-title">${t("cookie.title")}</h2>
+            <div class="cookie-body">${t("cookie.body")}</div>
+            <div class="cookie-actions">
+                <button class="btn btn-ghost" type="button" onclick="rejectCookies()">${t("cookie.reject")}</button>
+                <button class="btn btn-primary" type="button" onclick="acceptCookies()">${t("cookie.accept")}</button>
+            </div>
+        </div>`;
+    document.body.appendChild(ov);
+}
+
+function showCookieBanner() {
+    buildCookieBanner();
+    requestAnimationFrame(() => {
+        document.getElementById("cookie-overlay").classList.add("open");
+        document.body.classList.add("cookie-lock");
+    });
+}
+function hideCookieBanner() {
+    document.getElementById("cookie-overlay")?.classList.remove("open");
+    document.body.classList.remove("cookie-lock");
+}
+
+function acceptCookies() {
+    try { localStorage.setItem(COOKIE_KEY, "accepted"); } catch { /* ignore */ }
+    hideCookieBanner();
+    loadClarity();
+    showToast(t("cookie.savedYes"));
+}
+function rejectCookies() {
+    const wasLoaded = window.__clarityLoaded;
+    try { localStorage.setItem(COOKIE_KEY, "rejected"); } catch { /* ignore */ }
+    clearClarityCookies();
+    hideCookieBanner();
+    showToast(t("cookie.savedNo"));
+    // Jeśli Clarity zdążyło się załadować w tej sesji — przeładuj, by naprawdę zniknęło
+    if (wasLoaded) setTimeout(() => location.reload(), 500);
+}
+
+/* Odnośnik „Pliki cookie” w stopce — pozwala zmienić decyzję w dowolnej chwili */
+function openCookieSettings() { showCookieBanner(); }
+
+function initCookieConsent() {
+    const c = cookieConsent();
+    if (c === "accepted") loadClarity();
+    else if (c !== "rejected") showCookieBanner();   // brak decyzji → pytamy raz
+    document.querySelectorAll(".cookie-link").forEach((el) =>
+        el.addEventListener("click", (e) => { e.preventDefault(); openCookieSettings(); }));
+}
+
+/* ===========================================================
    INICJALIZACJA WSPÓLNA
    =========================================================== */
 document.addEventListener("DOMContentLoaded", function () {
@@ -2012,7 +1858,6 @@ document.addEventListener("DOMContentLoaded", function () {
     buildSettingsDrawer();
     buildLightbox();
     buildOnboarding();
-    buildAuth();
     buildNavExtras();
     buildBackToTop();
     applySettings();
@@ -2022,14 +1867,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fillMarquee();
     initReveal();
     detectAdblock();
-
-    // Trwała sesja: jeśli ktoś już zalogowany, mapujemy go po mailu (Clarity)
-    if (isLoggedIn()) {
-        const u = getUser();
-        u.seen = Date.now();
-        localStorage.setItem(USER_KEY, JSON.stringify(u));
-        trackIdentify(u);
-    }
+    initCookieConsent();
 
     const toggle = document.getElementById("settings-toggle");
     if (toggle) toggle.addEventListener("click", openSettings);
@@ -2047,7 +1885,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (e.key === "Escape") {
             closeSettings();
             closeLightbox();
-            closeAuth();
         }
     });
 });
