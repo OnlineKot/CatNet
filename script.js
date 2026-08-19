@@ -544,16 +544,27 @@ const translations = {
         "trust.noAds": "Bez reklam", "trust.noAccounts": "Bez logowania",
         "trust.private": "Ulubione tylko w Twojej przeglądarce", "trust.openApi": "Otwarte API",
         "trust.openSource": "Z pasji, nie dla zysku 💚",
-        "cookie.title": "Zanim zaczniemy — pliki cookie 🍪",
-        "cookie.accept": "Akceptuję",
-        "cookie.reject": "Odrzuć",
-        "cookie.footer": "Pliki cookie 🍪",
         "nav.privacy": "Polityka prywatności",
-        "cookie.savedYes": "Dzięki! Anonimowa analityka włączona 🍪",
-        "cookie.savedNo": "Zapisano. Analityka wyłączona 🚫",
-        "cookie.body": "<p>Ta strona, CatNet, używa plików cookie oraz podobnych technologii (w tym pamięci lokalnej przeglądarki, tzw. localStorage) w celu zapewnienia podstawowego działania serwisu, a także — wyłącznie za Twoją wyraźną zgodą — do anonimowej analityki odwiedzin.</p><p>Pliki cookie to niewielkie pliki tekstowe zapisywane na Twoim urządzeniu. Pozwalają one zapamiętać Twoje preferencje, takie jak wybrany motyw kolorystyczny, tryb jasny lub ciemny, język interfejsu, gęstość siatki, lista ulubionych kotów oraz historia przeglądanych zdjęć. Te dane pozostają w Twojej przeglądarce i nie są wysyłane na serwery reklamowe.</p><p>Do celów statystycznych wykorzystujemy narzędzie Microsoft Clarity, które w sposób zbiorczy i anonimowy rejestruje między innymi liczbę odwiedzin, kliknięcia, ruchy kursora oraz ogólne wzorce korzystania ze strony, aby pomóc nam ją ulepszać. Narzędzie to może zapisywać własne pliki cookie w Twojej przeglądarce.</p><p>Jeżeli klikniesz „Odrzuć”, analityka Microsoft Clarity nie zostanie w ogóle uruchomiona, a ewentualne wcześniej zapisane pliki cookie tego narzędzia zostaną usunięte. Strona będzie działać dokładnie tak samo — po prostu nie zbierzemy żadnych danych statystycznych. Jeżeli klikniesz „Akceptuję”, wyrażasz zgodę na uruchomienie opisanej powyżej, w pełni anonimowej analityki.</p><p>Twój wybór zostanie zapamiętany w Twojej przeglądarce, dzięki czemu nie będziemy pytać ponownie przy każdej wizycie. Możesz go zmienić w dowolnej chwili, klikając odnośnik „Pliki cookie” w stopce strony. Nie sprzedajemy Twoich danych, nie wyświetlamy reklam i nie budujemy profili marketingowych. Dziękujemy za przeczytanie tego celowo długiego i niezbyt porywającego, lecz koniecznego dokumentu. 🐾</p><p>Pełne informacje znajdziesz w naszej <a href='polityka-prywatnosci.html'>Polityce prywatności i plików cookie</a>.</p>",
+        "priv.title": "Polityka prywatności",
+        "priv.updated": "Ostatnia aktualizacja: 19 sierpnia 2026 r.",
+        "priv.intro": "CatNet to prosty, darmowy serwis ze zdjęciami kotów. Traktujemy Twoją prywatność poważnie i celowo zbudowaliśmy stronę tak, aby zbierać jak najmniej danych. Ta polityka wyjaśnia — w pełni i wprost — co dzieje się z danymi podczas korzystania z serwisu.",
+        "priv.s1h": "1. Nie śledzimy Cię",
+        "priv.s1p": "Nie używamy Google Analytics, Microsoft Clarity, pikseli reklamowych, narzędzi śledzących ani żadnej innej analityki. Nie budujemy profili, nie wyświetlamy reklam i nie sprzedajemy żadnych danych. Nie mamy kont użytkowników ani logowania.",
+        "priv.s2h": "2. Dane pozostają w Twojej przeglądarce",
+        "priv.s2p": "Twoje ustawienia (motyw, tryb jasny/ciemny, język, gęstość siatki), lista ulubionych kotów oraz historia oglądanych zdjęć są zapisywane wyłącznie w pamięci lokalnej Twojej przeglądarki (localStorage). Te informacje nigdy nie są wysyłane na nasze serwery — pozostają na Twoim urządzeniu i możesz je w każdej chwili usunąć, czyszcząc dane przeglądarki.",
+        "priv.s3h": "3. Jedyne połączenie zewnętrzne: kocie API",
+        "priv.s3p": "Aby pokazać Ci zdjęcia kotów, strona łączy się z otwartymi, zewnętrznymi serwisami: TheCatAPI (api.thecatapi.com, cdn2.thecatapi.com) oraz Cataas (cataas.com). Przy pobieraniu zdjęcia Twoja przeglądarka nawiązuje z nimi połączenie, w ramach którego — jak przy każdej stronie w internecie — może zostać przekazany Twój adres IP, niezbędny do dostarczenia obrazu. Są to niezależni dostawcy, którzy mają własne polityki prywatności. Poza pobieraniem zdjęć nie przekazujemy im żadnych Twoich danych.",
+        "priv.s4h": "4. Pliki cookie",
+        "priv.s4p": "Nie używamy własnych plików cookie do śledzenia ani do reklam. Do zapamiętania Twoich ustawień i ulubionych wykorzystujemy pamięć localStorage przeglądarki, a nie pliki cookie. Ponieważ nie prowadzimy analityki, nie wyświetlamy też banera zgody na cookie — nie ma na co się zgadzać.",
+        "priv.s5h": "5. Twoje prawa (RODO)",
+        "priv.s5p": "Ponieważ nie gromadzimy danych osobowych na naszych serwerach, w praktyce nie przechowujemy niczego, co moglibyśmy Ci udostępnić lub usunąć na żądanie — wszystkie Twoje dane są na Twoim urządzeniu i w pełni nimi zarządzasz. Niezależnie od tego, na gruncie RODO przysługuje Ci prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia i sprzeciwu, a także prawo wniesienia skargi do organu nadzorczego (w Polsce: Prezes Urzędu Ochrony Danych Osobowych, PUODO).",
+        "priv.s6h": "6. Kontakt",
+        "priv.s6p": "W sprawach dotyczących prywatności możesz napisać na adres: [UZUPEŁNIJ ADRES E-MAIL KONTAKTOWY].",
+        "priv.s7h": "7. Zmiany polityki",
+        "priv.s7p": "Jeśli cokolwiek się zmieni (np. dodamy nową funkcję), zaktualizujemy tę stronę i zmienimy datę powyżej.",
+        "priv.note": "Dokument ma charakter informacyjny i został przygotowany z należytą starannością, ale nie stanowi porady prawnej. Przy wykorzystaniu serwisu do celów komercyjnych zalecana jest weryfikacja treści przez prawnika.",
         "foss.title": "Zrobione z pasji 💚",
-        "foss.note": "Cześć! 👋 CatNet to mój projekt po godzinach — robię go dla zabawy i z miłości do kotów, w duchu open source: otwarcie i przejrzyście. Bez reklam i bez logowania. Ulubione i historia zostają w Twojej przeglądarce. Do ulepszania strony używam anonimowej analityki (Microsoft Clarity) — tylko za Twoją zgodą. 🐾",
+        "foss.note": "Cześć! 👋 CatNet to mój projekt po godzinach — robię go dla zabawy i z miłości do kotów, w duchu open source: otwarcie i przejrzyście. Bez reklam, bez kont i bez śledzenia. Nie używamy Google Analytics ani żadnych narzędzi analitycznych. Jedyne, z czym łączy się strona, to otwarte kocie API (TheCatAPI i Cataas), skąd pobieramy zdjęcia. Twoje ulubione i ustawienia zostają wyłącznie w Twojej przeglądarce. 🐾",
         "trusted.title": "Zaufali nam ❤️",
         "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
         "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
@@ -660,16 +671,27 @@ const translations = {
         "trust.noAds": "No ads", "trust.noAccounts": "No login",
         "trust.private": "Favorites stay in your browser", "trust.openApi": "Open API",
         "trust.openSource": "Out of passion, not for profit 💚",
-        "cookie.title": "Before we start — cookies 🍪",
-        "cookie.accept": "Accept",
-        "cookie.reject": "Reject",
-        "cookie.footer": "Cookies 🍪",
         "nav.privacy": "Privacy policy",
-        "cookie.savedYes": "Thanks! Anonymous analytics on 🍪",
-        "cookie.savedNo": "Saved. Analytics turned off 🚫",
-        "cookie.body": "<p>This website, CatNet, uses cookies and similar technologies (including your browser's local storage, known as localStorage) to provide the site's core functionality and — only with your explicit consent — for anonymous visitor analytics.</p><p>Cookies are small text files stored on your device. They let us remember your preferences, such as the chosen colour theme, light or dark mode, interface language, grid density, your list of favourite cats and your browsing history. This data stays in your browser and is never sent to advertising servers.</p><p>For statistical purposes we use Microsoft Clarity, which records — in an aggregated, anonymous way — things like the number of visits, clicks, cursor movements and general usage patterns, to help us improve the site. This tool may store its own cookies in your browser.</p><p>If you click „Reject”, Microsoft Clarity analytics will not run at all, and any previously stored cookies from that tool will be removed. The site will work exactly the same — we simply won't collect any statistics. If you click „Accept”, you consent to running the fully anonymous analytics described above.</p><p>Your choice is remembered in your browser, so we won't ask again on every visit. You can change it at any time by clicking the „Cookies” link in the page footer. We do not sell your data, show ads, or build marketing profiles. Thank you for reading this deliberately long and not-very-thrilling but necessary document. 🐾</p><p>Full details are available in our <a href='polityka-prywatnosci.html'>Privacy &amp; Cookie Policy</a>.</p>",
+        "priv.title": "Privacy Policy",
+        "priv.updated": "Last updated: 19 August 2026.",
+        "priv.intro": "CatNet is a simple, free website with cat photos. We take your privacy seriously and deliberately built the site to collect as little data as possible. This policy explains — fully and plainly — what happens with data when you use the site.",
+        "priv.s1h": "1. We don't track you",
+        "priv.s1p": "We do not use Google Analytics, Microsoft Clarity, advertising pixels, tracking tools or any other analytics. We don't build profiles, show ads, or sell any data. We have no user accounts and no login.",
+        "priv.s2h": "2. Your data stays in your browser",
+        "priv.s2p": "Your settings (theme, light/dark mode, language, grid density), your list of favourite cats and your viewing history are stored only in your browser's local storage (localStorage). This information is never sent to our servers — it stays on your device and you can delete it at any time by clearing your browser data.",
+        "priv.s3h": "3. The only external connection: the cat API",
+        "priv.s3p": "To show you cat photos, the site connects to open, third-party services: TheCatAPI (api.thecatapi.com, cdn2.thecatapi.com) and Cataas (cataas.com). When a photo is fetched, your browser connects to them and — as with any website on the internet — your IP address may be shared, which is necessary to deliver the image. These are independent providers with their own privacy policies. Apart from fetching photos, we do not share any of your data with them.",
+        "priv.s4h": "4. Cookies",
+        "priv.s4p": "We do not use our own cookies for tracking or advertising. To remember your settings and favourites we use the browser's localStorage, not cookies. Because we run no analytics, we also show no cookie consent banner — there is nothing to consent to.",
+        "priv.s5h": "5. Your rights (GDPR)",
+        "priv.s5p": "Because we do not collect personal data on our servers, in practice we hold nothing we could give you or delete on request — all your data is on your device and fully under your control. Regardless, under the GDPR you have the right to access, rectify, erase, restrict and object to processing of your data, as well as the right to lodge a complaint with a supervisory authority (in Poland: the President of the Personal Data Protection Office, PUODO).",
+        "priv.s6h": "6. Contact",
+        "priv.s6p": "For privacy matters you can write to: [FILL IN CONTACT EMAIL ADDRESS].",
+        "priv.s7h": "7. Changes to this policy",
+        "priv.s7p": "If anything changes (for example, we add a new feature), we will update this page and change the date above.",
+        "priv.note": "This document is informational, prepared with due care, but does not constitute legal advice. If the site is used commercially, we recommend having the text reviewed by a lawyer.",
         "foss.title": "Made with passion 💚",
-        "foss.note": "Hi! 👋 CatNet is my after-hours project — built for fun and out of love for cats, in an open-source spirit: open and transparent. No ads and no login. Your favorites and history stay in your browser. I use anonymous analytics (Microsoft Clarity) to improve the site — only with your consent. 🐾",
+        "foss.note": "Hi! 👋 CatNet is my after-hours project — built for fun and out of love for cats, in an open-source spirit: open and transparent. No ads, no accounts and no tracking. We don't use Google Analytics or any analytics tools. The only thing the site connects to is the open cat APIs (TheCatAPI and Cataas), where the photos come from. Your favourites and settings stay only in your browser. 🐾",
         "footer.github": "Code on GitHub",
         "trusted.title": "Trusted by cat lovers ❤️",
         "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
@@ -1369,6 +1391,26 @@ function playMeow() {
 
 /* ---------- Pasek nawigacji: hamburger (mobile) ---------- */
 function buildNavExtras() {
+    // Przełącznik języka PL / EN u góry (w navbarze, przed kołem zębatym)
+    document.querySelectorAll(".nav-tools").forEach((tools) => {
+        if (tools.querySelector(".lang-toggle")) return;
+        const cur = (LANG === "en") ? "en" : "pl";
+        const box = document.createElement("div");
+        box.className = "lang-toggle";
+        box.setAttribute("role", "group");
+        box.setAttribute("aria-label", "Język / Language");
+        box.innerHTML =
+            `<button type="button" data-l="pl" class="${cur === "pl" ? "on" : ""}">PL</button>` +
+            `<button type="button" data-l="en" class="${cur === "en" ? "on" : ""}">EN</button>`;
+        box.querySelectorAll("button").forEach((b) =>
+            b.addEventListener("click", () => {
+                const l = b.getAttribute("data-l");
+                if (l !== cur) setLang(l);
+            }));
+        const gear = tools.querySelector("#settings-toggle");
+        tools.insertBefore(box, gear || null);
+    });
+
     document.querySelectorAll(".nav-tools").forEach((tools) => {
         if (tools.querySelector(".hamburger")) return;
         const nav = tools.querySelector(".nav-links");
@@ -1757,104 +1799,6 @@ async function shareQuizResult(emoji, name, pct) {
 }
 
 /* ===========================================================
-   ZGODA NA PLIKI COOKIE
-   Microsoft Clarity ładuje się WYŁĄCZNIE po akceptacji.
-   „Odrzuć" naprawdę wyłącza analitykę i czyści jej pliki cookie.
-   Wybór jest zapamiętywany w przeglądarce (localStorage).
-   =========================================================== */
-const COOKIE_KEY = "catnet_cookie_consent";   // "accepted" | "rejected"
-const CLARITY_ID = "x3sqx8dp6j";
-
-function cookieConsent() {
-    try { return localStorage.getItem(COOKIE_KEY); } catch { return null; }
-}
-
-function loadClarity() {
-    // Podwójne zabezpieczenie: bez wyraźnej zgody Clarity NIE zostanie załadowane
-    if (cookieConsent() !== "accepted") return;
-    if (window.__clarityLoaded) return;
-    window.__clarityLoaded = true;
-    (function (c, l, a, r, i, t, y) {
-        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
-        t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-    })(window, document, "clarity", "script", CLARITY_ID);
-}
-
-function clearClarityCookies() {
-    const names = ["_clck", "_clsk", "CLID", "_cltk", "MUID", "ANONCHK", "SM"];
-    names.forEach((n) => {
-        const exp = "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-        document.cookie = n + exp;
-        document.cookie = n + exp + "; domain=." + location.hostname;
-    });
-    try {
-        Object.keys(localStorage).forEach((k) => {
-            if (/^_?cl(ck|sk|id|tk)/i.test(k) || k.toLowerCase().indexOf("clarity") !== -1) {
-                localStorage.removeItem(k);
-            }
-        });
-    } catch { /* ignore */ }
-}
-
-function buildCookieBanner() {
-    if (document.getElementById("cookie-overlay")) return;
-    const ov = document.createElement("div");
-    ov.className = "cookie-overlay";
-    ov.id = "cookie-overlay";
-    ov.innerHTML = `
-        <div class="cookie-card" role="dialog" aria-modal="true" aria-labelledby="cookie-title">
-            <div class="cookie-emoji">🍪</div>
-            <h2 id="cookie-title">${t("cookie.title")}</h2>
-            <div class="cookie-body">${t("cookie.body")}</div>
-            <div class="cookie-actions">
-                <button class="btn btn-ghost" type="button" onclick="rejectCookies()">${t("cookie.reject")}</button>
-                <button class="btn btn-primary" type="button" onclick="acceptCookies()">${t("cookie.accept")}</button>
-            </div>
-        </div>`;
-    document.body.appendChild(ov);
-}
-
-function showCookieBanner() {
-    buildCookieBanner();
-    requestAnimationFrame(() => {
-        document.getElementById("cookie-overlay").classList.add("open");
-        document.body.classList.add("cookie-lock");
-    });
-}
-function hideCookieBanner() {
-    document.getElementById("cookie-overlay")?.classList.remove("open");
-    document.body.classList.remove("cookie-lock");
-}
-
-function acceptCookies() {
-    try { localStorage.setItem(COOKIE_KEY, "accepted"); } catch { /* ignore */ }
-    hideCookieBanner();
-    loadClarity();
-    showToast(t("cookie.savedYes"));
-}
-function rejectCookies() {
-    const wasLoaded = window.__clarityLoaded;
-    try { localStorage.setItem(COOKIE_KEY, "rejected"); } catch { /* ignore */ }
-    clearClarityCookies();
-    hideCookieBanner();
-    showToast(t("cookie.savedNo"));
-    // Jeśli Clarity zdążyło się załadować w tej sesji — przeładuj, by naprawdę zniknęło
-    if (wasLoaded) setTimeout(() => location.reload(), 500);
-}
-
-/* Odnośnik „Pliki cookie” w stopce — pozwala zmienić decyzję w dowolnej chwili */
-function openCookieSettings() { showCookieBanner(); }
-
-function initCookieConsent() {
-    const c = cookieConsent();
-    if (c === "accepted") loadClarity();
-    else if (c !== "rejected") showCookieBanner();   // brak decyzji → pytamy raz
-    document.querySelectorAll(".cookie-link").forEach((el) =>
-        el.addEventListener("click", (e) => { e.preventDefault(); openCookieSettings(); }));
-}
-
-/* ===========================================================
    INICJALIZACJA WSPÓLNA
    =========================================================== */
 document.addEventListener("DOMContentLoaded", function () {
@@ -1871,7 +1815,6 @@ document.addEventListener("DOMContentLoaded", function () {
     fillMarquee();
     initReveal();
     detectAdblock();
-    initCookieConsent();
 
     const toggle = document.getElementById("settings-toggle");
     if (toggle) toggle.addEventListener("click", openSettings);
