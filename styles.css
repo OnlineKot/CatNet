@@ -2188,14 +2188,12 @@ body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
     background: var(--accent) !important;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-    border-bottom: none !important;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+    box-shadow: none !important;
     top: 0;
 }
 body.light .navbar {
     background: var(--accent) !important;
-    border-bottom: none !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+    box-shadow: none !important;
 }
 
 /* Kontrast tekstu i ikon na tle akcentu */

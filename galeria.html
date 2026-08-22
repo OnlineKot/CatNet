@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria kotÃ³w â CatNet</title>
-    <meta name="description" content="PrzeglÄdaj nieskoÅczonÄ galeriÄ uroczych kotÃ³w i zapisuj swoje ulubione zdjÄcia.">
+    <title>Galeria kotów — CatNet</title>
+    <meta name="description" content="Przeglądaj nieskończoną galerię uroczych kotów i zapisuj swoje ulubione zdjęcia.">
 
-    <meta property="og:title" content="Galeria kotÃ³w â CatNet">
+    <meta property="og:title" content="Galeria kotów — CatNet">
     <meta property="og:image" content="https://onlinekot.github.io/CatNet/CatNet.PNG">
     <meta property="og:type" content="website">
 
@@ -18,7 +18,7 @@
 <body>
 
     <header class="navbar">
-        <a class="brand" href="index.html"><span class="paw">ð¾</span>Cat<span class="brand-accent">Net</span></a>
+        <a class="brand" href="index.html"><span class="paw">🐾</span>Cat<span class="brand-accent">Net</span></a>
         <div class="nav-tools">
             <nav class="nav-links">
                 <a href="index.html" data-i18n="nav.start">Start</a>
@@ -28,25 +28,25 @@
                 <a href="o-nas.html" data-i18n="nav.about">O nas</a>
                 <a href="https://teodorteo.com" class="nav-teo" target="_blank" rel="noopener">TeodorTeo ↗</a>
             </nav>
-            <button class="icon-btn" id="settings-toggle" title="Ustawienia">âï¸</button>
+            <button class="icon-btn" id="settings-toggle" title="Ustawienia">⚙️</button>
         </div>
     </header>
 
     <main class="page">
 
-        <h1 class="section-title" data-i18n="gallery.title">Galeria kotÃ³w ð±</h1>
-        <p class="section-sub" data-i18n="gallery.sub">OdÅwieÅ¼aj, ile chcesz â kotÃ³w nigdy nie zabraknie. Kliknij serduszko, by zapisaÄ ulubione.</p>
+        <h1 class="section-title" data-i18n="gallery.title">Galeria kotów 🐱</h1>
+        <p class="section-sub" data-i18n="gallery.sub">Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.</p>
 
         <div class="grid-toolbar">
             <div class="toolbar-controls">
-                <button class="btn btn-primary" onclick="refreshCats('cat-grid')" data-i18n="btn.newCats">Nowe koty ð</button>
-                <button class="btn btn-ghost" onclick="surpriseCat()" data-i18n="btn.surprise">ð Niespodzianka</button>
-                <button class="btn btn-ghost" onclick="loadKittens('cat-grid')" data-i18n="btn.kittens">ð± MaÅe koty</button>
-                <div class="src-toggle" id="src-toggle" role="group" aria-label="Å¹rÃ³dÅo zdjÄÄ">
-                    <span class="src-label" data-i18n="src.label">Å¹rÃ³dÅo:</span>
+                <button class="btn btn-primary" onclick="refreshCats('cat-grid')" data-i18n="btn.newCats">Nowe koty 🔄</button>
+                <button class="btn btn-ghost" onclick="surpriseCat()" data-i18n="btn.surprise">🎁 Niespodzianka</button>
+                <button class="btn btn-ghost" onclick="loadKittens('cat-grid')" data-i18n="btn.kittens">🐱 Małe koty</button>
+                <div class="src-toggle" id="src-toggle" role="group" aria-label="Źródło zdjęć">
+                    <span class="src-label" data-i18n="src.label">Źródło:</span>
                     <button type="button" data-src="standard" class="on" data-i18n="src.standard">TheCatAPI</button>
-                    <button type="button" data-src="community" data-i18n="src.community">SpoÅecznoÅÄ</button>
-                    <button type="button" data-src="deluxe" data-i18n="src.deluxe">Deluxe ð</button>
+                    <button type="button" data-src="community" data-i18n="src.community">Społeczność</button>
+                    <button type="button" data-src="deluxe" data-i18n="src.deluxe">Deluxe 💎</button>
                 </div>
                 <select class="cn-select" id="breed-filter" title="Filtruj po rasie">
                     <option value="" data-i18n="gallery.allBreeds">Wszystkie rasy</option>
@@ -57,15 +57,15 @@
 
         <div id="cat-grid" class="cat-grid"></div>
 
-        <h2 class="section-title" style="margin-top:60px;" data-i18n="gallery.favTitle">Twoje ulubione â¥</h2>
-        <p class="section-sub" data-i18n="gallery.favSub">Koty, ktÃ³re zapisaÅeÅ. ZapisujÄ siÄ w Twojej przeglÄdarce.</p>
+        <h2 class="section-title" style="margin-top:60px;" data-i18n="gallery.favTitle">Twoje ulubione ♥</h2>
+        <p class="section-sub" data-i18n="gallery.favSub">Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.</p>
         <div id="fav-grid" class="cat-grid"></div>
 
     </main>
 
     <footer class="footer">
-        <p>Â© <span id="year"></span> CatNet Â· <span data-i18n="footer.made">Stworzone z miÅoÅci do kotÃ³w</span></p>
-        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;Â·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;Â·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;Â·&nbsp; <a href="quiz.html" data-i18n="nav.quiz">Quiz</a> &nbsp;Â·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a> &nbsp;Â·&nbsp; <a href="polityka-prywatnosci.html" data-i18n="nav.privacy">Polityka prywatnoÅci</a> &nbsp;·&nbsp; <a href="https://teodorteo.com" target="_blank" rel="noopener">TeodorTeo ↗</a></p>
+        <p>© <span id="year"></span> CatNet · <span data-i18n="footer.made">Stworzone z miłości do kotów</span></p>
+        <p><a href="index.html" data-i18n="nav.start">Start</a> &nbsp;·&nbsp; <a href="galeria.html" data-i18n="nav.gallery">Galeria</a> &nbsp;·&nbsp; <a href="fakty.html" data-i18n="nav.facts">Fakty</a> &nbsp;·&nbsp; <a href="quiz.html" data-i18n="nav.quiz">Quiz</a> &nbsp;·&nbsp; <a href="o-nas.html" data-i18n="nav.about">O nas</a> &nbsp;·&nbsp; <a href="polityka-prywatnosci.html" data-i18n="nav.privacy">Polityka prywatności</a> &nbsp;·&nbsp; <a href="https://teodorteo.com" target="_blank" rel="noopener">TeodorTeo ↗</a></p>
     </footer>
 
     <script src="script.js"></script>
