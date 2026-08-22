@@ -14,6 +14,8 @@
     --accent: #2997ff;
     --accent-2: #2997ff;
     --accent-grad: linear-gradient(120deg, #2997ff, #5ac8fa);
+    --on-accent: #ffffff;           /* czytelny kolor tekstu na tle akcentu */
+    --frame: 10px;                  /* grubość kolorowej ramki dookoła strony */
     --radius: 20px;
     --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -2174,3 +2176,56 @@ body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
 }
 .src-toggle button.on { background: var(--accent-grad); color: #fff; }
 .src-toggle button:not(.on):hover { color: var(--text); }
+
+/* ===========================================================
+   SPÓJNY MOTYW: kolorowa ramka dookoła + solidny header
+   Ramka i pasek górny w tym samym kolorze akcentu (domyślnie
+   niebieski CatNet), spięte w jedną całość. Działa w trybie
+   jasnym i ciemnym; kolor tekstu na akcencie dobierany kontrastowo.
+   =========================================================== */
+html {
+    border: var(--frame) solid var(--accent);
+    background: var(--bg-1);
+}
+body {
+    min-height: calc(100vh - (var(--frame) * 2));
+}
+
+/* Header: pełny, jednolity blok koloru akcentu (bez przezroczystości i blur) */
+.navbar {
+    background: var(--accent) !important;
+    background-color: var(--accent) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border-bottom: none !important;
+    top: 0;
+}
+body.light .navbar { background: var(--accent) !important; border-bottom: none !important; }
+
+/* Kontrast tekstu i ikon na tle akcentu */
+.navbar .brand,
+.navbar .icon-btn { color: var(--on-accent) !important; }
+.navbar .brand .brand-accent {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: var(--on-accent) !important;
+    color: var(--on-accent) !important;
+}
+.navbar .nav-links a { color: var(--on-accent); opacity: 0.82; background: transparent; }
+.navbar .nav-links a:hover { color: var(--on-accent); opacity: 1; background: rgba(255, 255, 255, 0.14); }
+.navbar .nav-links a.active { color: var(--on-accent); opacity: 1; background: rgba(255, 255, 255, 0.22); }
+.navbar .icon-btn:hover { background: rgba(255, 255, 255, 0.18) !important; }
+
+/* Hamburger — kreski w kolorze kontrastowym */
+.navbar .hamburger .bars,
+.navbar .hamburger .bars::before,
+.navbar .hamburger .bars::after { background: var(--on-accent); }
+
+/* Przełącznik języka na pasku akcentu — czytelny */
+.navbar .lang-toggle {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+.navbar .lang-toggle button { color: var(--on-accent); }
+.navbar .lang-toggle button.on { background: var(--on-accent); color: var(--accent); }
