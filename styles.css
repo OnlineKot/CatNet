@@ -2371,3 +2371,16 @@ body.light .navbar {
     font-size: 14px;
     line-height: 1.5;
 }
+
+/* Strona 404 — wielki numer */
+.err404-code {
+    font-size: clamp(90px, 26vw, 200px);
+    font-weight: 900;
+    line-height: 0.9;
+    margin: 10px 0 4px;
+    letter-spacing: -4px;
+    background: var(--accent-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
