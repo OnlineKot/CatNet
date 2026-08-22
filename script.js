@@ -548,11 +548,11 @@ const translations = {
     pl: {
         "nav.start": "Start", "nav.gallery": "Galeria", "nav.facts": "Fakty", "nav.quiz": "Quiz", "nav.about": "O nas",
         "quizcta.title": "Czy jesteś kotem?",
-        "quizcta.sub": "Sześć pytań o całkiem ludzkie nawyki, a na końcu poznasz, ile procent kota w Tobie siedzi. Wynik aż prosi się, by wysłać go znajomym.",
+        "quizcta.sub": "Sześć pytań. Sprawdź, ile masz w sobie kota.",
         "quizcta.btn": "Sprawdź się",
-        "footer.made": "Stworzone z miłości do kotów",
+        "footer.made": "Galeria zdjęć kotów",
         "hero.badge": "🎉 Nowość: Koty od społeczności, Deluxe i małe koty!",
-        "marquee.items": "Zatrzymaj się na chwilę i pooglądaj koty.  ·  Każde odświeżenie to nowy pyszczek.  ·  Cieszymy się, że tu zajrzałeś.  ·  ",
+        "marquee.items": "Tysiące zdjęć kotów  ·  Odświeżaj do woli  ·  Zapisuj ulubione  ·  ",
         "rm.title": "Co dalej? Mapa mruczeń 🚀",
         "rm.sub": "CatNet dopiero się rozkręca. Oto, nad czym pracujemy — każda aktualizacja będzie większa od poprzedniej.",
         "rm.soon": "WKRÓTCE",
@@ -562,44 +562,44 @@ const translations = {
         "rm4t": "Tapety z kotami", "rm4d": "Najlepsze koty w wysokiej jakości — jedno kliknięcie i masz nową tapetę na telefon.",
         "rm5t": "CatNet w kieszeni", "rm5d": "Zainstaluj CatNet jak aplikację i miej koty zawsze przy sobie — nawet bez internetu.",
         "rm6t": "Galeria Freuda", "rm6d": "Więcej zdjęć najsłodszego kota na świecie. Tego chcieliście — to dostaniecie.",
-        "hero.h1": 'Najsłodsze <span class="grad">koty</span><br>w całej sieci 🐱',
-        "hero.p": "Cześć! 👋 Tu CatNet — miejsce, w którym zawsze czeka na Ciebie świeża porcja mruczących cudaków. Klikasz, oglądasz, uśmiechasz się. Tyle.",
-        "greet.morning": "Dzień dobry! ☀️ Idealna pora na pierwszego kota.",
-        "greet.day": "Hej! 😺 Przerwa na kota jeszcze nikomu nie zaszkodziła.",
-        "greet.evening": "Dobry wieczór! 🌙 Czas na wieczorną porcję mruczenia.",
-        "greet.night": "Nie śpisz? 🦉 Koty też nie. Idealnie się składa.",
+        "hero.h1": 'Galeria <span class="grad">kotów</span><br>bez końca',
+        "hero.p": "Prosta galeria zdjęć kotów. Odświeżasz, oglądasz, zapisujesz ulubione.",
+        "greet.morning": "Dzień dobry.",
+        "greet.day": "Cześć.",
+        "greet.evening": "Dobry wieczór.",
+        "greet.night": "Nie śpisz? Koty też nie.",
         "btn.browseGallery": "Przeglądaj galerię", "btn.showNewCats": "Pokaż nowe koty",
         "fact.label": "Ciekawostka o kotach",
-        "home.todayTitle": "Koty na dziś", "home.todaySub": "Mały podgląd tego, co czeka na Ciebie w galerii.",
-        "gallery.title": "Galeria kotów 🐱",
+        "home.todayTitle": "Koty na dziś", "home.todaySub": "Podgląd galerii.",
+        "gallery.title": "Galeria kotów",
         "gallery.sub": "Odświeżaj, ile chcesz — kotów nigdy nie zabraknie. Kliknij serduszko, by zapisać ulubione.",
-        "btn.newCats": "Nowe koty 🔄", "btn.surprise": "🎁 Niespodzianka", "btn.premium": "👑 Koty premium",
+        "btn.newCats": "Nowe koty", "btn.surprise": "Losowy kot", "btn.premium": "Koty premium",
         "btn.pro": "Koty od społeczności", "toast.pro": "Załadowano koty od społeczności (Cataas)",
-        "btn.kittens": "🐱 Małe koty", "toast.kittens": "Załadowano małe koty — kocięta 🐱",
+        "btn.kittens": "Kocięta", "toast.kittens": "Załadowano kocięta",
         "toast.deluxe": "Załadowano Koty Deluxe — miks z 2 API 💎",
-        "src.label": "Źródło:", "src.standard": "TheCatAPI", "src.community": "Społeczność", "src.deluxe": "Deluxe 💎",
+        "src.label": "Źródło:", "src.standard": "TheCatAPI", "src.community": "Społeczność", "src.deluxe": "Deluxe",
         "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
         "gallery.favTitle": "Twoje ulubione ♥", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
-        "facts.title": 'Fakty o <span class="grad">kotach</span> 🐾',
+        "facts.title": 'Fakty o <span class="grad">kotach</span>',
         "facts.sub": "Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.",
-        "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt ✨",
+        "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt",
         "facts.sweetTitle": "Freud",
-        "facts.sweetCaption": "Freud — najsłodszy czarny kot CatNet, w naturalnych warunkach 🐾",
-        "facts.sweetSub": "Freud to czarny kot o ogromnym sercu — większym niż jego apetyt na drzemki i przygody. Mieszka tam, gdzie trawa jest najwyższa, a słońce najcieplejsze, i każdy dzień zaczyna od porządnego przeciągnięcia się oraz obchodu swojego terytorium. Najbardziej lubi spacery po ogrodzie, polowanie na liście niesione wiatrem, wylegiwanie się w nagrzanej trawie i obserwowanie ptaków zza szyby. Ma miękkie, lśniące futro, spokojne spojrzenie i charakter, który topi serca wszystkich dookoła — potrafi być niezależnym łowcą, a chwilę później największym przytulasem pod słońcem. Gdy Freud mruczy, nawet najgorszy dzień robi się od razu znośniejszy. Nie potrzebuje filtrów, studia ani profesjonalnej sesji — jest najsłodszym kotem na świecie w każdych, najzupełniej naturalnych warunkach. I właśnie dlatego trafił tutaj, na honorowe miejsce w CatNet.",
+        "facts.sweetCaption": "Freud — czarny kocur w swoim ogrodzie",
+        "facts.sweetSub": "Freud to starszy czarny kocur. Lubi wygrzewać się w trawie, obchodzić swój ogród i obserwować ptaki. Spokojny i przyjazny.",
         "btn.anotherSweet": "Pokaż innego uroczego kota 🐾", "loading": "Wczytywanie...",
-        "about.title": "O CatNet 🐾",
-        "about.p1": "CatNet powstał z prostego przekonania: świat jest piękniejszy, gdy jest w nim więcej kotów. To miejsce, w którym jednym kliknięciem odkryjesz nieskończoną galerię uroczych pyszczków — bez logowania, bez opłat, bez końca.",
+        "about.title": "O CatNet",
+        "about.p1": "CatNet to prosta galeria zdjęć kotów. Jednym kliknięciem odświeżasz kolejne — bez logowania i bez opłat.",
         "about.p2": "Zdjęcia pochodzą z otwartych API <strong>TheCatAPI</strong> oraz <strong>Cataas</strong>, dzięki czemu za każdym odświeżeniem czeka na Ciebie zupełnie nowa porcja mruczących bohaterów.",
-        "stat.infinite": "Kotów do odkrycia", "stat.free": "Zawsze za darmo", "stat.joy": "Czystej radości",
+        "stat.infinite": "otwarte API (TheCatAPI, Cataas)", "stat.free": "reklam i kont", "stat.joy": "języki (PL, EN)",
         "about.whyTitle": "Dlaczego CatNet?",
         "feat1.t": "Nigdy się nie kończy", "feat1.p": "Tysiące losowych zdjęć kotów. Odświeżaj, ile tylko chcesz.",
         "feat2.t": "Twoje ulubione", "feat2.p": "Zapisuj najsłodsze koty jednym kliknięciem — zostaną w Twojej przeglądarce.",
-        "feat3.t": "Szybko i lekko", "feat3.p": "Bez kont, bez reklam, bez bałaganu. Tylko Ty i koty.",
+        "feat3.t": "Szybko i lekko", "feat3.p": "Bez kont i bez reklam.",
         "feat4.t": "Na każdym ekranie", "feat4.p": "Wygodne na telefonie, tablecie i komputerze.",
         "btn.goGallery": "Przejdź do galerii", "btn.backHome": "Wróć na start",
         "trust.noAds": "Bez reklam", "trust.noAccounts": "Bez logowania",
-        "trust.private": "Ulubione tylko w Twojej przeglądarce", "trust.openApi": "Otwarte API",
-        "trust.openSource": "Z pasji, nie dla zysku 💚",
+        "trust.private": "Ulubione w przeglądarce", "trust.openApi": "Otwarte API",
+        "trust.openSource": "Projekt niekomercyjny",
         "nav.privacy": "Polityka prywatności",
         "err404.title": "Tu nie ma kota 🙀",
         "err404.text": "Szukasz kotów nie tam, gdzie trzeba. Wróć na stronę główną — tam czeka ich pełno.",
@@ -629,8 +629,8 @@ const translations = {
         "priv.s7h": "7. Zmiany polityki",
         "priv.s7p": "Jeśli cokolwiek się zmieni (np. dodamy nową funkcję), zaktualizujemy tę stronę i zmienimy datę powyżej.",
         "priv.note": "Dokument ma charakter informacyjny i został przygotowany z należytą starannością, ale nie stanowi porady prawnej. Przy wykorzystaniu serwisu do celów komercyjnych zalecana jest weryfikacja treści przez prawnika.",
-        "foss.title": "Zrobione z pasji 💚",
-        "foss.note": "Cześć! 👋 CatNet to mój projekt po godzinach — robię go dla zabawy i z miłości do kotów, w duchu open source. Bez reklam i bez kont. Używamy jedynie anonimowej analityki Microsoft Clarity, żeby ulepszać stronę — nie budujemy profili i nie sprzedajemy danych. Zdjęcia pochodzą z otwartych kocich API (TheCatAPI i Cataas), a Twoje ulubione i ustawienia zostają w Twojej przeglądarce. 🐾",
+        "foss.title": "O projekcie",
+        "foss.note": "CatNet to projekt po godzinach — prosta galeria zdjęć kotów. Bez reklam i bez kont. Używamy anonimowej analityki (Microsoft Clarity), żeby ulepszać stronę; nie budujemy profili ani nie sprzedajemy danych. Zdjęcia pochodzą z otwartych API TheCatAPI i Cataas, a ulubione zapisują się w Twojej przeglądarce.",
         "trusted.title": "Zaufali nam ❤️",
         "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
         "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
@@ -642,12 +642,12 @@ const translations = {
         "set.title": "⚙️ Ustawienia", "set.themeColor": "Kolor motywu", "set.mode": "Tryb",
         "set.dark": "🌙 Ciemny", "set.light": "☀️ Jasny", "set.density": "Gęstość siatki",
         "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
-        "set.slideshow": "🎞️ Pokaz slajdów (auto)", "set.meow": "🔊 Meow Mode (miau przy kliknięciu)", "set.quickActions": "Szybkie akcje",
-        "set.surprise": "🎁 Niespodzianka — losowy kot", "set.clearFavs": "🗑️ Wyczyść ulubione",
-        "set.reset": "↺ Przywróć domyślne", "set.backup": "Dane i kopia zapasowa",
-        "set.export": "⬇️ Eksportuj ulubione + historię (JSON · Base64)", "set.copyExport": "📋 Kopiuj kod eksportu",
-        "set.importFile": "⬆️ Importuj z pliku", "set.importCode": "📥 Importuj z kodu",
-        "set.clearHistory": "🧹 Wyczyść historię", "set.language": "Język",
+        "set.slideshow": "Pokaz slajdów (auto)", "set.meow": "Meow Mode", "set.quickActions": "Szybkie akcje",
+        "set.surprise": "Losowy kot", "set.clearFavs": "Wyczyść ulubione",
+        "set.reset": "Przywróć domyślne", "set.backup": "Dane i kopia zapasowa",
+        "set.export": "Eksportuj (JSON · Base64)", "set.copyExport": "Kopiuj kod eksportu",
+        "set.importFile": "Importuj z pliku", "set.importCode": "Importuj z kodu",
+        "set.clearHistory": "Wyczyść historię", "set.language": "Język",
         "set.premium": "Premium i polecenia", "set.premiumBtn": "👑 Koty premium",
         "set.referralBtn": "🎁 Kod polecający",
         "pg.title": "🐾 Twoje postępy", "pg.level": "Poziom", "pg.dailyGoal": "Cel dzienny",
@@ -690,11 +690,11 @@ const translations = {
     en: {
         "nav.start": "Home", "nav.gallery": "Gallery", "nav.facts": "Facts", "nav.quiz": "Quiz", "nav.about": "About",
         "quizcta.title": "Are you a cat?",
-        "quizcta.sub": "Six questions about your very human habits, and in the end you'll learn what percent cat you are. A result made for sharing with friends.",
+        "quizcta.sub": "Six questions. See how much cat is in you.",
         "quizcta.btn": "Test yourself",
-        "footer.made": "Made with love for cats",
+        "footer.made": "A cat photo gallery",
         "hero.badge": "🎉 New: Community, Deluxe & kitten cats!",
-        "marquee.items": "Take a moment and just look at some cats.  ·  Every refresh brings a new little face.  ·  We're glad you stopped by.  ·  ",
+        "marquee.items": "Thousands of cat photos  ·  Refresh freely  ·  Save favorites  ·  ",
         "rm.title": "What's next? The purr roadmap 🚀",
         "rm.sub": "CatNet is just getting started. Here's what we're working on — every update will be bigger than the last.",
         "rm.soon": "SOON",
@@ -704,44 +704,44 @@ const translations = {
         "rm4t": "Cat wallpapers", "rm4d": "The best cats in high quality — one click and you've got a new phone wallpaper.",
         "rm5t": "CatNet in your pocket", "rm5d": "Install CatNet like an app and keep cats with you — even offline.",
         "rm6t": "Freud's gallery", "rm6d": "More photos of the cutest cat in the world. You asked — you'll get it.",
-        "hero.h1": 'The cutest <span class="grad">cats</span><br>on the whole web 🐱',
-        "hero.p": "Hi! 👋 This is CatNet — a place where a fresh batch of purring cuties is always waiting for you. You click, you look, you smile. That's it.",
-        "greet.morning": "Good morning! ☀️ The perfect time for your first cat.",
-        "greet.day": "Hey! 😺 A cat break never hurt anybody.",
-        "greet.evening": "Good evening! 🌙 Time for your evening dose of purring.",
-        "greet.night": "Can't sleep? 🦉 Neither can the cats. Perfect match.",
+        "hero.h1": 'An endless <span class="grad">cat</span><br>gallery',
+        "hero.p": "A simple cat photo gallery. Refresh, browse, save your favorites.",
+        "greet.morning": "Good morning.",
+        "greet.day": "Hello.",
+        "greet.evening": "Good evening.",
+        "greet.night": "Can't sleep? Neither can the cats.",
         "btn.browseGallery": "Browse gallery", "btn.showNewCats": "Show new cats",
         "fact.label": "Cat fact",
-        "home.todayTitle": "Cats for today", "home.todaySub": "A little preview of what's waiting for you in the gallery.",
-        "gallery.title": "Cat gallery 🐱",
+        "home.todayTitle": "Cats for today", "home.todaySub": "A preview of the gallery.",
+        "gallery.title": "Cat gallery",
         "gallery.sub": "Refresh as much as you like — there are endless cats. Click the heart to save your favorites.",
-        "btn.newCats": "New cats 🔄", "btn.surprise": "🎁 Surprise", "btn.premium": "👑 Premium cats",
+        "btn.newCats": "New cats", "btn.surprise": "Random cat", "btn.premium": "Premium cats",
         "btn.pro": "Community cats", "toast.pro": "Loaded community cats (Cataas)",
-        "btn.kittens": "🐱 Kittens", "toast.kittens": "Loaded kittens 🐱",
+        "btn.kittens": "Kittens", "toast.kittens": "Loaded kittens",
         "toast.deluxe": "Loaded Deluxe cats — a mix of 2 APIs 💎",
-        "src.label": "Source:", "src.standard": "TheCatAPI", "src.community": "Community", "src.deluxe": "Deluxe 💎",
+        "src.label": "Source:", "src.standard": "TheCatAPI", "src.community": "Community", "src.deluxe": "Deluxe",
         "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
         "gallery.favTitle": "Your favorites ♥", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
-        "facts.title": 'Facts about <span class="grad">cats</span> 🐾',
+        "facts.title": 'Facts about <span class="grad">cats</span>',
         "facts.sub": "Click and discover — something new about our purring friends every time.",
-        "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact ✨",
+        "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact",
         "facts.sweetTitle": "Freud",
-        "facts.sweetCaption": "Freud — the sweetest black cat on CatNet, in natural conditions 🐾",
-        "facts.sweetSub": "Freud is a black cat with a huge heart — bigger than his appetite for naps and adventures. He lives where the grass is tallest and the sun is warmest, and he starts every day with a proper stretch and a patrol of his territory. His favourite things are wandering the garden, hunting leaves carried by the wind, lounging in the warm grass and watching birds through the window. He has soft, glossy fur, a calm gaze and a personality that melts everyone's heart — one moment an independent hunter, the next the biggest cuddler under the sun. When Freud purrs, even the worst day instantly gets better. He needs no filters, no studio and no professional photoshoot — he is the cutest cat in the world in the most natural conditions imaginable. And that's exactly why he earned his place of honour here on CatNet.",
+        "facts.sweetCaption": "Freud — a black cat in his garden",
+        "facts.sweetSub": "Freud is an older black cat. He likes basking in the grass, patrolling his garden and watching birds. Calm and friendly.",
         "btn.anotherSweet": "Show another adorable cat 🐾", "loading": "Loading...",
-        "about.title": "About CatNet 🐾",
-        "about.p1": "CatNet was born from a simple belief: the world is more beautiful with more cats in it. It's a place where one click reveals an endless gallery of adorable faces — no login, no fees, no end.",
+        "about.title": "About CatNet",
+        "about.p1": "CatNet is a simple cat photo gallery. One click refreshes the next batch — no login, no fees.",
         "about.p2": "The photos come from the open <strong>TheCatAPI</strong> and <strong>Cataas</strong> APIs, so every refresh brings a brand-new batch of purring heroes.",
-        "stat.infinite": "Cats to discover", "stat.free": "Always free", "stat.joy": "Pure joy",
+        "stat.infinite": "open APIs (TheCatAPI, Cataas)", "stat.free": "ads and accounts", "stat.joy": "languages (PL, EN)",
         "about.whyTitle": "Why CatNet?",
         "feat1.t": "Never ends", "feat1.p": "Thousands of random cat photos. Refresh as much as you want.",
         "feat2.t": "Your favorites", "feat2.p": "Save the cutest cats with one click — they stay in your browser.",
-        "feat3.t": "Fast and light", "feat3.p": "No accounts, no ads, no clutter. Just you and the cats.",
+        "feat3.t": "Fast and light", "feat3.p": "No accounts and no ads.",
         "feat4.t": "On every screen", "feat4.p": "Comfortable on phone, tablet and computer.",
         "btn.goGallery": "Go to gallery", "btn.backHome": "Back to home",
         "trust.noAds": "No ads", "trust.noAccounts": "No login",
-        "trust.private": "Favorites stay in your browser", "trust.openApi": "Open API",
-        "trust.openSource": "Out of passion, not for profit 💚",
+        "trust.private": "Favorites in your browser", "trust.openApi": "Open API",
+        "trust.openSource": "Non-commercial project",
         "nav.privacy": "Privacy policy",
         "err404.title": "There's no cat here 🙀",
         "err404.text": "You're looking for cats in the wrong place. Head back to the homepage — it's full of them.",
@@ -772,7 +772,7 @@ const translations = {
         "priv.s7p": "If anything changes (for example, we add a new feature), we will update this page and change the date above.",
         "priv.note": "This document is informational, prepared with due care, but does not constitute legal advice. If the site is used commercially, we recommend having the text reviewed by a lawyer.",
         "foss.title": "Made with passion 💚",
-        "foss.note": "Hi! 👋 CatNet is my after-hours project — built for fun and out of love for cats, in an open-source spirit. No ads and no accounts. We only use anonymous Microsoft Clarity analytics to improve the site — we don't build profiles or sell data. Photos come from open cat APIs (TheCatAPI and Cataas), and your favourites and settings stay in your browser. 🐾",
+        "foss.note": "CatNet is an after-hours project — a simple cat photo gallery. No ads and no accounts. We use anonymous analytics (Microsoft Clarity) to improve the site; we don't build profiles or sell data. Photos come from the open TheCatAPI and Cataas APIs, and favorites are saved in your browser.",
         "footer.github": "Code on GitHub",
         "trusted.title": "Trusted by cat lovers ❤️",
         "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
@@ -785,12 +785,12 @@ const translations = {
         "set.title": "⚙️ Settings", "set.themeColor": "Theme color", "set.mode": "Mode",
         "set.dark": "🌙 Dark", "set.light": "☀️ Light", "set.density": "Grid density",
         "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
-        "set.slideshow": "🎞️ Slideshow (auto)", "set.meow": "🔊 Meow Mode (meow on click)", "set.quickActions": "Quick actions",
-        "set.surprise": "🎁 Surprise — random cat", "set.clearFavs": "🗑️ Clear favorites",
-        "set.reset": "↺ Restore defaults", "set.backup": "Data & backup",
-        "set.export": "⬇️ Export favorites + history (JSON · Base64)", "set.copyExport": "📋 Copy export code",
-        "set.importFile": "⬆️ Import from file", "set.importCode": "📥 Import from code",
-        "set.clearHistory": "🧹 Clear history", "set.language": "Language",
+        "set.slideshow": "Slideshow (auto)", "set.meow": "Meow Mode", "set.quickActions": "Quick actions",
+        "set.surprise": "Random cat", "set.clearFavs": "Clear favorites",
+        "set.reset": "Restore defaults", "set.backup": "Data & backup",
+        "set.export": "Export (JSON · Base64)", "set.copyExport": "Copy export code",
+        "set.importFile": "Import from file", "set.importCode": "Import from code",
+        "set.clearHistory": "Clear history", "set.language": "Language",
         "set.premium": "Premium & referrals", "set.premiumBtn": "👑 Premium cats",
         "set.referralBtn": "🎁 Referral code",
         "pg.title": "🐾 Your progress", "pg.level": "Level", "pg.dailyGoal": "Daily goal",
@@ -924,14 +924,6 @@ function buildSettingsDrawer() {
         </div>
 
         <div class="setting-group">
-            <label>${t("set.density")}</label>
-            <div class="seg" id="density-seg">
-                <button data-density="comfortable">${t("set.comfortable")}</button>
-                <button data-density="dense">${t("set.dense")}</button>
-            </div>
-        </div>
-
-        <div class="setting-group">
             <label>${t("set.perPage")}</label>
             <div class="range-row">
                 <input type="range" id="perpage-range" min="4" max="20" step="1">
@@ -944,13 +936,6 @@ function buildSettingsDrawer() {
                 <span>${t("set.slideshow")}</span>
                 <label class="switch">
                     <input type="checkbox" id="autorefresh-toggle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="switch-row">
-                <span>${t("set.meow")}</span>
-                <label class="switch">
-                    <input type="checkbox" id="meow-toggle">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -991,9 +976,6 @@ function buildSettingsDrawer() {
     drawer.querySelectorAll("[data-mode]").forEach((b) =>
         b.addEventListener("click", () => setSetting("mode", b.dataset.mode))
     );
-    drawer.querySelectorAll("[data-density]").forEach((b) =>
-        b.addEventListener("click", () => setSetting("density", b.dataset.density))
-    );
     const range = drawer.querySelector("#perpage-range");
     range.addEventListener("input", () => {
         document.getElementById("perpage-val").innerText = range.value;
@@ -1009,10 +991,6 @@ function buildSettingsDrawer() {
         setSetting("autoRefresh", e.target.checked);
         e.target.checked ? startAutoRefresh() : stopAutoRefresh();
     });
-    drawer.querySelector("#meow-toggle").addEventListener("change", (e) => {
-        setSetting("meow", e.target.checked);
-        if (e.target.checked) playMeow();
-    });
 }
 
 function syncSettingsUI() {
@@ -1026,9 +1004,6 @@ function syncSettingsUI() {
     document.querySelectorAll("#mode-seg button").forEach((b) =>
         b.classList.toggle("active", b.dataset.mode === s.mode)
     );
-    document.querySelectorAll("#density-seg button").forEach((b) =>
-        b.classList.toggle("active", b.dataset.density === s.density)
-    );
     const range = document.getElementById("perpage-range");
     if (range) {
         range.value = s.perPage;
@@ -1036,8 +1011,6 @@ function syncSettingsUI() {
     }
     const auto = document.getElementById("autorefresh-toggle");
     if (auto) auto.checked = s.autoRefresh;
-    const meow = document.getElementById("meow-toggle");
-    if (meow) meow.checked = s.meow;
 }
 
 function openSettings() {
