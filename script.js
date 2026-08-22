@@ -448,11 +448,33 @@ function showRandomFact(elId = "cat-fact") {
 
 /* Najsłodszy kot na świecie — prawdziwy Freud */
 const FREUD_IMG = "freud.jpeg";
+/* Podpina polubienie/konfetti/lightbox pod statyczny (indeksowalny) obrazek Freuda */
 function loadSweetCat() {
-    const grid = document.getElementById("sweet-grid");
-    if (!grid) return;
-    grid.innerHTML = "";
-    createCatElement(grid, FREUD_IMG);
+    const fav = document.querySelector(".freud-fav");
+    if (fav) {
+        const sync = () => {
+            const on = isFavorite(FREUD_IMG);
+            fav.classList.toggle("is-fav", on);
+            fav.innerHTML = on ? "♥" : "♡";
+        };
+        sync();
+        fav.addEventListener("click", () => {
+            const added = toggleFavorite(FREUD_IMG);
+            sync();
+            if (added) {
+                const fig = fav.closest(".freud-figure") || fav.parentElement;
+                heartBurst(fig);
+                confettiBurst(fig);
+                showToast(t("toast.favSaved"));
+            }
+            if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
+        });
+    }
+    const img = document.querySelector(".freud-img");
+    if (img) {
+        img.style.cursor = "zoom-in";
+        img.addEventListener("click", () => openLightbox(FREUD_IMG));
+    }
 }
 
 /* ===========================================================
@@ -562,6 +584,7 @@ const translations = {
         "facts.sub": "Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.",
         "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt ✨",
         "facts.sweetTitle": "Freud",
+        "facts.sweetCaption": "Freud — najsłodszy czarny kot CatNet, w naturalnych warunkach 🐾",
         "facts.sweetSub": "Freud to czarny kot o ogromnym sercu — większym niż jego apetyt na drzemki i przygody. Mieszka tam, gdzie trawa jest najwyższa, a słońce najcieplejsze, i każdy dzień zaczyna od porządnego przeciągnięcia się oraz obchodu swojego terytorium. Najbardziej lubi spacery po ogrodzie, polowanie na liście niesione wiatrem, wylegiwanie się w nagrzanej trawie i obserwowanie ptaków zza szyby. Ma miękkie, lśniące futro, spokojne spojrzenie i charakter, który topi serca wszystkich dookoła — potrafi być niezależnym łowcą, a chwilę później największym przytulasem pod słońcem. Gdy Freud mruczy, nawet najgorszy dzień robi się od razu znośniejszy. Nie potrzebuje filtrów, studia ani profesjonalnej sesji — jest najsłodszym kotem na świecie w każdych, najzupełniej naturalnych warunkach. I właśnie dlatego trafił tutaj, na honorowe miejsce w CatNet.",
         "btn.anotherSweet": "Pokaż innego uroczego kota 🐾", "loading": "Wczytywanie...",
         "about.title": "O CatNet 🐾",
@@ -700,6 +723,7 @@ const translations = {
         "facts.sub": "Click and discover — something new about our purring friends every time.",
         "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact ✨",
         "facts.sweetTitle": "Freud",
+        "facts.sweetCaption": "Freud — the sweetest black cat on CatNet, in natural conditions 🐾",
         "facts.sweetSub": "Freud is a black cat with a huge heart — bigger than his appetite for naps and adventures. He lives where the grass is tallest and the sun is warmest, and he starts every day with a proper stretch and a patrol of his territory. His favourite things are wandering the garden, hunting leaves carried by the wind, lounging in the warm grass and watching birds through the window. He has soft, glossy fur, a calm gaze and a personality that melts everyone's heart — one moment an independent hunter, the next the biggest cuddler under the sun. When Freud purrs, even the worst day instantly gets better. He needs no filters, no studio and no professional photoshoot — he is the cutest cat in the world in the most natural conditions imaginable. And that's exactly why he earned his place of honour here on CatNet.",
         "btn.anotherSweet": "Show another adorable cat 🐾", "loading": "Loading...",
         "about.title": "About CatNet 🐾",
