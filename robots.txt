@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Zasoby potrzebne do renderowania i indeksowania (obrazy, CSS, JS)
+Allow: /*.webp$
+Allow: /*.avif$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.css$
+Allow: /*.js$
+
+Sitemap: https://catnet.teodorteo.com/sitemap.xml

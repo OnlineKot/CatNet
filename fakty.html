@@ -6,14 +6,44 @@
     <title>Fakty o kotach — CatNet</title>
     <meta name="description" content="Odkrywaj zaskakujące fakty o kotach — za każdym kliknięciem coś nowego.">
 
+    <link rel="canonical" href="https://catnet.teodorteo.com/fakty.html">
+
     <meta property="og:title" content="Fakty o kotach — CatNet">
-    <meta property="og:image" content="https://onlinekot.github.io/CatNet/CatNet.PNG">
-    <meta property="og:type" content="website">
+    <meta property="og:description" content="Odkrywaj zaskakujące fakty o kotach i poznaj Freuda — najsłodszego kota CatNet.">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="CatNet">
+    <meta property="og:locale" content="pl_PL">
+    <meta property="og:url" content="https://catnet.teodorteo.com/fakty.html">
+    <meta property="og:image" content="https://catnet.teodorteo.com/freud.jpeg">
+    <meta property="og:image:width" content="901">
+    <meta property="og:image:height" content="1212">
+    <meta property="og:image:alt" content="Freud — czarny kot o ogromnym sercu, wylegujący się w nagrzanej trawie">
+    <meta name="twitter:card" content="summary_large_image">
 
     <link rel="preconnect" href="https://cdn2.thecatapi.com" crossorigin>
     <link rel="preconnect" href="https://api.thecatapi.com" crossorigin>
     <link rel="preconnect" href="https://cataas.com" crossorigin>
     <link rel="stylesheet" href="styles.css">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ImageObject",
+        "contentUrl": "https://catnet.teodorteo.com/freud.jpeg",
+        "url": "https://catnet.teodorteo.com/freud.jpeg",
+        "thumbnailUrl": "https://catnet.teodorteo.com/freud.webp",
+        "name": "Freud — najsłodszy czarny kot CatNet",
+        "description": "Freud to czarny kot o ogromnym sercu, uwielbiający drzemki w nagrzanej trawie, spacery po ogrodzie i obserwowanie ptaków. Zdjęcie w naturalnych warunkach.",
+        "caption": "Freud — najsłodszy czarny kot CatNet, w naturalnych warunkach",
+        "width": 901,
+        "height": 1212,
+        "encodingFormat": "image/jpeg",
+        "representativeOfPage": true,
+        "isPartOf": "https://catnet.teodorteo.com/fakty.html",
+        "creator": { "@type": "Organization", "name": "CatNet" },
+        "license": "https://catnet.teodorteo.com/polityka-prywatnosci.html"
+    }
+    </script>
 </head>
 <body>
 
@@ -48,13 +78,23 @@
             </div>
         </section>
 
-        <section style="text-align:center;">
+        <article class="freud-article" style="text-align:center;">
             <h2 class="section-title" data-i18n="facts.sweetTitle">Freud</h2>
             <p class="section-sub" style="margin-left:auto;margin-right:auto;" data-i18n="facts.sweetSub">
                 Freud to czarny kot o ogromnym sercu — większym niż jego apetyt na drzemki i przygody. Mieszka tam, gdzie trawa jest najwyższa, a słońce najcieplejsze, i każdy dzień zaczyna od porządnego przeciągnięcia się oraz obchodu swojego terytorium. Najbardziej lubi spacery po ogrodzie, polowanie na liście niesione wiatrem, wylegiwanie się w nagrzanej trawie i obserwowanie ptaków zza szyby. Ma miękkie, lśniące futro, spokojne spojrzenie i charakter, który topi serca wszystkich dookoła. Gdy Freud mruczy, nawet najgorszy dzień robi się od razu znośniejszy. Jest najsłodszym kotem na świecie w każdych, najzupełniej naturalnych warunkach.
             </p>
-            <div id="sweet-grid" class="cat-grid" style="max-width:420px;margin:0 auto;"></div>
-        </section>
+            <figure class="freud-figure">
+                <picture>
+                    <source srcset="freud.avif" type="image/avif">
+                    <source srcset="freud.webp" type="image/webp">
+                    <img class="freud-img" src="freud.jpeg" width="901" height="1212"
+                         alt="Freud — czarny kot o ogromnym sercu, wygrzewający się w nagrzanej trawie w ogrodzie"
+                         loading="lazy" decoding="async">
+                </picture>
+                <button class="fav-btn freud-fav" type="button" aria-label="Polub Freuda">♡</button>
+                <figcaption data-i18n="facts.sweetCaption">Freud — najsłodszy czarny kot CatNet, w naturalnych warunkach 🐾</figcaption>
+            </figure>
+        </article>
 
     </main>
 
