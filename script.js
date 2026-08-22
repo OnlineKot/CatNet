@@ -456,7 +456,7 @@ function loadSweetCat() {
    =========================================================== */
 
 const ACCENTS = {
-    apple:  { a: "#0a84ff", b: "#0a84ff", grad: "linear-gradient(120deg,#0a84ff,#5ac8fa)" },
+    sunny:  { a: "#f1be53", b: "#e0a92e", grad: "linear-gradient(120deg,#f6d074,#e0a92e)" },
     aurora: { a: "#7c5cff", b: "#ff5ca8", grad: "linear-gradient(120deg,#7c5cff 0%,#5cc8ff 50%,#ff5ca8 100%)" },
     ocean:  { a: "#2bb7ff", b: "#5cf0d0", grad: "linear-gradient(120deg,#2bb7ff,#5cf0d0)" },
     sunset: { a: "#ff8a3c", b: "#ff4d6d", grad: "linear-gradient(120deg,#ff8a3c,#ff4d6d)" },
@@ -467,7 +467,7 @@ const ACCENTS = {
 
 const SETTINGS_KEY = "catnet_settings";
 const defaultSettings = {
-    accent: "apple",
+    accent: "sunny",
     mode: "dark",
     density: "comfortable",
     perPage: 8,
@@ -814,7 +814,7 @@ function contrastOn(hex) {
 
 function applySettings() {
     const s = getSettings();
-    const ac = ACCENTS[s.accent] || ACCENTS.aurora;
+    const ac = ACCENTS[s.accent] || ACCENTS.sunny;
     const root = document.documentElement.style;
     root.setProperty("--accent", ac.a);
     root.setProperty("--accent-2", ac.b);
