@@ -2225,3 +2225,8 @@ body.light .navbar {
 }
 .navbar .lang-toggle button { color: var(--on-accent); }
 .navbar .lang-toggle button.on { background: var(--on-accent); color: var(--accent); }
+
+/* Pogrubiony (bold) pasek górny */
+.navbar .brand { font-weight: 800; letter-spacing: -0.02em; }
+.navbar .nav-links a { font-weight: 700; }
+.navbar .lang-toggle button { font-weight: 800; }
