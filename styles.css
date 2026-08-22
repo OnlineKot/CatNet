@@ -11,9 +11,9 @@
     --border: rgba(255, 255, 255, 0.14);
     --text: #f5f5f7;
     --text-muted: #a1a1a6;
-    --accent: #f1be53;              /* CatNet — ciepły złoty żółty */
-    --accent-2: #e0a92e;
-    --accent-grad: linear-gradient(120deg, #f6d074, #e0a92e);
+    --accent: #ffc22e;              /* CatNet — mocny, ciepły złoty (styl Google Maps Contributor) */
+    --accent-2: #f0a500;
+    --accent-grad: linear-gradient(120deg, #ffd23f, #f0a500);
     --on-accent: #1a1a1a;           /* czytelny (ciemny) tekst na żółtym akcencie */
     --radius: 20px;
     --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
@@ -36,7 +36,7 @@ body {
     font-family: var(--font);
     color: var(--text);
     background-color: #000;
-    background-image: radial-gradient(900px 520px at 50% -160px, rgba(241, 190, 83, 0.12), transparent 60%);
+    background-image: radial-gradient(900px 520px at 50% -160px, rgba(255, 194, 46, 0.16), transparent 60%);
     background-repeat: no-repeat;
     background-attachment: fixed;
     line-height: 1.47;

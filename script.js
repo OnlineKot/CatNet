@@ -456,7 +456,7 @@ function loadSweetCat() {
    =========================================================== */
 
 const ACCENTS = {
-    sunny:  { a: "#f1be53", b: "#e0a92e", grad: "linear-gradient(120deg,#f6d074,#e0a92e)" },
+    sunny:  { a: "#ffc22e", b: "#f0a500", grad: "linear-gradient(120deg,#ffd23f,#f0a500)" },
     aurora: { a: "#7c5cff", b: "#ff5ca8", grad: "linear-gradient(120deg,#7c5cff 0%,#5cc8ff 50%,#ff5ca8 100%)" },
     ocean:  { a: "#2bb7ff", b: "#5cf0d0", grad: "linear-gradient(120deg,#2bb7ff,#5cf0d0)" },
     sunset: { a: "#ff8a3c", b: "#ff4d6d", grad: "linear-gradient(120deg,#ff8a3c,#ff4d6d)" },
