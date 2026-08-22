@@ -15,7 +15,6 @@
     --accent-2: #2997ff;
     --accent-grad: linear-gradient(120deg, #2997ff, #5ac8fa);
     --on-accent: #ffffff;           /* czytelny kolor tekstu na tle akcentu */
-    --frame: 10px;                  /* grubość kolorowej ramki dookoła strony */
     --radius: 20px;
     --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -2178,29 +2177,25 @@ body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
 .src-toggle button:not(.on):hover { color: var(--text); }
 
 /* ===========================================================
-   SPÓJNY MOTYW: kolorowa ramka dookoła + solidny header
-   Ramka i pasek górny w tym samym kolorze akcentu (domyślnie
-   niebieski CatNet), spięte w jedną całość. Działa w trybie
-   jasnym i ciemnym; kolor tekstu na akcencie dobierany kontrastowo.
+   AKCENT MARKI: elegancki, gradientowy header (bez ciężkiej ramki)
+   Miękki gradient CatNet (niebieski → cyjan) z delikatnym cieniem.
+   Działa w trybie jasnym i ciemnym; tekst na akcencie kontrastowy.
    =========================================================== */
-html {
-    border: var(--frame) solid var(--accent);
-    background: var(--bg-1);
-}
-body {
-    min-height: calc(100vh - (var(--frame) * 2));
-}
 
-/* Header: pełny, jednolity blok koloru akcentu (bez przezroczystości i blur) */
+/* Header: subtelny gradient marki + cień dla głębi (bez blur, solidny) */
 .navbar {
-    background: var(--accent) !important;
-    background-color: var(--accent) !important;
+    background: var(--accent-grad) !important;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     border-bottom: none !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
     top: 0;
 }
-body.light .navbar { background: var(--accent) !important; border-bottom: none !important; }
+body.light .navbar {
+    background: var(--accent-grad) !important;
+    border-bottom: none !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
 
 /* Kontrast tekstu i ikon na tle akcentu */
 .navbar .brand,
