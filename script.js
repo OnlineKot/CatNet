@@ -801,6 +801,17 @@ function setSetting(key, value) {
     applySettings();
 }
 
+/* Dobiera czytelny kolor tekstu (biały/ciemny) na tle danego koloru akcentu */
+function contrastOn(hex) {
+    const h = (hex || "").replace("#", "");
+    if (h.length < 6) return "#ffffff";
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    const L = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    return L > 0.6 ? "#111114" : "#ffffff";
+}
+
 function applySettings() {
     const s = getSettings();
     const ac = ACCENTS[s.accent] || ACCENTS.aurora;
@@ -808,6 +819,7 @@ function applySettings() {
     root.setProperty("--accent", ac.a);
     root.setProperty("--accent-2", ac.b);
     root.setProperty("--accent-grad", ac.grad);
+    root.setProperty("--on-accent", contrastOn(ac.a));
     document.body.classList.toggle("light", s.mode === "light");
     document.body.classList.toggle("dense", s.density === "dense");
     syncSettingsUI();
