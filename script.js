@@ -105,7 +105,11 @@ function createCatElement(grid, url) {
         const added = toggleFavorite(url);
         fav.classList.toggle("is-fav", added);
         fav.innerHTML = added ? "♥" : "♡";
-        if (added) heartBurst(card);
+        if (added) {
+            heartBurst(card);
+            showToast(t("toast.favSaved"));
+            if (grid && grid.id === "sweet-grid") confettiBurst(card); // Freud → konfetti 🎉
+        }
         // Odśwież sekcję ulubionych, jeśli jest na stronie
         if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
     });
@@ -558,7 +562,7 @@ const translations = {
         "facts.sub": "Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.",
         "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt ✨",
         "facts.sweetTitle": "Freud",
-        "facts.sweetSub": "Freud to czarny kot o wielkim sercu i jeszcze większym apetycie na drzemki. Mieszka tam, gdzie trawa jest najwyższa, a słońce najcieplejsze, i każdy dzień zaczyna od porządnego przeciągnięcia się oraz obchodu swojego terytorium. Najbardziej lubi spacery po ogrodzie, polowanie na liście niesione wiatrem, wylegiwanie się w nagrzanej trawie i obserwowanie ptaków zza szyby. Ma miękkie, lśniące futro, spokojne spojrzenie i charakter, który topi serca wszystkich dookoła — potrafi być niezależnym łowcą, a chwilę później największym przytulasem pod słońcem. Gdy Freud mruczy, nawet najgorszy dzień robi się od razu znośniejszy. Nie potrzebuje filtrów, studia ani profesjonalnej sesji — jest najsłodszym kotem na świecie w każdych, najzupełniej naturalnych warunkach. I właśnie dlatego trafił tutaj, na honorowe miejsce w CatNet.",
+        "facts.sweetSub": "Freud to czarny kot o ogromnym sercu — większym niż jego apetyt na drzemki i przygody. Mieszka tam, gdzie trawa jest najwyższa, a słońce najcieplejsze, i każdy dzień zaczyna od porządnego przeciągnięcia się oraz obchodu swojego terytorium. Najbardziej lubi spacery po ogrodzie, polowanie na liście niesione wiatrem, wylegiwanie się w nagrzanej trawie i obserwowanie ptaków zza szyby. Ma miękkie, lśniące futro, spokojne spojrzenie i charakter, który topi serca wszystkich dookoła — potrafi być niezależnym łowcą, a chwilę później największym przytulasem pod słońcem. Gdy Freud mruczy, nawet najgorszy dzień robi się od razu znośniejszy. Nie potrzebuje filtrów, studia ani profesjonalnej sesji — jest najsłodszym kotem na świecie w każdych, najzupełniej naturalnych warunkach. I właśnie dlatego trafił tutaj, na honorowe miejsce w CatNet.",
         "btn.anotherSweet": "Pokaż innego uroczego kota 🐾", "loading": "Wczytywanie...",
         "about.title": "O CatNet 🐾",
         "about.p1": "CatNet powstał z prostego przekonania: świat jest piękniejszy, gdy jest w nim więcej kotów. To miejsce, w którym jednym kliknięciem odkryjesz nieskończoną galerię uroczych pyszczków — bez logowania, bez opłat, bez końca.",
@@ -574,6 +578,13 @@ const translations = {
         "trust.private": "Ulubione tylko w Twojej przeglądarce", "trust.openApi": "Otwarte API",
         "trust.openSource": "Z pasji, nie dla zysku 💚",
         "nav.privacy": "Polityka prywatności",
+        "cookie.text": "Używamy anonimowej analityki (Microsoft Clarity), aby ulepszać CatNet. Zgoda jest dobrowolna.",
+        "cookie.more": "Dowiedz się więcej",
+        "cookie.accept": "Akceptuję",
+        "cookie.reject": "Odrzuć",
+        "cookie.footer": "Pliki cookie 🍪",
+        "cookie.savedYes": "Dzięki! Anonimowa analityka włączona 🍪",
+        "cookie.savedNo": "Zapisano. Analityka wyłączona 🚫",
         "priv.title": "Polityka prywatności",
         "priv.updated": "Ostatnia aktualizacja: 19 sierpnia 2026 r.",
         "priv.intro": "CatNet to prosty, darmowy serwis ze zdjęciami kotów. Traktujemy Twoją prywatność poważnie i celowo zbudowaliśmy stronę tak, aby zbierać jak najmniej danych. Ta polityka wyjaśnia — w pełni i wprost — co dzieje się z danymi podczas korzystania z serwisu.",
@@ -625,6 +636,7 @@ const translations = {
         "onb.goalHard": "Hardcore", "onb.goalHardD": "20 kotów dziennie",
         "onb.next": "Dalej", "onb.back": "Wstecz", "onb.start": "Zaczynamy! 🚀",
         "toast.resetSettings": "Przywrócono ustawienia domyślne", "toast.noFavs": "Brak ulubionych do usunięcia",
+        "toast.favSaved": "Zapisano w ulubionych — zostaje u Ciebie 💛",
         "toast.favsCleared": "Usunięto ulubione koty", "toast.downloaded": "Pobrano zdjęcie 🐾",
         "toast.shareCopied": "Skopiowano link do zdjęcia 🔗", "toast.exported": "Wyeksportowano dane (JSON w Base64) ⬇️",
         "toast.copied": "Skopiowano kod eksportu 📋", "toast.imported": "Zaimportowano dane ✅",
@@ -688,7 +700,7 @@ const translations = {
         "facts.sub": "Click and discover — something new about our purring friends every time.",
         "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact ✨",
         "facts.sweetTitle": "Freud",
-        "facts.sweetSub": "Freud is a black cat with a huge heart and an even bigger appetite for naps. He lives where the grass is tallest and the sun is warmest, and he starts every day with a proper stretch and a patrol of his territory. His favourite things are wandering the garden, hunting leaves carried by the wind, lounging in the warm grass and watching birds through the window. He has soft, glossy fur, a calm gaze and a personality that melts everyone's heart — one moment an independent hunter, the next the biggest cuddler under the sun. When Freud purrs, even the worst day instantly gets better. He needs no filters, no studio and no professional photoshoot — he is the cutest cat in the world in the most natural conditions imaginable. And that's exactly why he earned his place of honour here on CatNet.",
+        "facts.sweetSub": "Freud is a black cat with a huge heart — bigger than his appetite for naps and adventures. He lives where the grass is tallest and the sun is warmest, and he starts every day with a proper stretch and a patrol of his territory. His favourite things are wandering the garden, hunting leaves carried by the wind, lounging in the warm grass and watching birds through the window. He has soft, glossy fur, a calm gaze and a personality that melts everyone's heart — one moment an independent hunter, the next the biggest cuddler under the sun. When Freud purrs, even the worst day instantly gets better. He needs no filters, no studio and no professional photoshoot — he is the cutest cat in the world in the most natural conditions imaginable. And that's exactly why he earned his place of honour here on CatNet.",
         "btn.anotherSweet": "Show another adorable cat 🐾", "loading": "Loading...",
         "about.title": "About CatNet 🐾",
         "about.p1": "CatNet was born from a simple belief: the world is more beautiful with more cats in it. It's a place where one click reveals an endless gallery of adorable faces — no login, no fees, no end.",
@@ -704,6 +716,13 @@ const translations = {
         "trust.private": "Favorites stay in your browser", "trust.openApi": "Open API",
         "trust.openSource": "Out of passion, not for profit 💚",
         "nav.privacy": "Privacy policy",
+        "cookie.text": "We use anonymous analytics (Microsoft Clarity) to improve CatNet. Consent is optional.",
+        "cookie.more": "Learn more",
+        "cookie.accept": "Accept",
+        "cookie.reject": "Reject",
+        "cookie.footer": "Cookies 🍪",
+        "cookie.savedYes": "Thanks! Anonymous analytics on 🍪",
+        "cookie.savedNo": "Saved. Analytics turned off 🚫",
         "priv.title": "Privacy Policy",
         "priv.updated": "Last updated: 19 August 2026.",
         "priv.intro": "CatNet is a simple, free website with cat photos. We take your privacy seriously and deliberately built the site to collect as little data as possible. This policy explains — fully and plainly — what happens with data when you use the site.",
@@ -756,6 +775,7 @@ const translations = {
         "onb.goalHard": "Hardcore", "onb.goalHardD": "20 cats a day",
         "onb.next": "Next", "onb.back": "Back", "onb.start": "Let's go! 🚀",
         "toast.resetSettings": "Default settings restored", "toast.noFavs": "No favorites to remove",
+        "toast.favSaved": "Saved to favorites — it stays with you 💛",
         "toast.favsCleared": "Favorite cats removed", "toast.downloaded": "Photo downloaded 🐾",
         "toast.shareCopied": "Photo link copied 🔗", "toast.exported": "Data exported (JSON in Base64) ⬇️",
         "toast.copied": "Export code copied 📋", "toast.imported": "Data imported ✅",
@@ -1656,6 +1676,31 @@ function heartBurst(card) {
     }
 }
 
+/* Wybuch konfetti (np. przy polubieniu Freuda) */
+function confettiBurst(anchor) {
+    if (!anchor) return;
+    const rect = anchor.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const colors = ["#ffc22e", "#ff5ca8", "#5ac8fa", "#27c46b", "#ff8a3c", "#ffffff", "#f0a500"];
+    for (let i = 0; i < 32; i++) {
+        const p = document.createElement("span");
+        p.className = "confetti-piece";
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 70 + Math.random() * 140;
+        p.style.left = cx + "px";
+        p.style.top = cy + "px";
+        p.style.background = colors[i % colors.length];
+        p.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        p.style.setProperty("--dy", (Math.sin(angle) * dist + 60) + "px");
+        p.style.setProperty("--rot", (Math.random() * 720 - 360) + "deg");
+        p.style.animationDelay = (Math.random() * 0.08) + "s";
+        if (i % 3 === 0) p.style.borderRadius = "50%";
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1300);
+    }
+}
+
 /* Marquee — przewijany pasek haseł (zawartość 2x dla pętli) */
 function fillMarquee() {
     const track = document.getElementById("marquee-track");
@@ -1905,6 +1950,96 @@ async function shareQuizResult(emoji, name, pct) {
 }
 
 /* ===========================================================
+   ZGODA NA PLIKI COOKIE (RODO)
+   Microsoft Clarity ładuje się WYŁĄCZNIE po „Akceptuję".
+   „Odrzuć" nie uruchamia analityki i czyści jej pliki cookie.
+   Wybór jest zapamiętywany (localStorage).
+   =========================================================== */
+const COOKIE_KEY = "catnet_cookie_consent";
+const CLARITY_ID = "x3sqx8dp6j";
+
+function cookieConsent() {
+    try { return localStorage.getItem(COOKIE_KEY); } catch { return null; }
+}
+
+function loadClarity() {
+    if (cookieConsent() !== "accepted") return;   // bez zgody nie ładujemy
+    if (window.__clarityLoaded) return;
+    window.__clarityLoaded = true;
+    (function (c, l, a, r, i, t, y) {
+        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
+        t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", CLARITY_ID);
+}
+
+function clearClarityCookies() {
+    ["_clck", "_clsk", "CLID", "_cltk", "MUID", "ANONCHK", "SM"].forEach((n) => {
+        const exp = "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+        document.cookie = n + exp;
+        document.cookie = n + exp + "; domain=." + location.hostname;
+    });
+}
+
+function buildCookieBanner() {
+    if (document.getElementById("cookie-bar")) return;
+    const bar = document.createElement("div");
+    bar.className = "cookie-bar";
+    bar.id = "cookie-bar";
+    bar.innerHTML = `
+        <div class="cookie-bar-inner">
+            <span class="cookie-emoji">🍪</span>
+            <p class="cookie-text">${t("cookie.text")} <a href="polityka-prywatnosci.html">${t("cookie.more")}</a></p>
+            <div class="cookie-btns">
+                <button class="btn btn-ghost cookie-reject" type="button" onclick="rejectCookies()">${t("cookie.reject")}</button>
+                <button class="btn btn-primary" type="button" onclick="acceptCookies()">${t("cookie.accept")}</button>
+            </div>
+        </div>`;
+    document.body.appendChild(bar);
+}
+function showCookieBanner() {
+    buildCookieBanner();
+    requestAnimationFrame(() => document.getElementById("cookie-bar").classList.add("open"));
+}
+function hideCookieBanner() {
+    document.getElementById("cookie-bar")?.classList.remove("open");
+}
+function acceptCookies() {
+    try { localStorage.setItem(COOKIE_KEY, "accepted"); } catch {}
+    hideCookieBanner();
+    loadClarity();
+    showToast(t("cookie.savedYes"));
+}
+function rejectCookies() {
+    const was = window.__clarityLoaded;
+    try { localStorage.setItem(COOKIE_KEY, "rejected"); } catch {}
+    clearClarityCookies();
+    hideCookieBanner();
+    showToast(t("cookie.savedNo"));
+    if (was) setTimeout(() => location.reload(), 500);
+}
+function openCookieSettings() { showCookieBanner(); }
+
+function initCookieConsent() {
+    // Odnośnik „Pliki cookie" w stopce (zmiana/wycofanie zgody — wymóg RODO)
+    const footP = document.querySelector("footer.footer p:last-child");
+    if (footP && !footP.querySelector(".cookie-link")) {
+        footP.appendChild(document.createTextNode(" · "));
+        const a = document.createElement("a");
+        a.href = "#";
+        a.className = "cookie-link";
+        a.textContent = t("cookie.footer");
+        footP.appendChild(a);
+    }
+    document.querySelectorAll(".cookie-link").forEach((el) =>
+        el.addEventListener("click", (e) => { e.preventDefault(); openCookieSettings(); }));
+
+    const c = cookieConsent();
+    if (c === "accepted") loadClarity();
+    else if (c !== "rejected") showCookieBanner();
+}
+
+/* ===========================================================
    INICJALIZACJA WSPÓLNA
    =========================================================== */
 document.addEventListener("DOMContentLoaded", function () {
@@ -1921,6 +2056,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fillMarquee();
     initReveal();
     initSourceToggle();
+    initCookieConsent();
     detectAdblock();
 
     const toggle = document.getElementById("settings-toggle");
