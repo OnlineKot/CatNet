@@ -2230,3 +2230,28 @@ body.light .navbar {
 .navbar .brand { font-weight: 800; letter-spacing: -0.02em; }
 .navbar .nav-links a { font-weight: 700; }
 .navbar .lang-toggle button { font-weight: 800; }
+
+/* ===========================================================
+   HEADER — PRO MAX ULTRA BOLD 🔥
+   =========================================================== */
+.navbar {
+    border-bottom: 3px solid var(--on-accent) !important;
+}
+.navbar .brand {
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.005em;
+    font-size: clamp(20px, 5.5vw, 26px);
+}
+.navbar .brand .paw { font-size: 1.05em; }
+.navbar .nav-links a {
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 13.5px;
+}
+.navbar .nav-links a.active { text-decoration: none; }
+.navbar .lang-toggle button {
+    font-weight: 900 !important;
+    letter-spacing: 0.03em;
+}
