@@ -908,18 +908,22 @@ function buildSettingsDrawer() {
 
         <div class="setting-group">
             <label>${t("set.quickActions")}</label>
-            <button class="btn btn-ghost btn-block" onclick="surpriseCat()">${t("set.surprise")}</button>
-            <button class="btn btn-ghost btn-block" onclick="clearFavorites()">${t("set.clearFavs")}</button>
-            <button class="btn btn-ghost btn-block" onclick="resetSettings()">${t("set.reset")}</button>
+            <div class="btn-grid">
+                <button class="btn btn-ghost" onclick="surpriseCat()">${t("set.surprise")}</button>
+                <button class="btn btn-ghost" onclick="clearFavorites()">${t("set.clearFavs")}</button>
+                <button class="btn btn-ghost" onclick="resetSettings()">${t("set.reset")}</button>
+            </div>
         </div>
 
         <div class="setting-group">
             <label>${t("set.backup")}</label>
-            <button class="btn btn-ghost btn-block" onclick="exportData()">${t("set.export")}</button>
-            <button class="btn btn-ghost btn-block" onclick="copyExport()">${t("set.copyExport")}</button>
-            <button class="btn btn-ghost btn-block" onclick="importData()">${t("set.importFile")}</button>
-            <button class="btn btn-ghost btn-block" onclick="importFromText()">${t("set.importCode")}</button>
-            <button class="btn btn-ghost btn-block" onclick="clearHistory()">${t("set.clearHistory")}</button>
+            <div class="btn-grid">
+                <button class="btn btn-ghost" onclick="exportData()">${t("set.export")}</button>
+                <button class="btn btn-ghost" onclick="copyExport()">${t("set.copyExport")}</button>
+                <button class="btn btn-ghost" onclick="importData()">${t("set.importFile")}</button>
+                <button class="btn btn-ghost" onclick="importFromText()">${t("set.importCode")}</button>
+                <button class="btn btn-ghost" onclick="clearHistory()">${t("set.clearHistory")}</button>
+            </div>
             <input type="file" id="import-file" accept=".json,.txt,application/json" style="display:none" onchange="handleImportFile(this)">
         </div>
     `;
