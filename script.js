@@ -1736,7 +1736,7 @@ const QUIZ = {
     pl: {
         title: "Czy jesteś kotem?",
         sub: "Sześć pytań o całkiem ludzkie sprawy — a my policzymy, ile procent kota w Tobie siedzi.",
-        start: "Sprawdźmy 🐾",
+        start: "Sprawdźmy",
         of: "z",
         again: "Rozwiąż jeszcze raz",
         share: "Udostępnij wynik 🔗",
@@ -1744,36 +1744,36 @@ const QUIZ = {
         resultLabel: "Werdykt:",
         scoreLabel: "Jesteś kotem w",
         q: [
-            { q: "Jak zwykle zaczynasz dzień?", a: [
-                { t: "Zrywam się skoro świt, pełen energii", v: 0 },
-                { t: "Powoli — kawa i porządne przeciąganie", v: 2 },
-                { t: "Zależy od humoru, różnie bywa", v: 1 },
-                { t: "Wyłączam budzik i śpię dalej", v: 3 } ] },
-            { q: "Ktoś niezapowiedziany dzwoni do drzwi:", a: [
-                { t: "Otwieram od razu, super wizyta!", v: 0 },
-                { t: "Sprawdzam, kto to, zanim zdecyduję", v: 1 },
-                { t: "Niech chwilę poczekają", v: 2 },
-                { t: "Udaję, że mnie nie ma", v: 3 } ] },
-            { q: "Twój idealny sposób na popołudnie?", a: [
-                { t: "Spotkanie ze znajomymi w mieście", v: 0 },
-                { t: "Spacer i trochę ruchu", v: 1 },
-                { t: "Kanapa, koc i przekąska", v: 2 },
-                { t: "Drzemka w plamie słońca przy oknie", v: 3 } ] },
-            { q: "Jak wygląda Twoje jedzenie w ciągu dnia?", a: [
-                { t: "Stałe pory, wszystko zaplanowane", v: 0 },
-                { t: "Regularnie, ale uwielbiam smakołyki", v: 1 },
-                { t: "Jem głównie wtedy, gdy ktoś mi poda", v: 2 },
-                { t: "Podjadam cały dzień, kiedy mam ochotę", v: 3 } ] },
-            { q: "Widzisz puste pudełko po paczce:", a: [
-                { t: "Składam i od razu wyrzucam", v: 0 },
-                { t: "Odkładam, może się przyda", v: 1 },
-                { t: "Muszę zajrzeć do środka", v: 2 },
-                { t: "Mam ogromną ochotę w nim usiąść", v: 3 } ] },
-            { q: "Jak okazujesz bliskim uczucia?", a: [
-                { t: "Mówię wprost i ściskam na powitanie", v: 0 },
-                { t: "Lubię towarzystwo, gdy mam nastrój", v: 1 },
-                { t: "Drobnymi gestami, bez wielkich słów", v: 2 },
-                { t: "Jestem blisko, ale wyłącznie na swoich zasadach", v: 3 } ] }
+            { q: "Ktoś przestawił Twoje rzeczy na biurku.", a: [
+                { t: "W ogóle nie zwracam uwagi", v: 0 },
+                { t: "Wspominam o tym mimochodem", v: 1 },
+                { t: "Dyskretnie wracam wszystko na miejsce", v: 2 },
+                { t: "To moje terytorium — musi wrócić co do milimetra", v: 3 } ] },
+            { q: "Impreza, na której nie znasz prawie nikogo.", a: [
+                { t: "Poznaję pół sali w godzinę", v: 0 },
+                { t: "Trzymam się jednej–dwóch osób", v: 1 },
+                { t: "Obserwuję z boku z drinkiem", v: 2 },
+                { t: "Znajduję najcichszy pokój i tam siedzę", v: 3 } ] },
+            { q: "Twój dokładnie zaplanowany dzień właśnie się rozsypał.", a: [
+                { t: "Świetnie, lubię improwizować", v: 0 },
+                { t: "Trochę mnie to rusza, ale ogarniam", v: 1 },
+                { t: "Wolę z góry wiedzieć, co i kiedy", v: 2 },
+                { t: "Robię swoje — plan i tak był umowny", v: 3 } ] },
+            { q: "Ktoś patrzy Ci prosto w oczy dłuższą chwilę.", a: [
+                { t: "Uśmiecham się i zagaduję", v: 0 },
+                { t: "Spokojnie odwzajemniam spojrzenie", v: 1 },
+                { t: "Robi mi się nieswojo, odwracam wzrok", v: 2 },
+                { t: "Powoli mrugam i odchodzę", v: 3 } ] },
+            { q: "Twoje ulubione miejsce w domu to:", a: [
+                { t: "Tam, gdzie są inni ludzie", v: 0 },
+                { t: "Biurko albo miejsce do pracy", v: 1 },
+                { t: "Najcieplejszy róg kanapy", v: 2 },
+                { t: "Parapet w słońcu, wysoko, z widokiem", v: 3 } ] },
+            { q: "Dostajesz nieoczekiwany komplement.", a: [
+                { t: "Dziękuję i od razu odbijam komplement", v: 0 },
+                { t: "Cieszę się i mówię to wprost", v: 1 },
+                { t: "Zbywam lekko, choć miło mi", v: 2 },
+                { t: "Przyjmuję jak coś zupełnie oczywistego", v: 3 } ] }
         ],
         tiers: [
             { min: 80, e: "🐱", n: "Zdecydowanie kot", d: "Nie ma żadnych wątpliwości — w środku jesteś kotem w niemal stu procentach. Drzemki, niezależność i ciepłe miejsca to Twój żywioł. Brakuje Ci tylko ogona i wąsów." },
@@ -1785,7 +1785,7 @@ const QUIZ = {
     en: {
         title: "Are you a cat?",
         sub: "Six questions about very human things — and we'll work out what percent cat you really are.",
-        start: "Let's find out 🐾",
+        start: "Let's find out",
         of: "of",
         again: "Take it again",
         share: "Share result 🔗",
@@ -1793,36 +1793,36 @@ const QUIZ = {
         resultLabel: "The verdict:",
         scoreLabel: "You are",
         q: [
-            { q: "How do you usually start your day?", a: [
-                { t: "Up at dawn, full of energy", v: 0 },
-                { t: "Slowly — coffee and a proper stretch", v: 2 },
-                { t: "Depends on my mood, it varies", v: 1 },
-                { t: "Turn off the alarm and sleep on", v: 3 } ] },
-            { q: "Someone rings the doorbell unannounced:", a: [
-                { t: "I open right away, great visit!", v: 0 },
-                { t: "I check who it is before deciding", v: 1 },
-                { t: "Let them wait a moment", v: 2 },
-                { t: "I pretend I'm not home", v: 3 } ] },
-            { q: "Your perfect way to spend an afternoon?", a: [
-                { t: "Meeting friends in town", v: 0 },
-                { t: "A walk and a bit of movement", v: 1 },
-                { t: "Couch, blanket and a snack", v: 2 },
-                { t: "A nap in a patch of sun by the window", v: 3 } ] },
-            { q: "What does your eating look like during the day?", a: [
-                { t: "Fixed times, all planned out", v: 0 },
-                { t: "Regular, but I love treats", v: 1 },
-                { t: "Mostly when someone serves me", v: 2 },
-                { t: "I snack all day, whenever I feel like it", v: 3 } ] },
-            { q: "You spot an empty cardboard box:", a: [
-                { t: "Flatten it and bin it right away", v: 0 },
-                { t: "Keep it, might be useful", v: 1 },
-                { t: "I have to look inside", v: 2 },
-                { t: "I really want to sit in it", v: 3 } ] },
-            { q: "How do you show affection?", a: [
-                { t: "I say it outright and hug hello", v: 0 },
-                { t: "I enjoy company when I'm in the mood", v: 1 },
-                { t: "Small gestures, no big words", v: 2 },
-                { t: "I stay close, but strictly on my own terms", v: 3 } ] }
+            { q: "Someone moved your things around on your desk.", a: [
+                { t: "I don't even notice", v: 0 },
+                { t: "I mention it in passing", v: 1 },
+                { t: "I quietly put it all back", v: 2 },
+                { t: "It's my territory — back to the millimeter", v: 3 } ] },
+            { q: "A party where you barely know anyone.", a: [
+                { t: "I meet half the room within an hour", v: 0 },
+                { t: "I stick to one or two people", v: 1 },
+                { t: "I watch from the side with a drink", v: 2 },
+                { t: "I find the quietest room and stay there", v: 3 } ] },
+            { q: "Your carefully planned day just fell apart.", a: [
+                { t: "Great, I like improvising", v: 0 },
+                { t: "It bugs me a little, but I cope", v: 1 },
+                { t: "I'd rather know what happens and when", v: 2 },
+                { t: "I do my own thing — plans were loose anyway", v: 3 } ] },
+            { q: "Someone holds eye contact with you for a while.", a: [
+                { t: "I smile and start a chat", v: 0 },
+                { t: "I calmly hold their gaze", v: 1 },
+                { t: "I get uneasy and look away", v: 2 },
+                { t: "I slow-blink and walk off", v: 3 } ] },
+            { q: "Your favorite spot at home is:", a: [
+                { t: "Wherever other people are", v: 0 },
+                { t: "The desk or workspace", v: 1 },
+                { t: "The warmest corner of the couch", v: 2 },
+                { t: "A sunny windowsill, high up, with a view", v: 3 } ] },
+            { q: "You get an unexpected compliment.", a: [
+                { t: "Thanks — and I bounce it right back", v: 0 },
+                { t: "I'm glad and say so directly", v: 1 },
+                { t: "I brush it off, though it's nice", v: 2 },
+                { t: "I take it as completely obvious", v: 3 } ] }
         ],
         tiers: [
             { min: 80, e: "🐱", n: "Definitely a cat", d: "No doubt about it — inside, you're very nearly one hundred percent cat. Naps, independence and warm spots are your element. You're only missing a tail and whiskers." },
@@ -2063,7 +2063,11 @@ document.addEventListener("DOMContentLoaded", function () {
     detectAdblock();
 
     const toggle = document.getElementById("settings-toggle");
-    if (toggle) toggle.addEventListener("click", openSettings);
+    if (toggle) {
+        toggle.innerHTML = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>';
+        toggle.setAttribute("aria-label", "Ustawienia");
+        toggle.addEventListener("click", openSettings);
+    }
 
     // Sekretne wejście z innej strony
     if (sessionStorage.getItem("catnet_open_secret") === "1") {

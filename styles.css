@@ -2359,3 +2359,7 @@ body.light .navbar {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/* Ikony Lucide (SVG) w przyciskach i przyciskach-ikonach */
+.btn .ic { width: 18px; height: 18px; flex: 0 0 auto; }
+.icon-btn .ic { width: 20px; height: 20px; }
