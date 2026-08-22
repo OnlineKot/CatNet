@@ -11,10 +11,10 @@
     --border: rgba(255, 255, 255, 0.14);
     --text: #f5f5f7;
     --text-muted: #a1a1a6;
-    --accent: #2997ff;
-    --accent-2: #2997ff;
-    --accent-grad: linear-gradient(120deg, #2997ff, #5ac8fa);
-    --on-accent: #ffffff;           /* czytelny kolor tekstu na tle akcentu */
+    --accent: #f1be53;              /* CatNet — ciepły złoty żółty */
+    --accent-2: #e0a92e;
+    --accent-grad: linear-gradient(120deg, #f6d074, #e0a92e);
+    --on-accent: #1a1a1a;           /* czytelny (ciemny) tekst na żółtym akcencie */
     --radius: 20px;
     --shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -36,7 +36,7 @@ body {
     font-family: var(--font);
     color: var(--text);
     background-color: #000;
-    background-image: radial-gradient(900px 520px at 50% -160px, rgba(10, 132, 255, 0.12), transparent 60%);
+    background-image: radial-gradient(900px 520px at 50% -160px, rgba(241, 190, 83, 0.12), transparent 60%);
     background-repeat: no-repeat;
     background-attachment: fixed;
     line-height: 1.47;
@@ -212,7 +212,7 @@ body.light {
 }
 
 .btn-primary {
-    color: #fff;
+    color: var(--on-accent);
     background: var(--accent-grad);
     background-size: 180% 180%;
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
@@ -315,6 +315,7 @@ body.light {
 
 .fav-btn.is-fav {
     background: var(--accent-2);
+    color: var(--on-accent);
 }
 
 @keyframes fadeUp {
@@ -2182,9 +2183,9 @@ body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
    Działa w trybie jasnym i ciemnym; tekst na akcencie kontrastowy.
    =========================================================== */
 
-/* Header: subtelny gradient marki + cień dla głębi (bez blur, solidny) */
+/* Header: solidny żółty pasek marki + delikatny cień (bez przezroczystości/blur) */
 .navbar {
-    background: var(--accent-grad) !important;
+    background: var(--accent) !important;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     border-bottom: none !important;
@@ -2192,9 +2193,9 @@ body:not(.light) .cat-card:hover { box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6); }
     top: 0;
 }
 body.light .navbar {
-    background: var(--accent-grad) !important;
+    background: var(--accent) !important;
     border-bottom: none !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
 }
 
 /* Kontrast tekstu i ikon na tle akcentu */
