@@ -2255,3 +2255,14 @@ body.light .navbar {
     font-weight: 900 !important;
     letter-spacing: 0.03em;
 }
+
+/* Link do siostrzanej strony TeodorTeo — wyróżniona pigułka */
+.navbar .nav-links a.nav-teo {
+    border: 2px solid var(--on-accent);
+    border-radius: 999px;
+    opacity: 1;
+}
+.navbar .nav-links a.nav-teo:hover {
+    background: var(--on-accent);
+    color: var(--accent);
+}
