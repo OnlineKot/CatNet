@@ -2264,3 +2264,7 @@ body.light .navbar {
     background: var(--on-accent);
     color: var(--accent);
 }
+
+/* CatNet jako jedno słowo (bez odstępu między „Cat" a „Net") */
+.navbar .brand { gap: 0; }
+.navbar .brand .paw { margin-right: 8px; }
