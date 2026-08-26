@@ -71,30 +71,33 @@ body::after {
 }
 @keyframes paraFront { to { transform: translate3d(-17vw, -124vh, 0) scale(1.5); } }
 
-/* Hero — mocny parallax: zjeżdża, oddala się i rozmywa przy scrollu */
+/* Hero — prawdziwy parallax: warstwy jadą z różną prędkością.
+   Nic się NIE rozmywa ani NIE znika — treść zostaje ostra i czytelna,
+   po prostu naturalnie wyjeżdża górą przy scrollu. */
 .hero {
     animation: heroPara linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 92vh;
-    will-change: transform, opacity, filter;
+    animation-range: 0 110vh;
+    will-change: transform;
 }
-@keyframes heroPara {
-    to { transform: translateY(150px) scale(0.88); opacity: 0; filter: blur(7px); }
-}
+@keyframes heroPara { to { transform: translateY(-58px); } }
 
-/* Wnętrze hero jedzie z różną prędkością — dodatkowa głębia */
+/* Tytuł ucieka odrobinę szybciej — pierwszy plan */
 .hero h1 {
     animation: heroTitle linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 92vh;
+    animation-range: 0 110vh;
 }
-@keyframes heroTitle { to { transform: translateY(-40px); } }
+@keyframes heroTitle { to { transform: translateY(-42px); } }
+
+/* Ciekawostka jedzie wolniej i zostaje dłużej — drugi plan (głębia).
+   Przez cały czas ostra i widoczna: żadnego rozmycia ani znikania. */
 .hero .fact-card {
     animation: heroCard linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 92vh;
+    animation-range: 0 110vh;
 }
-@keyframes heroCard { to { transform: translateY(60px) scale(0.96); } }
+@keyframes heroCard { to { transform: translateY(34px); } }
 
 /* Sekcje wjeżdżają z głębi (reveal + lekkie skalowanie) */
 .trust-bar, .quiz-cta, .feature-grid, .stats, .freud-figure, .marquee, .cat-grid, .foss-note, .prose {
