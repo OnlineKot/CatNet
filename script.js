@@ -647,8 +647,13 @@ const translations = {
         "set.simple": "Tryb prosty", "set.simpleHint": "Wyłącza efekty tła i animacje",
         "simple.title": "Włączyć tryb prosty?",
         "simple.text": "Wyłącza ruchome tło i animacje — strona działa lżej i szybciej. W każdej chwili zmienisz to w ustawieniach.",
+        "simple.bar": "Wolniejsze urządzenie? Włącz tryb prosty — mniej efektów.",
         "simple.yes": "Włącz tryb prosty", "simple.no": "Zostaw efekty",
         "toast.simpleOn": "Tryb prosty włączony", "toast.simpleOff": "Tryb prosty wyłączony",
+        "mini.undo": "Cofnij",
+        "mini.favsCleared": "Ulubione wyczyszczone.",
+        "mini.historyCleared": "Historia wyczyszczona.",
+        "mini.restored": "Przywrócono ✓",
         "set.surprise": "Losowy kot", "set.clearFavs": "Wyczyść ulubione",
         "set.reset": "Przywróć domyślne", "set.backup": "Dane i kopia zapasowa",
         "set.export": "Eksportuj (JSON · Base64)", "set.copyExport": "Kopiuj kod eksportu",
@@ -795,8 +800,13 @@ const translations = {
         "set.simple": "Simple mode", "set.simpleHint": "Turns off background effects and animations",
         "simple.title": "Enable simple mode?",
         "simple.text": "Turns off the moving background and animations — the site runs lighter and faster. You can change this anytime in settings.",
+        "simple.bar": "Slower device? Enable simple mode — fewer effects.",
         "simple.yes": "Enable simple mode", "simple.no": "Keep effects",
         "toast.simpleOn": "Simple mode on", "toast.simpleOff": "Simple mode off",
+        "mini.undo": "Undo",
+        "mini.favsCleared": "Favorites cleared.",
+        "mini.historyCleared": "History cleared.",
+        "mini.restored": "Restored ✓",
         "set.surprise": "Random cat", "set.clearFavs": "Clear favorites",
         "set.reset": "Restore defaults", "set.backup": "Data & backup",
         "set.export": "Export (JSON · Base64)", "set.copyExport": "Copy export code",
@@ -1054,11 +1064,11 @@ function resetSettings() {
 }
 
 function clearFavorites() {
-    if (getFavorites().length === 0) {
+    const prev = getFavorites();
+    if (prev.length === 0) {
         showToast(t("toast.noFavs"));
         return;
     }
-    if (!confirm(t("toast.favsCleared") + "?")) return;
     localStorage.removeItem(favKey());
     updateFavCounter();
     renderFavorites("fav-grid");
@@ -1066,7 +1076,21 @@ function clearFavorites() {
         b.classList.remove("is-fav");
         b.innerHTML = "♡";
     });
-    showToast(t("toast.favsCleared"));
+    // Zamiast okna „na pewno?" — małe okienko z możliwością cofnięcia
+    showMiniBar({
+        id: "undo-favs",
+        icon: "🗑️",
+        text: t("mini.favsCleared"),
+        timeout: 8000,
+        actions: [{
+            label: t("mini.undo"), primary: true, onClick: () => {
+                try { localStorage.setItem(favKey(), JSON.stringify(prev)); } catch {}
+                updateFavCounter();
+                renderFavorites("fav-grid");
+                showToast(t("mini.restored"));
+            }
+        }]
+    });
 }
 
 /* ===========================================================
@@ -1287,8 +1311,22 @@ function addToHistory(url) {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
 }
 function clearHistory() {
+    let prev = "[]";
+    try { prev = localStorage.getItem(HISTORY_KEY) || "[]"; } catch {}
+    if (prev === "[]") { showToast(t("toast.historyCleared")); return; }
     localStorage.removeItem(HISTORY_KEY);
-    showToast(t("toast.historyCleared"));
+    showMiniBar({
+        id: "undo-history",
+        icon: "🧹",
+        text: t("mini.historyCleared"),
+        timeout: 8000,
+        actions: [{
+            label: t("mini.undo"), primary: true, onClick: () => {
+                try { localStorage.setItem(HISTORY_KEY, prev); } catch {}
+                showToast(t("mini.restored"));
+            }
+        }]
+    });
 }
 
 /* ===========================================================
@@ -2068,6 +2106,69 @@ function initCookieConsent() {
 }
 
 /* ===========================================================
+   MINI-OKIENKA — małe paski na dole (w stylu banera cookie).
+   Uniwersalny komponent do wielu drobnych ułatwień:
+   propozycji, potwierdzeń z „Cofnij", podpowiedzi itp.
+   =========================================================== */
+let __miniSeq = 0;
+
+function ensureMiniStack() {
+    let s = document.getElementById("mini-stack");
+    if (!s) {
+        s = document.createElement("div");
+        s.id = "mini-stack";
+        s.className = "mini-stack";
+        document.body.appendChild(s);
+    }
+    // gdy widać baner cookie, podnosimy pasek, żeby się nie nakładały
+    s.classList.toggle("above-cookie", !!document.querySelector(".cookie-bar.open"));
+    return s;
+}
+
+function hideMiniBar(id) {
+    const bar = document.getElementById(id);
+    if (!bar) return;
+    bar.classList.remove("open");
+    setTimeout(() => bar.remove(), 280);
+}
+
+/* opts: { id?, icon?(html), text, actions?[{label, primary?, onClick?, close?}], timeout? } */
+function showMiniBar(opts) {
+    opts = opts || {};
+    const stack = ensureMiniStack();
+    const id = opts.id || ("mini-" + (++__miniSeq));
+    const old = document.getElementById(id);
+    if (old) old.remove();
+
+    const bar = document.createElement("div");
+    bar.className = "mini-bar";
+    bar.id = id;
+    bar.setAttribute("role", "status");
+
+    const icon = opts.icon ? `<span class="mini-ico" aria-hidden="true">${opts.icon}</span>` : "";
+    const actions = opts.actions || [];
+    const btns = actions.map((a, i) =>
+        `<button class="btn ${a.primary ? "btn-primary" : "btn-ghost"} mini-act" type="button" data-i="${i}">${a.label}</button>`
+    ).join("");
+    const close = actions.length ? "" : `<button class="mini-x" type="button" aria-label="Zamknij">✕</button>`;
+
+    bar.innerHTML = `<div class="mini-inner">${icon}<p class="mini-text">${opts.text}</p><div class="mini-btns">${btns}${close}</div></div>`;
+    stack.appendChild(bar);
+
+    actions.forEach((a, i) => {
+        bar.querySelector(`.mini-act[data-i="${i}"]`).addEventListener("click", () => {
+            try { a.onClick && a.onClick(); } finally { if (a.close !== false) hideMiniBar(id); }
+        });
+    });
+    const x = bar.querySelector(".mini-x");
+    if (x) x.addEventListener("click", () => hideMiniBar(id));
+
+    requestAnimationFrame(() => bar.classList.add("open"));
+    if (opts.timeout) setTimeout(() => hideMiniBar(id), opts.timeout);
+    return id;
+}
+
+/* ===========================================================
    DZIKI KOT — zabawne odgłosy (rawr!, tk tk tk tk, mrrp…)
    Małe „okienka" z tekstem odlatują w górę i znikają.
    Delikatne i nie-wkurzające: tylko po kliknięciu, bez dźwięku,
@@ -2145,45 +2246,19 @@ function markSimplePrompted() {
     try { localStorage.setItem(SIMPLE_PROMPTED_KEY, "1"); } catch {}
 }
 
-function buildSimplePrompt() {
-    if (document.getElementById("simple-prompt")) return;
-    const ov = document.createElement("div");
-    ov.className = "simple-prompt";
-    ov.id = "simple-prompt";
-    ov.innerHTML = `
-        <div class="simple-card" role="dialog" aria-modal="true" aria-labelledby="simple-title">
-            <div class="simple-ico" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
-            </div>
-            <h3 id="simple-title">${t("simple.title")}</h3>
-            <p>${t("simple.text")}</p>
-            <div class="simple-btns">
-                <button class="btn btn-ghost" type="button" onclick="dismissSimplePrompt()">${t("simple.no")}</button>
-                <button class="btn btn-primary" type="button" onclick="acceptSimplePrompt()">${t("simple.yes")}</button>
-            </div>
-        </div>`;
-    ov.addEventListener("click", (e) => { if (e.target === ov) dismissSimplePrompt(); });
-    document.body.appendChild(ov);
-}
+const LIGHTNING_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>';
+
 function showSimplePrompt() {
-    buildSimplePrompt();
-    requestAnimationFrame(() => document.getElementById("simple-prompt").classList.add("open"));
-}
-function hideSimplePrompt() {
-    const el = document.getElementById("simple-prompt");
-    if (!el) return;
-    el.classList.remove("open");
-    setTimeout(() => el.remove(), 250);
-}
-function acceptSimplePrompt() {
-    markSimplePrompted();
-    hideSimplePrompt();
-    setSimpleMode(true);
-}
-function dismissSimplePrompt() {
-    if (!document.getElementById("simple-prompt")) return;  // nic nie robimy, jeśli okna nie ma
-    markSimplePrompted();
-    hideSimplePrompt();
+    // Małe okienko na dole (jak baner cookie), nie duży modal
+    showMiniBar({
+        id: "simple-bar",
+        icon: LIGHTNING_SVG,
+        text: t("simple.bar"),
+        actions: [
+            { label: t("simple.no"), onClick: markSimplePrompted },
+            { label: t("simple.yes"), primary: true, onClick: () => { markSimplePrompted(); setSimpleMode(true); } }
+        ]
+    });
 }
 
 function maybeShowSimplePrompt() {
@@ -2241,7 +2316,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (e.key === "Escape") {
             closeSettings();
             closeLightbox();
-            dismissSimplePrompt();
         }
     });
 });

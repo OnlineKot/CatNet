@@ -288,41 +288,47 @@ html.simple-mode .feature:hover,
 html.simple-mode .stat:hover,
 html.simple-mode .made-by-teo:hover { transform: none !important; }
 
-/* ---- Okienko: „Włączyć tryb prosty?" ---- */
-.simple-prompt {
-    position: fixed; inset: 0; z-index: 3000;
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.55);
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.25s ease, visibility 0.25s ease;
+/* ---- Mini-okienka: małe paski na dole (jak baner cookie) ---- */
+.mini-stack {
+    position: fixed;
+    left: 16px; right: 16px; bottom: 16px;
+    z-index: 2100;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
-.simple-prompt.open { opacity: 1; visibility: visible; }
-.simple-card {
-    width: min(420px, 100%);
+.mini-stack.above-cookie { bottom: 112px; }   /* nad banerem cookie */
+.mini-bar {
+    pointer-events: auto;
+    width: min(600px, 100%);
     background: var(--surface-solid);
-    border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-    border-radius: 22px;
-    padding: 30px 26px 24px;
-    text-align: center;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-    transform: translateY(12px) scale(0.98);
-    transition: transform 0.25s ease;
+    border: 1px solid var(--border, color-mix(in srgb, var(--text) 12%, transparent));
+    border-radius: 14px;
+    box-shadow: 0 14px 42px rgba(0, 0, 0, 0.5);
+    transform: translateY(150%);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
 }
-.simple-prompt.open .simple-card { transform: none; }
-.simple-ico {
-    width: 54px; height: 54px; margin: 0 auto 14px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 16px;
-    background: var(--accent-grad);
-    color: var(--on-accent);
+.mini-bar.open { transform: none; opacity: 1; }
+.mini-inner { display: flex; align-items: center; gap: 12px; padding: 11px 12px 11px 15px; }
+.mini-ico { font-size: 20px; line-height: 1; display: inline-flex; flex-shrink: 0; color: var(--accent); }
+.mini-ico svg { width: 20px; height: 20px; }
+.mini-text { margin: 0; flex: 1; min-width: 0; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+.mini-btns { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.mini-btns .btn { padding: 8px 15px !important; font-size: 13px !important; }
+.mini-x {
+    background: none; border: 0; cursor: pointer;
+    color: var(--text-muted); font-size: 15px; line-height: 1;
+    padding: 6px 8px; border-radius: 8px;
 }
-.simple-ico svg { width: 28px; height: 28px; }
-.simple-card h3 { margin: 0 0 8px; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
-.simple-card p { margin: 0 0 20px; color: var(--text-muted); font-size: 14.5px; line-height: 1.55; }
-.simple-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.simple-btns .btn { flex: 1 1 auto; min-width: 150px; }
+.mini-x:hover { color: var(--text); background: color-mix(in srgb, var(--text) 10%, transparent); }
+@media (max-width: 480px) {
+    .mini-inner { flex-wrap: wrap; }
+    .mini-btns { width: 100%; }
+    .mini-btns .btn { flex: 1; justify-content: center; }
+}
 
 .switch-hint { display: block; font-size: 11.5px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
 
