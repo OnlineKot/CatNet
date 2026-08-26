@@ -2085,3 +2085,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+/* ===========================================================
+   Delikatny parallax od kursora — ustawia --mx / --my (-1..1)
+   na <html>. Warstwy tła reagują na ruch myszy przy górze strony.
+   Pomijane przy prefers-reduced-motion i na ekranach dotykowych.
+   =========================================================== */
+(function cursorParallax() {
+    try {
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+        if (reduce || !fine) return;
+
+        var root = document.documentElement;
+        var tx = 0, ty = 0, cx = 0, cy = 0, ticking = false;
+
+        function render() {
+            // płynne dochodzenie do celu (łagodny lerp)
+            cx += (tx - cx) * 0.08;
+            cy += (ty - cy) * 0.08;
+            root.style.setProperty("--mx", cx.toFixed(3));
+            root.style.setProperty("--my", cy.toFixed(3));
+            if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) {
+                requestAnimationFrame(render);
+            } else {
+                ticking = false;
+            }
+        }
+
+        window.addEventListener("pointermove", function (e) {
+            tx = (e.clientX / window.innerWidth) * 2 - 1;   // -1..1
+            ty = (e.clientY / window.innerHeight) * 2 - 1;  // -1..1
+            if (!ticking) {
+                ticking = true;
+                requestAnimationFrame(render);
+            }
+        }, { passive: true });
+    } catch (err) { /* bez parallaxu kursora — nic się nie dzieje */ }
+})();

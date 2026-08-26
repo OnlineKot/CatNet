@@ -8,62 +8,122 @@
     --shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
 }
 
-/* ---- Baza + warstwy parallax ---- */
-html { background: var(--bg-1) !important; }
+/* ---- Baza + wielowarstwowy parallax (głębia) ----
+   4 świetlne kule, każda z inną prędkością i kierunkiem = realna głębia.
+   Dodatkowo delikatny parallax od kursora (JS ustawia --mx / --my). */
+html {
+    background:
+        radial-gradient(130% 90% at 50% -12%, rgba(255, 194, 46, 0.10), transparent 58%),
+        var(--bg-1) !important;
+}
 body { background: transparent !important; background-image: none !important; }
 
+html::before, html::after,
 body::before, body::after {
     content: "";
     position: fixed;
     z-index: -1;
     pointer-events: none;
     border-radius: 50%;
-    filter: blur(70px);
     will-change: transform;
-}
-body::before {
-    top: -18vh; left: -12vw; width: 65vw; height: 65vw;
-    background: radial-gradient(circle at 35% 35%, rgba(255, 194, 46, 0.42), transparent 68%);
-    animation: paraA linear both;
     animation-timeline: scroll(root);
+    animation-fill-mode: both;
+    animation-timing-function: linear;
 }
-body::after {
-    top: 34vh; right: -16vw; width: 60vw; height: 60vw;
-    background: radial-gradient(circle at 60% 40%, rgba(94, 132, 255, 0.28), transparent 70%);
-    animation: paraB linear both;
-    animation-timeline: scroll(root);
-}
-@keyframes paraA { to { transform: translate3d(8vw, 55vh, 0) scale(1.35); } }
-@keyframes paraB { to { transform: translate3d(-10vw, -46vh, 0) scale(1.5); } }
 
-/* Hero — mocny parallax: zjeżdża i blednie przy scrollu */
+/* Warstwa 1 — najgłębsza, najwolniejsza (żółta) */
+html::before {
+    top: -24vh; left: -16vw; width: 72vw; height: 72vw;
+    background: radial-gradient(circle at 40% 40%, rgba(255, 194, 46, 0.42), transparent 66%);
+    filter: blur(84px);
+    transform: translate3d(calc(var(--mx, 0) * 10px), calc(var(--my, 0) * 10px), 0);
+    animation-name: paraDeep;
+}
+@keyframes paraDeep { to { transform: translate3d(4vw, 24vh, 0) scale(1.18); } }
+
+/* Warstwa 2 — średnia (niebieska) */
+html::after {
+    top: 26vh; right: -22vw; width: 64vw; height: 64vw;
+    background: radial-gradient(circle at 60% 40%, rgba(94, 132, 255, 0.30), transparent 68%);
+    filter: blur(74px);
+    transform: translate3d(calc(var(--mx, 0) * -18px), calc(var(--my, 0) * -14px), 0);
+    animation-name: paraMid;
+}
+@keyframes paraMid { to { transform: translate3d(-9vw, -42vh, 0) scale(1.42); } }
+
+/* Warstwa 3 — szybka (różowa) */
+body::before {
+    top: 60vh; left: 2vw; width: 54vw; height: 54vw;
+    background: radial-gradient(circle at 45% 45%, rgba(255, 86, 180, 0.26), transparent 68%);
+    filter: blur(70px);
+    transform: translate3d(calc(var(--mx, 0) * 26px), calc(var(--my, 0) * 20px), 0);
+    animation-name: paraFast;
+}
+@keyframes paraFast { to { transform: translate3d(13vw, -82vh, 0) scale(1.28); } }
+
+/* Warstwa 4 — najszybsza, przeciwny kierunek, najbliżej (turkus) */
+body::after {
+    top: 92vh; right: 4vw; width: 42vw; height: 42vw;
+    background: radial-gradient(circle at 50% 50%, rgba(45, 212, 191, 0.24), transparent 68%);
+    filter: blur(62px);
+    transform: translate3d(calc(var(--mx, 0) * -34px), calc(var(--my, 0) * -26px), 0);
+    animation-name: paraFront;
+}
+@keyframes paraFront { to { transform: translate3d(-17vw, -124vh, 0) scale(1.5); } }
+
+/* Hero — mocny parallax: zjeżdża, oddala się i rozmywa przy scrollu */
 .hero {
     animation: heroPara linear both;
     animation-timeline: scroll(root);
-    animation-range: 0 80vh;
-    will-change: transform, opacity;
+    animation-range: 0 92vh;
+    will-change: transform, opacity, filter;
 }
-@keyframes heroPara { to { transform: translateY(90px) scale(0.97); opacity: 0.22; } }
+@keyframes heroPara {
+    to { transform: translateY(150px) scale(0.88); opacity: 0; filter: blur(7px); }
+}
 
-/* Sekcje wjeżdżają przy wejściu w widok (parallax reveal) */
-.trust-bar, .quiz-cta, .feature-grid, .stats, .freud-figure {
+/* Wnętrze hero jedzie z różną prędkością — dodatkowa głębia */
+.hero h1 {
+    animation: heroTitle linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 92vh;
+}
+@keyframes heroTitle { to { transform: translateY(-40px); } }
+.hero .fact-card {
+    animation: heroCard linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 92vh;
+}
+@keyframes heroCard { to { transform: translateY(60px) scale(0.96); } }
+
+/* Sekcje wjeżdżają z głębi (reveal + lekkie skalowanie) */
+.trust-bar, .quiz-cta, .feature-grid, .stats, .freud-figure, .marquee, .cat-grid, .foss-note, .prose {
     animation: sectionRise linear both;
     animation-timeline: view();
-    animation-range: entry 0% cover 24%;
+    animation-range: entry 0% cover 32%;
 }
-@keyframes sectionRise { from { transform: translateY(46px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sectionRise {
+    from { transform: translateY(64px) scale(0.94); opacity: 0; }
+    to { transform: none; opacity: 1; }
+}
 
 /* Fallback bez scroll-driven animations */
 @supports not (animation-timeline: scroll()) {
-    body::before { transform: translate3d(4vw, 26vh, 0) scale(1.15); }
-    body::after { transform: translate3d(-5vw, -20vh, 0) scale(1.2); }
-    .hero, .trust-bar, .quiz-cta, .feature-grid, .stats, .freud-figure {
+    html::before { transform: translate3d(2vw, 12vh, 0) scale(1.08) !important; }
+    html::after { transform: translate3d(-4vw, -16vh, 0) scale(1.2) !important; }
+    body::before { transform: translate3d(5vw, -18vh, 0) scale(1.12) !important; }
+    body::after { transform: translate3d(-6vw, -24vh, 0) scale(1.24) !important; }
+    .hero, .hero h1, .hero .fact-card,
+    .trust-bar, .quiz-cta, .feature-grid, .stats, .freud-figure, .marquee, .cat-grid, .foss-note, .prose {
         animation: none; opacity: 1; transform: none;
     }
 }
 @media (prefers-reduced-motion: reduce) {
-    .hero, .trust-bar, .quiz-cta, .feature-grid, .stats, .freud-figure,
-    body::before, body::after { animation: none !important; opacity: 1 !important; transform: none !important; }
+    .hero, .hero h1, .hero .fact-card,
+    .trust-bar, .quiz-cta, .feature-grid, .stats, .freud-figure, .marquee, .cat-grid, .foss-note, .prose,
+    html::before, html::after, body::before, body::after {
+        animation: none !important; opacity: 1 !important; transform: none !important;
+    }
 }
 
 /* ---- Interfejs Apple-like ---- */
