@@ -499,6 +499,7 @@ const defaultSettings = {
     perPage: 8,
     autoRefresh: false,
     meow: false,
+    simple: false,
     lang: "auto"
 };
 
@@ -643,6 +644,11 @@ const translations = {
         "set.dark": "🌙 Ciemny", "set.light": "☀️ Jasny", "set.density": "Gęstość siatki",
         "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
         "set.slideshow": "Pokaz slajdów (auto)", "set.meow": "Meow Mode", "set.quickActions": "Szybkie akcje",
+        "set.simple": "Tryb prosty", "set.simpleHint": "Wyłącza efekty tła i animacje",
+        "simple.title": "Włączyć tryb prosty?",
+        "simple.text": "Wyłącza ruchome tło i animacje — strona działa lżej i szybciej. W każdej chwili zmienisz to w ustawieniach.",
+        "simple.yes": "Włącz tryb prosty", "simple.no": "Zostaw efekty",
+        "toast.simpleOn": "Tryb prosty włączony", "toast.simpleOff": "Tryb prosty wyłączony",
         "set.surprise": "Losowy kot", "set.clearFavs": "Wyczyść ulubione",
         "set.reset": "Przywróć domyślne", "set.backup": "Dane i kopia zapasowa",
         "set.export": "Eksportuj (JSON · Base64)", "set.copyExport": "Kopiuj kod eksportu",
@@ -786,6 +792,11 @@ const translations = {
         "set.dark": "🌙 Dark", "set.light": "☀️ Light", "set.density": "Grid density",
         "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
         "set.slideshow": "Slideshow (auto)", "set.meow": "Meow Mode", "set.quickActions": "Quick actions",
+        "set.simple": "Simple mode", "set.simpleHint": "Turns off background effects and animations",
+        "simple.title": "Enable simple mode?",
+        "simple.text": "Turns off the moving background and animations — the site runs lighter and faster. You can change this anytime in settings.",
+        "simple.yes": "Enable simple mode", "simple.no": "Keep effects",
+        "toast.simpleOn": "Simple mode on", "toast.simpleOff": "Simple mode off",
         "set.surprise": "Random cat", "set.clearFavs": "Clear favorites",
         "set.reset": "Restore defaults", "set.backup": "Data & backup",
         "set.export": "Export (JSON · Base64)", "set.copyExport": "Copy export code",
@@ -872,6 +883,7 @@ function applySettings() {
     root.setProperty("--on-accent", contrastOn(ac.a));
     document.body.classList.toggle("light", s.mode === "light");
     document.body.classList.toggle("dense", s.density === "dense");
+    document.documentElement.classList.toggle("simple-mode", !!s.simple);
     syncSettingsUI();
 }
 
@@ -939,6 +951,13 @@ function buildSettingsDrawer() {
                     <span class="slider"></span>
                 </label>
             </div>
+            <div class="switch-row">
+                <span>${t("set.simple")}<small class="switch-hint">${t("set.simpleHint")}</small></span>
+                <label class="switch">
+                    <input type="checkbox" id="simple-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
 
         <div class="setting-group">
@@ -991,6 +1010,9 @@ function buildSettingsDrawer() {
         setSetting("autoRefresh", e.target.checked);
         e.target.checked ? startAutoRefresh() : stopAutoRefresh();
     });
+    drawer.querySelector("#simple-toggle").addEventListener("change", (e) => {
+        setSimpleMode(e.target.checked);
+    });
 }
 
 function syncSettingsUI() {
@@ -1011,6 +1033,8 @@ function syncSettingsUI() {
     }
     const auto = document.getElementById("autorefresh-toggle");
     if (auto) auto.checked = s.autoRefresh;
+    const simple = document.getElementById("simple-toggle");
+    if (simple) simple.checked = !!s.simple;
 }
 
 function openSettings() {
@@ -1682,6 +1706,7 @@ function heartBurst(card) {
 /* Wybuch konfetti (np. przy polubieniu Freuda) */
 function confettiBurst(anchor) {
     if (!anchor) return;
+    if (isSimpleMode()) return;   // tryb prosty — bez konfetti
     const rect = anchor.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -2043,6 +2068,83 @@ function initCookieConsent() {
 }
 
 /* ===========================================================
+   TRYB PROSTY (mniej efektów)
+   Wyłącza tło parallax, matowe szkło i animacje.
+   Zapamiętywany w ustawieniach; pyta o niego raz (okienko).
+   =========================================================== */
+const SIMPLE_PROMPTED_KEY = "catnet_simple_prompted";
+
+function isSimpleMode() {
+    try { return !!getSettings().simple; } catch { return false; }
+}
+
+function setSimpleMode(on) {
+    setSetting("simple", !!on);
+    try { showToast(on ? t("toast.simpleOn") : t("toast.simpleOff")); } catch {}
+}
+
+function simplePrompted() {
+    try { return localStorage.getItem(SIMPLE_PROMPTED_KEY) === "1"; } catch { return true; }
+}
+function markSimplePrompted() {
+    try { localStorage.setItem(SIMPLE_PROMPTED_KEY, "1"); } catch {}
+}
+
+function buildSimplePrompt() {
+    if (document.getElementById("simple-prompt")) return;
+    const ov = document.createElement("div");
+    ov.className = "simple-prompt";
+    ov.id = "simple-prompt";
+    ov.innerHTML = `
+        <div class="simple-card" role="dialog" aria-modal="true" aria-labelledby="simple-title">
+            <div class="simple-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
+            </div>
+            <h3 id="simple-title">${t("simple.title")}</h3>
+            <p>${t("simple.text")}</p>
+            <div class="simple-btns">
+                <button class="btn btn-ghost" type="button" onclick="dismissSimplePrompt()">${t("simple.no")}</button>
+                <button class="btn btn-primary" type="button" onclick="acceptSimplePrompt()">${t("simple.yes")}</button>
+            </div>
+        </div>`;
+    ov.addEventListener("click", (e) => { if (e.target === ov) dismissSimplePrompt(); });
+    document.body.appendChild(ov);
+}
+function showSimplePrompt() {
+    buildSimplePrompt();
+    requestAnimationFrame(() => document.getElementById("simple-prompt").classList.add("open"));
+}
+function hideSimplePrompt() {
+    const el = document.getElementById("simple-prompt");
+    if (!el) return;
+    el.classList.remove("open");
+    setTimeout(() => el.remove(), 250);
+}
+function acceptSimplePrompt() {
+    markSimplePrompted();
+    hideSimplePrompt();
+    setSimpleMode(true);
+}
+function dismissSimplePrompt() {
+    if (!document.getElementById("simple-prompt")) return;  // nic nie robimy, jeśli okna nie ma
+    markSimplePrompted();
+    hideSimplePrompt();
+}
+
+function maybeShowSimplePrompt() {
+    // Pytamy tylko raz. Nie nakładamy się na samouczek ani baner cookie —
+    // jeśli któreś ma się pojawić, pokażemy się dopiero przy kolejnej wizycie.
+    if (simplePrompted()) return;
+    if (isSimpleMode()) { markSimplePrompted(); return; }
+    try {
+        const onbWillShow = !localStorage.getItem(ONB_KEY);      // samouczek pokaże się na 1. wizycie
+        const cookieUndecided = cookieConsent() === null;        // baner cookie jeszcze widoczny
+        if (onbWillShow || cookieUndecided) return;
+    } catch {}
+    setTimeout(showSimplePrompt, 900);
+}
+
+/* ===========================================================
    INICJALIZACJA WSPÓLNA
    =========================================================== */
 document.addEventListener("DOMContentLoaded", function () {
@@ -2076,12 +2178,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     maybeShowOnboarding();
+    maybeShowSimplePrompt();
 
     document.addEventListener("keydown", (e) => {
         handleSecretKey(e);
         if (e.key === "Escape") {
             closeSettings();
             closeLightbox();
+            dismissSimplePrompt();
         }
     });
 });
