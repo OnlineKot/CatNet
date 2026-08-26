@@ -605,7 +605,7 @@ const translations = {
         "err404.title": "Tu nie ma kota 🙀",
         "err404.text": "Szukasz kotów nie tam, gdzie trzeba. Wróć na stronę główną — tam czeka ich pełno.",
         "err404.btn": "Wróć na stronę główną 🐾",
-        "cookie.text": "Używamy anonimowej analityki (Microsoft Clarity), aby ulepszać CatNet. Zgoda jest dobrowolna.",
+        "cookie.text": "Używamy anonimowej analityki, aby ulepszać CatNet. Zgoda jest dobrowolna.",
         "cookie.more": "Dowiedz się więcej",
         "cookie.accept": "Akceptuję",
         "cookie.reject": "Odrzuć",
@@ -752,7 +752,7 @@ const translations = {
         "err404.title": "There's no cat here 🙀",
         "err404.text": "You're looking for cats in the wrong place. Head back to the homepage — it's full of them.",
         "err404.btn": "Back to homepage 🐾",
-        "cookie.text": "We use anonymous analytics (Microsoft Clarity) to improve CatNet. Consent is optional.",
+        "cookie.text": "We use anonymous analytics to improve CatNet. Consent is optional.",
         "cookie.more": "Learn more",
         "cookie.accept": "Accept",
         "cookie.reject": "Reject",
@@ -2068,6 +2068,61 @@ function initCookieConsent() {
 }
 
 /* ===========================================================
+   DZIKI KOT — zabawne odgłosy (rawr!, tk tk tk tk, mrrp…)
+   Małe „okienka" z tekstem odlatują w górę i znikają.
+   Delikatne i nie-wkurzające: tylko po kliknięciu, bez dźwięku,
+   wyłączone w trybie prostym i przy prefers-reduced-motion.
+   =========================================================== */
+const CAT_SOUNDS = ["miau", "mrrp", "prr…", "nyaa~", "mao?", "tk tk tk tk", "ekekeke", "brr-tk-tk", "rawr", "mrrow"];
+const CAT_WILD = ["RAWR!", "MRRRAWR!", "tk-tk-tk-tk-tk!", "NYAAA!"];
+
+function catVocalize(x, y, opts) {
+    opts = opts || {};
+    if (isSimpleMode()) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const pool = opts.wild ? CAT_WILD : CAT_SOUNDS;
+    const el = document.createElement("div");
+    el.className = "cat-sound" + (opts.wild ? " wild" : "");
+    el.textContent = opts.text || pool[Math.floor(Math.random() * pool.length)];
+    // trzymaj dymek w widoku (żeby nie ucinało przy krawędziach)
+    const cx = Math.max(70, Math.min(window.innerWidth - 70, x));
+    const cy = Math.max(60, Math.min(window.innerHeight - 40, y));
+    el.style.left = cx + "px";
+    el.style.top = cy + "px";
+    el.style.setProperty("--drift", ((Math.random() * 60 - 30) | 0) + "px");
+    el.style.setProperty("--rot", ((Math.random() * 18 - 9) | 0) + "deg");
+    document.body.appendChild(el);
+    const kill = () => el.remove();
+    el.addEventListener("animationend", kill);
+    setTimeout(kill, 1700);
+}
+
+function initCatSounds() {
+    document.addEventListener("click", (e) => {
+        // Łapka w logo = dziki ryk kota (easter egg, bez przechodzenia na stronę)
+        const paw = e.target.closest(".brand .paw");
+        if (paw) {
+            e.preventDefault();
+            e.stopPropagation();
+            catVocalize(e.clientX, e.clientY, { wild: true });
+            paw.classList.remove("paw-wiggle");
+            void paw.offsetWidth;              // reset animacji
+            paw.classList.add("paw-wiggle");
+            return;
+        }
+        // Serduszko „polub" = ciche miauknięcie / tk tk
+        if (e.target.closest(".fav-btn")) {
+            catVocalize(e.clientX, e.clientY);
+            return;
+        }
+        // Klik w zdjęcie kota = odgłos (nie blokuje podglądu)
+        if (e.target.closest(".cat-card img, .cat-grid img, .marquee img, .freud-img, .sweet-img")) {
+            catVocalize(e.clientX, e.clientY);
+        }
+    });
+}
+
+/* ===========================================================
    TRYB PROSTY (mniej efektów)
    Wyłącza tło parallax, matowe szkło i animacje.
    Zapamiętywany w ustawieniach; pyta o niego raz (okienko).
@@ -2179,6 +2234,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     maybeShowOnboarding();
     maybeShowSimplePrompt();
+    initCatSounds();
 
     document.addEventListener("keydown", (e) => {
         handleSecretKey(e);
