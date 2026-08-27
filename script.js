@@ -1804,6 +1804,7 @@ const QUIZ = {
         again: "Rozwiąż jeszcze raz",
         share: "Udostępnij wynik 🔗",
         copied: "Skopiowano wynik 🔗",
+        imgSaved: "Obrazek zapisany, tekst skopiowany 🖼️",
         resultLabel: "Werdykt:",
         scoreLabel: "Jesteś kotem w",
         q: [
@@ -1853,6 +1854,7 @@ const QUIZ = {
         again: "Take it again",
         share: "Share result 🔗",
         copied: "Result copied 🔗",
+        imgSaved: "Image saved, text copied 🖼️",
         resultLabel: "The verdict:",
         scoreLabel: "You are",
         q: [
@@ -1999,13 +2001,135 @@ async function loadQuizCat() {
     createCatElement(grid, url);
 }
 
+function quizShareLines(pct) {
+    return LANG === "en"
+        ? { l1: `I'm ${pct}% cat!`, l2: "See if you're a cat too!" }
+        : { l1: `Jestem w ${pct}% kotem!`, l2: "Zobacz czy jesteś kotem!" };
+}
+
+function loadImgEl(src) {
+    return new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = reject;
+        im.src = src;
+    });
+}
+
+/* Rysuje kwadratowy obrazek wyniku (1080×1080) do udostępnienia */
+async function makeQuizCardBlob(pct, emoji, name) {
+    const S = 1080;
+    const c = document.createElement("canvas");
+    c.width = S; c.height = S;
+    const ctx = c.getContext("2d");
+    const { l1, l2 } = quizShareLines(pct);
+
+    // tło + tęczowa poświata (w duchu logo CatNet)
+    ctx.fillStyle = "#0a0a0c";
+    ctx.fillRect(0, 0, S, S);
+    const g = ctx.createLinearGradient(0, 0, S, S);
+    g.addColorStop(0, "#ff5ca8");
+    g.addColorStop(0.5, "#ffc22e");
+    g.addColorStop(1, "#5e84ff");
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, S, S);
+    ctx.globalAlpha = 1;
+
+    // logo CatNet (jeśli się załaduje)
+    try {
+        const img = await loadImgEl("catnet-icon.png");
+        const sz = 156, x = (S - sz) / 2, y = 96, r = 34;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + sz, y, x + sz, y + sz, r);
+        ctx.arcTo(x + sz, y + sz, x, y + sz, r);
+        ctx.arcTo(x, y + sz, x, y, r);
+        ctx.arcTo(x, y, x + sz, y, r);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, x, y, sz, sz);
+        ctx.restore();
+    } catch {}
+
+    ctx.textAlign = "center";
+
+    // emoji + duży procent
+    ctx.font = "110px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji', system-ui, sans-serif";
+    ctx.fillText(emoji || "🐱", S / 2, 400);
+
+    const grad = ctx.createLinearGradient(S / 2 - 260, 0, S / 2 + 260, 0);
+    grad.addColorStop(0, "#ffd23f");
+    grad.addColorStop(1, "#f0a500");
+    ctx.fillStyle = grad;
+    ctx.font = "800 240px system-ui, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText(pct + "%", S / 2, 640);
+
+    // „Jestem w X% kotem!”
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "700 66px system-ui, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText(l1, S / 2, 740);
+
+    // werdykt (nazwa tieru)
+    ctx.fillStyle = "#c7c7cf";
+    ctx.font = "500 44px system-ui, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText(name || "", S / 2, 812);
+
+    // wezwanie do działania
+    ctx.fillStyle = "#ffc22e";
+    ctx.font = "700 54px system-ui, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText(l2, S / 2, 920);
+
+    // adres
+    ctx.fillStyle = "#8a8a92";
+    ctx.font = "500 40px system-ui, 'Segoe UI', Roboto, sans-serif";
+    ctx.fillText("catnet.teodorteo.com", S / 2, 1000);
+
+    return new Promise((resolve) => c.toBlob(resolve, "image/png", 0.95));
+}
+
 async function shareQuizResult(emoji, name, pct) {
-    const text = (LANG === "en"
-        ? `${emoji} I'm ${pct}% cat on CatNet (${name})! Are you a cat?`
-        : `${emoji} Jestem kotem w ${pct}% (${name}) na CatNet! A Ty — jesteś kotem?`);
+    const { l1, l2 } = quizShareLines(pct);
+    const text = `${l1} ${l2}`;
     const url = location.href;
+
+    // 1) Udostępnij OBRAZEK (natywny arkusz udostępniania — Instagram, Messenger…)
+    let blob = null;
+    try { blob = await makeQuizCardBlob(pct, emoji, name); } catch {}
+    if (blob && navigator.canShare) {
+        try {
+            const file = new File([blob], "catnet-wynik.png", { type: "image/png" });
+            if (navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], text: `${text} ${url}`, title: "CatNet" });
+                return;
+            }
+        } catch (e) {
+            if (e && e.name === "AbortError") return;   // użytkownik anulował
+        }
+    }
+
+    // 2) Bez udostępniania plików — zapisz obrazek i skopiuj tekst
+    if (blob) {
+        try {
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "catnet-wynik.png";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+            try { await navigator.clipboard.writeText(text + " " + url); } catch {}
+            showToast(quizData().imgSaved);
+            return;
+        } catch {}
+    }
+
+    // 3) Ostatecznie: zwykłe udostępnienie / schowek
     if (navigator.share) {
-        try { await navigator.share({ title: "CatNet", text, url }); return; } catch {}
+        try { await navigator.share({ title: "CatNet", text, url }); return; } catch (e) {
+            if (e && e.name === "AbortError") return;
+        }
     }
     try {
         await navigator.clipboard.writeText(text + " " + url);
