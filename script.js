@@ -1804,7 +1804,7 @@ const QUIZ = {
         again: "Rozwiąż jeszcze raz",
         share: "Udostępnij wynik 🔗",
         copied: "Skopiowano wynik 🔗",
-        imgSaved: "Obrazek zapisany, tekst skopiowany 🖼️",
+        imgSaved: "Obrazek zapisany, tekst skopiowany",
         resultLabel: "Werdykt:",
         scoreLabel: "Jesteś kotem w",
         q: [
@@ -1854,7 +1854,7 @@ const QUIZ = {
         again: "Take it again",
         share: "Share result 🔗",
         copied: "Result copied 🔗",
-        imgSaved: "Image saved, text copied 🖼️",
+        imgSaved: "Image saved, text copied",
         resultLabel: "The verdict:",
         scoreLabel: "You are",
         q: [
@@ -2016,6 +2016,27 @@ function loadImgEl(src) {
     });
 }
 
+/* Ikona Lucide „cat” (viewBox 24×24) narysowana wektorowo na canvasie */
+const LUCIDE_CAT_PATHS = [
+    "M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z",
+    "M8 14v.5",
+    "M16 14v.5",
+    "M11.25 16.25h1.5L12 17l-.75-.75Z"
+];
+
+function drawLucide(ctx, paths, x, y, size, color, strokePx) {
+    const k = size / 24;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(k, k);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = (strokePx || 6) / k;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    paths.forEach((d) => ctx.stroke(new Path2D(d)));
+    ctx.restore();
+}
+
 /* Rysuje kwadratowy obrazek wyniku (1080×1080) do udostępnienia */
 async function makeQuizCardBlob(pct, emoji, name) {
     const S = 1080;
@@ -2055,10 +2076,10 @@ async function makeQuizCardBlob(pct, emoji, name) {
 
     ctx.textAlign = "center";
 
-    // emoji + duży procent
-    ctx.font = "110px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji', system-ui, sans-serif";
-    ctx.fillText(emoji || "🐱", S / 2, 400);
+    // ikona kota (Lucide) zamiast emotki
+    drawLucide(ctx, LUCIDE_CAT_PATHS, S / 2 - 78, 268, 156, "#f2f2f5", 6.5);
 
+    // duży procent
     const grad = ctx.createLinearGradient(S / 2 - 260, 0, S / 2 + 260, 0);
     grad.addColorStop(0, "#ffd23f");
     grad.addColorStop(1, "#f0a500");
