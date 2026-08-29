@@ -1804,7 +1804,7 @@ const QUIZ = {
         again: "Rozwiąż jeszcze raz",
         share: "Udostępnij wynik 🔗",
         copied: "Skopiowano wynik 🔗",
-        imgSaved: "Obrazek zapisany, tekst skopiowany",
+        linkCopied: "Link skopiowany",
         resultLabel: "Werdykt:",
         scoreLabel: "Jesteś kotem w",
         q: [
@@ -1854,7 +1854,7 @@ const QUIZ = {
         again: "Take it again",
         share: "Share result 🔗",
         copied: "Result copied 🔗",
-        imgSaved: "Image saved, text copied",
+        linkCopied: "Link copied",
         resultLabel: "The verdict:",
         scoreLabel: "You are",
         q: [
@@ -1903,6 +1903,7 @@ let quizState = { step: -1, score: 0 };
 function startQuiz() {
     quizState = { step: -1, score: 0 };
     renderQuiz();
+    handleSharedResultParam();
 }
 
 function quizData() {
@@ -2007,156 +2008,56 @@ function quizShareLines(pct) {
         : { l1: `Jestem w ${pct}% kotem!`, l2: "Zobacz czy jesteś kotem!" };
 }
 
-function loadImgEl(src) {
-    return new Promise((resolve, reject) => {
-        const im = new Image();
-        im.onload = () => resolve(im);
-        im.onerror = reject;
-        im.src = src;
-    });
-}
-
-/* Ikona Lucide „cat” (viewBox 24×24) narysowana wektorowo na canvasie */
+// Ikona Lucide „cat" (viewBox 24×24) — do małego dymka po otwarciu linku
 const LUCIDE_CAT_PATHS = [
     "M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z",
     "M8 14v.5",
     "M16 14v.5",
     "M11.25 16.25h1.5L12 17l-.75-.75Z"
 ];
-
-function drawLucide(ctx, paths, x, y, size, color, strokePx) {
-    const k = size / 24;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(k, k);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = (strokePx || 6) / k;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    paths.forEach((d) => ctx.stroke(new Path2D(d)));
-    ctx.restore();
+function lucideCatSvg() {
+    return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        + LUCIDE_CAT_PATHS.map((d) => `<path d="${d}"/>`).join("")
+        + "</svg>";
 }
 
-/* Rysuje kwadratowy obrazek wyniku (1080×1080) do udostępnienia */
-async function makeQuizCardBlob(pct, emoji, name) {
-    const S = 1080;
-    const c = document.createElement("canvas");
-    c.width = S; c.height = S;
-    const ctx = c.getContext("2d");
-    const { l1, l2 } = quizShareLines(pct);
-
-    // tło + tęczowa poświata (w duchu logo CatNet)
-    ctx.fillStyle = "#0a0a0c";
-    ctx.fillRect(0, 0, S, S);
-    const g = ctx.createLinearGradient(0, 0, S, S);
-    g.addColorStop(0, "#ff5ca8");
-    g.addColorStop(0.5, "#ffc22e");
-    g.addColorStop(1, "#5e84ff");
-    ctx.globalAlpha = 0.16;
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, S, S);
-    ctx.globalAlpha = 1;
-
-    // logo CatNet (jeśli się załaduje)
-    try {
-        const img = await loadImgEl("catnet-icon.png");
-        const sz = 156, x = (S - sz) / 2, y = 96, r = 34;
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + sz, y, x + sz, y + sz, r);
-        ctx.arcTo(x + sz, y + sz, x, y + sz, r);
-        ctx.arcTo(x, y + sz, x, y, r);
-        ctx.arcTo(x, y, x + sz, y, r);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(img, x, y, sz, sz);
-        ctx.restore();
-    } catch {}
-
-    ctx.textAlign = "center";
-
-    // ikona kota (Lucide) zamiast emotki
-    drawLucide(ctx, LUCIDE_CAT_PATHS, S / 2 - 78, 268, 156, "#f2f2f5", 6.5);
-
-    // duży procent
-    const grad = ctx.createLinearGradient(S / 2 - 260, 0, S / 2 + 260, 0);
-    grad.addColorStop(0, "#ffd23f");
-    grad.addColorStop(1, "#f0a500");
-    ctx.fillStyle = grad;
-    ctx.font = "800 240px system-ui, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText(pct + "%", S / 2, 640);
-
-    // „Jestem w X% kotem!”
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "700 66px system-ui, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText(l1, S / 2, 740);
-
-    // werdykt (nazwa tieru)
-    ctx.fillStyle = "#c7c7cf";
-    ctx.font = "500 44px system-ui, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText(name || "", S / 2, 812);
-
-    // wezwanie do działania
-    ctx.fillStyle = "#ffc22e";
-    ctx.font = "700 54px system-ui, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText(l2, S / 2, 920);
-
-    // adres
-    ctx.fillStyle = "#8a8a92";
-    ctx.font = "500 40px system-ui, 'Segoe UI', Roboto, sans-serif";
-    ctx.fillText("catnet.teodorteo.com", S / 2, 1000);
-
-    return new Promise((resolve) => c.toBlob(resolve, "image/png", 0.95));
+// Jeden link z wynikiem w parametrze ?k= (podgląd sam pokaże napis)
+function quizShareUrl(pct) {
+    const base = location.origin + location.pathname;   // …/quiz.html
+    return base + "?k=" + pct + (LANG === "en" ? "&l=en" : "");
 }
 
 async function shareQuizResult(emoji, name, pct) {
-    const { l1, l2 } = quizShareLines(pct);
-    const text = `${l1} ${l2}`;
-    const url = location.href;
-
-    // 1) Udostępnij OBRAZEK (natywny arkusz udostępniania — Instagram, Messenger…)
-    let blob = null;
-    try { blob = await makeQuizCardBlob(pct, emoji, name); } catch {}
-    if (blob && navigator.canShare) {
-        try {
-            const file = new File([blob], "catnet-wynik.png", { type: "image/png" });
-            if (navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], text: `${text} ${url}`, title: "CatNet" });
-                return;
-            }
-        } catch (e) {
-            if (e && e.name === "AbortError") return;   // użytkownik anulował
-        }
-    }
-
-    // 2) Bez udostępniania plików — zapisz obrazek i skopiuj tekst
-    if (blob) {
-        try {
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "catnet-wynik.png";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-            try { await navigator.clipboard.writeText(text + " " + url); } catch {}
-            showToast(quizData().imgSaved);
-            return;
-        } catch {}
-    }
-
-    // 3) Ostatecznie: zwykłe udostępnienie / schowek
+    const url = quizShareUrl(pct);
+    // Udostępniamy TYLKO link — iMessage/WhatsApp/itp. same wczytają napis
+    // z podglądu (meta OG podmieniane na brzegu przez worker Cloudflare).
     if (navigator.share) {
-        try { await navigator.share({ title: "CatNet", text, url }); return; } catch (e) {
-            if (e && e.name === "AbortError") return;
-        }
+        try { await navigator.share({ url }); return; }
+        catch (e) { if (e && e.name === "AbortError") return; }
     }
     try {
-        await navigator.clipboard.writeText(text + " " + url);
-        showToast(quizData().copied);
+        await navigator.clipboard.writeText(url);
+        showToast(quizData().linkCopied);
     } catch {
-        window.prompt("CatNet", text + " " + url);
+        window.prompt("CatNet", url);
+    }
+}
+
+// Po otwarciu linku ze znajomym wynikiem: pokaż miły dymek i wyczyść adres z ?k=
+function handleSharedResultParam() {
+    let k = NaN;
+    try {
+        const sp = new URLSearchParams(location.search);
+        if (sp.has("k")) k = parseInt(sp.get("k"), 10);
+    } catch {}
+    if (!Number.isFinite(k)) return;
+    k = Math.max(0, Math.min(100, k));
+    try { history.replaceState(null, "", location.pathname); } catch {}   // usuń ?k= z paska adresu
+    const msg = LANG === "en"
+        ? `Someone is ${k}% cat. And you?`
+        : `Ktoś jest w ${k}% kotem. A Ty?`;
+    if (typeof showMiniBar === "function") {
+        showMiniBar({ id: "shared-result", icon: lucideCatSvg(), text: msg, timeout: 7000 });
     }
 }
 

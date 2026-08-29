@@ -1,8 +1,11 @@
 {
   "name": "catnet",
   "compatibility_date": "2026-08-20",
+  "main": "worker.js",
   "assets": {
     "directory": "./",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/quiz", "/quiz.html"]
   }
 }
