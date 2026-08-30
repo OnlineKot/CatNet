@@ -605,9 +605,9 @@ const translations = {
         "err404.title": "Tu nie ma kota 🙀",
         "err404.text": "Szukasz kotów nie tam, gdzie trzeba. Wróć na stronę główną — tam czeka ich pełno.",
         "err404.btn": "Wróć na stronę główną 🐾",
-        "cookie.text": "Używamy anonimowej analityki, aby ulepszać CatNet. Zgoda jest dobrowolna.",
+        "cookie.text": "Pomóż nam ulepszać CatNet — zgódź się na anonimową analitykę. Bez reklam, bez sprzedaży danych, bez śledzenia między stronami.",
         "cookie.more": "Dowiedz się więcej",
-        "cookie.accept": "Akceptuję",
+        "cookie.accept": "Zgadzam się",
         "cookie.reject": "Odrzuć",
         "cookie.footer": "Pliki cookie 🍪",
         "cookie.savedYes": "Dzięki! Anonimowa analityka włączona 🍪",
@@ -757,10 +757,10 @@ const translations = {
         "err404.title": "There's no cat here 🙀",
         "err404.text": "You're looking for cats in the wrong place. Head back to the homepage — it's full of them.",
         "err404.btn": "Back to homepage 🐾",
-        "cookie.text": "We use anonymous analytics to improve CatNet. Consent is optional.",
+        "cookie.text": "Help us improve CatNet — allow anonymous analytics. No ads, no data selling, no cross-site tracking.",
         "cookie.more": "Learn more",
-        "cookie.accept": "Accept",
-        "cookie.reject": "Reject",
+        "cookie.accept": "I agree",
+        "cookie.reject": "Decline",
         "cookie.footer": "Cookies 🍪",
         "cookie.savedYes": "Thanks! Anonymous analytics on 🍪",
         "cookie.savedNo": "Saved. Analytics turned off 🚫",
@@ -2083,6 +2083,9 @@ function loadClarity() {
         t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
         y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
     })(window, document, "clarity", "script", CLARITY_ID);
+    // Sygnał zgody dla Clarity (gdy w projekcie włączona jest zgoda na cookies,
+    // bez tego Clarity nie zapisuje danych). Nieszkodliwy, gdy opcja wyłączona.
+    try { window.clarity("consent"); } catch {}
 }
 
 function clearClarityCookies() {
@@ -2093,6 +2096,14 @@ function clearClarityCookies() {
     });
 }
 
+function lucideCookieSvg() {
+    // Lucide „cookie"
+    return '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        + '<path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>'
+        + '<path d="M8.5 8.5v.01"/><path d="M16 15.5v.01"/><path d="M12 12v.01"/>'
+        + '<path d="M11 17v.01"/><path d="M7 14v.01"/></svg>';
+}
+
 function buildCookieBanner() {
     if (document.getElementById("cookie-bar")) return;
     const bar = document.createElement("div");
@@ -2100,7 +2111,7 @@ function buildCookieBanner() {
     bar.id = "cookie-bar";
     bar.innerHTML = `
         <div class="cookie-bar-inner">
-            <span class="cookie-emoji">🍪</span>
+            <span class="cookie-ico" aria-hidden="true">${lucideCookieSvg()}</span>
             <p class="cookie-text">${t("cookie.text")} <a href="polityka-prywatnosci.html">${t("cookie.more")}</a></p>
             <div class="cookie-btns">
                 <button class="btn btn-ghost cookie-reject" type="button" onclick="rejectCookies()">${t("cookie.reject")}</button>

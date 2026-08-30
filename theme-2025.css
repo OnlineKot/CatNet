@@ -378,3 +378,6 @@ html.simple-mode .made-by-teo:hover { transform: none !important; }
 /* Tryb prosty i reduced-motion nie pokazują odgłosów (JS i tak je blokuje) */
 html.simple-mode .cat-sound { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .cat-sound, .paw-wiggle { animation: none !important; } }
+
+/* Ikona (Lucide) w banerze cookie zamiast emotki */
+.cookie-ico { color: var(--accent); display: inline-flex; align-items: center; flex-shrink: 0; line-height: 1; }
