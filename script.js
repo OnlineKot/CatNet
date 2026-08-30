@@ -645,6 +645,7 @@ const translations = {
         "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
         "set.slideshow": "Pokaz slajdów (auto)", "set.meow": "Meow Mode", "set.quickActions": "Szybkie akcje",
         "set.simple": "Tryb prosty", "set.simpleHint": "Wyłącza efekty tła i animacje",
+        "set.analytics": "Anonimowa analityka", "set.analyticsHint": "Pomaga ulepszać CatNet. Możesz zmienić w każdej chwili.",
         "simple.title": "Włączyć tryb prosty?",
         "simple.text": "Wyłącza ruchome tło i animacje — strona działa lżej i szybciej. W każdej chwili zmienisz to w ustawieniach.",
         "simple.bar": "Wolniejsze urządzenie? Włącz tryb prosty — mniej efektów.",
@@ -798,6 +799,7 @@ const translations = {
         "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
         "set.slideshow": "Slideshow (auto)", "set.meow": "Meow Mode", "set.quickActions": "Quick actions",
         "set.simple": "Simple mode", "set.simpleHint": "Turns off background effects and animations",
+        "set.analytics": "Anonymous analytics", "set.analyticsHint": "Helps improve CatNet. Change anytime.",
         "simple.title": "Enable simple mode?",
         "simple.text": "Turns off the moving background and animations — the site runs lighter and faster. You can change this anytime in settings.",
         "simple.bar": "Slower device? Enable simple mode — fewer effects.",
@@ -968,6 +970,13 @@ function buildSettingsDrawer() {
                     <span class="slider"></span>
                 </label>
             </div>
+            <div class="switch-row">
+                <span>${t("set.analytics")}<small class="switch-hint">${t("set.analyticsHint")}</small></span>
+                <label class="switch">
+                    <input type="checkbox" id="analytics-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
 
         <div class="setting-group">
@@ -1023,6 +1032,9 @@ function buildSettingsDrawer() {
     drawer.querySelector("#simple-toggle").addEventListener("change", (e) => {
         setSimpleMode(e.target.checked);
     });
+    drawer.querySelector("#analytics-toggle").addEventListener("change", (e) => {
+        if (e.target.checked) acceptCookies(); else rejectCookies();
+    });
 }
 
 function syncSettingsUI() {
@@ -1045,9 +1057,12 @@ function syncSettingsUI() {
     if (auto) auto.checked = s.autoRefresh;
     const simple = document.getElementById("simple-toggle");
     if (simple) simple.checked = !!s.simple;
+    const analytics = document.getElementById("analytics-toggle");
+    if (analytics) analytics.checked = (typeof cookieConsent === "function" && cookieConsent() === "accepted");
 }
 
 function openSettings() {
+    syncSettingsUI();   // odśwież stany (m.in. zgodę na analitykę)
     document.getElementById("settings-overlay")?.classList.add("open");
     document.getElementById("settings-drawer")?.classList.add("open");
 }
