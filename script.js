@@ -704,6 +704,7 @@ const translations = {
         "blocked.retry": "Spróbuj ponownie 🔄",
         "adblock.banner": "🚫 Wygląda na to, że masz włączony <strong>AdBlock</strong> — przez to koty mogą się nie wyświetlać. Wyłącz blokowanie i odśwież stronę.",
         "lightbox.fav": "♡ Ulubione", "lightbox.favOn": "♥ W ulubionych", "lightbox.download": "⬇️ Pobierz", "lightbox.share": "🔗 Udostępnij",
+        "lightbox.dlFail": "Nie udało się pobrać zdjęcia",
         "empty.favs": "Nie masz jeszcze ulubionych kotów. Kliknij serduszko na zdjęciu, aby je tu zapisać. 🐾",
         "premium.title": "👑 Koty premium", "premium.locked": "Koty premium z serwisu Cataas są zablokowane. Odblokuj je, wpisując kod polecający od znajomego!",
         "premium.unlocked": "Masz dostęp do kotów premium! 👑", "premium.show": "Pokaż koty premium 👑",
@@ -858,6 +859,7 @@ const translations = {
         "blocked.retry": "Try again 🔄",
         "adblock.banner": "🚫 It looks like you have <strong>AdBlock</strong> enabled — the cats may not show up. Disable blocking and refresh the page.",
         "lightbox.fav": "♡ Favorite", "lightbox.favOn": "♥ In favorites", "lightbox.download": "⬇️ Download", "lightbox.share": "🔗 Share",
+        "lightbox.dlFail": "Couldn't download the image",
         "empty.favs": "You don't have any favorite cats yet. Click the heart on a photo to save them here. 🐾",
         "premium.title": "👑 Premium cats", "premium.locked": "Premium cats from Cataas are locked. Unlock them by entering a friend's referral code!",
         "premium.unlocked": "You have access to premium cats! 👑", "premium.show": "Show premium cats 👑",
@@ -1195,18 +1197,103 @@ function lightboxToggleFav() {
     });
 }
 
-async function downloadImage(url) {
+function loadCrossImg(src) {
+    return new Promise((resolve, reject) => {
+        const im = new Image();
+        im.crossOrigin = "anonymous";
+        im.onload = () => resolve(im);
+        im.onerror = reject;
+        im.src = src;
+    });
+}
+
+function roundRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+}
+
+async function makeWatermarkedBlob(src) {
+    const img = await loadCrossImg(src);
+    const W = img.naturalWidth || img.width;
+    const H = img.naturalHeight || img.height;
+    if (!W || !H) throw new Error("brak wymiarów obrazu");
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d");
+    ctx.drawImage(img, 0, 0, W, H);
+
+    const unit = Math.min(W, H);
+    const fs = Math.max(13, Math.round(unit * 0.038));
+    const pad = Math.round(unit * 0.028);
+    const gap = Math.round(fs * 0.45);
+    const icon = Math.round(fs * 1.2);
+    const text = "CatNet.TeodorTeo.com";
+    const fontStr = `700 ${fs}px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif`;
+    ctx.font = fontStr;
+    const textW = ctx.measureText(text).width;
+    const boxH = Math.round(fs * 1.8);
+    const innerL = Math.round(fs * 0.6);
+    const boxW = Math.round(innerL + icon + gap + textW + fs * 0.7);
+    const bx = W - pad - boxW;
+    const by = H - pad - boxH;
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.42)";
+    roundRectPath(ctx, bx, by, boxW, boxH, boxH / 2);
+    ctx.fill();
+
     try {
-        const res = await safeFetch(url);
-        const blob = await res.blob();
+        const logo = await loadCrossImg("catnet-icon.png");
+        const lx = bx + innerL;
+        const ly = by + (boxH - icon) / 2;
+        ctx.save();
+        roundRectPath(ctx, lx, ly, icon, icon, Math.round(icon * 0.24));
+        ctx.clip();
+        ctx.drawImage(logo, lx, ly, icon, icon);
+        ctx.restore();
+    } catch (e) {}
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.94)";
+    ctx.textBaseline = "middle";
+    ctx.font = fontStr;
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = Math.round(fs * 0.25);
+    ctx.fillText(text, bx + innerL + icon + gap, by + boxH / 2 + Math.round(fs * 0.06));
+
+    return await new Promise((resolve, reject) =>
+        c.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob null"))), "image/jpeg", 0.92)
+    );
+}
+
+async function downloadImage(url) {
+    let blob = null;
+    const sources = ["/img?u=" + encodeURIComponent(url), url];
+    for (const src of sources) {
+        try { blob = await makeWatermarkedBlob(src); if (blob) break; } catch (e) {}
+    }
+    if (!blob) { showToast(t("lightbox.dlFail")); return; }
+
+    const file = new File([blob], "catnet-kot.jpg", { type: "image/jpeg" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file] }); return; }
+        catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    try {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
         a.download = "catnet-kot.jpg";
+        document.body.appendChild(a);
         a.click();
-        URL.revokeObjectURL(a.href);
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
         showToast(t("toast.downloaded"));
-    } catch {
-        window.open(url, "_blank");
+    } catch (e) {
+        showToast(t("lightbox.dlFail"));
     }
 }
 
