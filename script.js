@@ -79,20 +79,37 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     }
 }
 
-// Kot z „stojącym ogonem" (sylwetka) — do znaku wodnego na zdjęciach
-function catTailUpSvg(cls) {
-    return `<svg class="${cls || ""}" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">`
-        + '<path d="M19 21 L23 10 L30 19 Z"/><path d="M45 21 L41 10 L34 19 Z"/>'
-        + '<path d="M32 16 c9 0 15 7 15 16 v12 c0 5-4 8-9 8 H26 c-5 0-9-3-9-8 V32 c0-9 6-16 15-16 z"/>'
-        + '<path d="M39 49 c9 3 16-2 18-13 2-9-1-18-6-22 -3-2-6 2-3 5 3 4 4 11 3 17 -2 9-7 12-14 10 z"/>'
-        + "</svg>";
-}
+// Znak wodny z logo CatNet — widoczny dopiero po przytrzymaniu zdjęcia
 function catWatermarkEl(big) {
     const w = document.createElement("span");
     w.className = "cat-wm" + (big ? " cat-wm-lg" : "");
     w.setAttribute("aria-hidden", "true");
-    w.innerHTML = catTailUpSvg("cat-wm-ico") + '<span class="cat-wm-txt">CatNet.TeodorTeo.com</span>';
+    w.innerHTML = '<img class="cat-wm-ico" src="catnet-icon.png" alt="" width="16" height="16">'
+        + '<span class="cat-wm-txt">CatNet.TeodorTeo.com</span>';
     return w;
+}
+
+/* Pokazuje znak wodny tylko gdy ktoś przytrzyma zdjęcie (long-press)
+   lub kliknie prawym / spróbuje zapisać. Ustawia imgEl.__held podczas
+   przytrzymania, by kod kliknięcia mógł pominąć np. otwarcie podglądu. */
+function enableHoldReveal(imgEl, holderEl) {
+    if (!imgEl || !holderEl) return;
+    let timer = null;
+    const show = () => { imgEl.__held = true; holderEl.classList.add("wm-show"); };
+    const hide = () => holderEl.classList.remove("wm-show");
+    imgEl.addEventListener("pointerdown", () => {
+        imgEl.__held = false;
+        clearTimeout(timer);
+        timer = setTimeout(show, 300);
+    });
+    const end = () => {
+        clearTimeout(timer);
+        if (holderEl.classList.contains("wm-show")) setTimeout(hide, 700);
+    };
+    imgEl.addEventListener("pointerup", end);
+    imgEl.addEventListener("pointerleave", end);
+    imgEl.addEventListener("pointercancel", end);
+    imgEl.addEventListener("contextmenu", () => { show(); setTimeout(hide, 1800); });
 }
 
 function createCatElement(grid, url) {
@@ -107,6 +124,7 @@ function createCatElement(grid, url) {
     img.decoding = "async";
     img.style.cursor = "zoom-in";
     img.addEventListener("click", () => {
+        if (img.__held) { img.__held = false; return; }   // przytrzymanie = tylko znak wodny
         if (getSettings().meow) playMeow();
         registerCatClick();
         openLightbox(url);
@@ -133,6 +151,7 @@ function createCatElement(grid, url) {
     card.appendChild(img);
     card.appendChild(fav);
     card.appendChild(catWatermarkEl());
+    enableHoldReveal(img, card);
     grid.appendChild(card);
 }
 
@@ -490,7 +509,11 @@ function loadSweetCat() {
     const img = document.querySelector(".freud-img");
     if (img) {
         img.style.cursor = "zoom-in";
-        img.addEventListener("click", () => openLightbox(FREUD_IMG));
+        enableHoldReveal(img, img.closest(".freud-media") || img.closest(".freud-figure"));
+        img.addEventListener("click", () => {
+            if (img.__held) { img.__held = false; return; }
+            openLightbox(FREUD_IMG);
+        });
     }
 }
 
@@ -1170,7 +1193,12 @@ function openLightbox(url) {
     lightboxUrl = url;
     const box = document.getElementById("lightbox");
     if (!box) return;
-    document.getElementById("lightbox-img").src = url;
+    const lbImg = document.getElementById("lightbox-img");
+    lbImg.src = url;
+    if (!lbImg.__holdWired) {
+        enableHoldReveal(lbImg, lbImg.closest(".lightbox-frame"));
+        lbImg.__holdWired = true;
+    }
     updateLightboxFav();
     box.classList.add("open");
 }

@@ -410,11 +410,16 @@ html.simple-mode .cat-sound { display: none !important; }
     pointer-events: none;
     z-index: 3;
     overflow: hidden;
+    /* Ukryty domyślnie — pokazuje się dopiero po przytrzymaniu zdjęcia */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
 }
+.wm-show .cat-wm { opacity: 1; visibility: visible; }
 .cat-wm-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cat-wm-ico { width: 14px; height: 14px; flex-shrink: 0; color: var(--accent); }
+.cat-wm-ico { width: 16px; height: 16px; flex-shrink: 0; border-radius: 4px; object-fit: cover; display: block; }
 
 /* Lightbox: ramka wokół obrazu + większy znak wodny */
 .lightbox-frame { position: relative; display: inline-flex; }
 .cat-wm-lg { left: 12px; bottom: 12px; font-size: 13px; padding: 5px 13px 5px 9px; gap: 7px; }
-.cat-wm-lg .cat-wm-ico { width: 17px; height: 17px; }
+.cat-wm-lg .cat-wm-ico { width: 20px; height: 20px; border-radius: 5px; }
