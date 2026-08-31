@@ -1,15 +1,10 @@
-/* ===========================================================
-   CatNet — wspólna logika dla wszystkich podstron
-   =========================================================== */
-
 const API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
 let currentLimit = 2;
-let currentBreed = "";       // filtr rasy (puste = wszystkie)
-let catSource = "standard";  // źródło kotów: "standard" (TheCatAPI) | "community" (Cataas) | "deluxe" (miks 2 API)
-let forceFallback = false;   // tryb awaryjny wymuszony przez admina
-let autoRefreshTimer = null;  // pokaz slajdów / auto-odświeżanie
+let currentBreed = "";
+let catSource = "standard";
+let forceFallback = false;
+let autoRefreshTimer = null;
 
-// Awaryjne koty (gdy TheCatAPI nie odpowiada)
 const fallbackImages = [
     "https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg",
     "https://cdn2.thecatapi.com/images/1g.jpg",
@@ -17,7 +12,6 @@ const fallbackImages = [
     "https://cdn2.thecatapi.com/images/a5j.jpg"
 ];
 
-/* ---------- Ulubione koty (zapis w przeglądarce, per konto) ---------- */
 function favKey() { return "catnet_favorites"; }
 function getFavorites() {
     try {
@@ -41,7 +35,7 @@ function toggleFavorite(url) {
     }
     localStorage.setItem(favKey(), JSON.stringify(favs));
     updateFavCounter();
-    return idx === -1; // true jeśli właśnie dodano
+    return idx === -1;
 }
 
 function updateFavCounter() {
@@ -49,8 +43,12 @@ function updateFavCounter() {
     if (el) el.innerText = getFavorites().length;
 }
 
+function safeFetch(url, ms = 8000, opts = {}) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(timer));
+}
 
-/* ---------- Ładowanie kotów ---------- */
 async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
@@ -60,7 +58,7 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     try {
         if (forceFallback) throw new Error("Wymuszony tryb awaryjny");
         const breedParam = currentBreed ? `&breed_ids=${currentBreed}` : "";
-        const response = await fetch(
+        const response = await safeFetch(
             `https://api.thecatapi.com/v1/images/search?limit=${limit}${breedParam}&api_key=${API_KEY}`
         );
         if (!response.ok) throw new Error("API Błąd");
@@ -79,19 +77,15 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     }
 }
 
-// Znak wodny z logo CatNet — widoczny dopiero po przytrzymaniu zdjęcia
 function catWatermarkEl(big) {
     const w = document.createElement("span");
     w.className = "cat-wm" + (big ? " cat-wm-lg" : "");
     w.setAttribute("aria-hidden", "true");
-    w.innerHTML = '<img class="cat-wm-ico" src="catnet-icon.png" alt="" width="16" height="16">'
+    w.innerHTML = '<img class="cat-wm-ico" src="catnet-icon.png" alt="CatNet" width="16" height="16" onerror="this.remove()">'
         + '<span class="cat-wm-txt">CatNet.TeodorTeo.com</span>';
     return w;
 }
 
-/* Pokazuje znak wodny tylko gdy ktoś przytrzyma zdjęcie (long-press)
-   lub kliknie prawym / spróbuje zapisać. Ustawia imgEl.__held podczas
-   przytrzymania, by kod kliknięcia mógł pominąć np. otwarcie podglądu. */
 function enableHoldReveal(imgEl, holderEl) {
     if (!imgEl || !holderEl) return;
     let timer = null;
@@ -123,8 +117,13 @@ function createCatElement(grid, url) {
     img.loading = "lazy";
     img.decoding = "async";
     img.style.cursor = "zoom-in";
+    img.addEventListener("error", () => {
+        if (img.dataset.fb) { img.closest(".cat-card")?.remove(); return; }
+        img.dataset.fb = "1";
+        img.src = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+    });
     img.addEventListener("click", () => {
-        if (img.__held) { img.__held = false; return; }   // przytrzymanie = tylko znak wodny
+        if (img.__held) { img.__held = false; return; }
         if (getSettings().meow) playMeow();
         registerCatClick();
         openLightbox(url);
@@ -142,9 +141,9 @@ function createCatElement(grid, url) {
         if (added) {
             heartBurst(card);
             showToast(t("toast.favSaved"));
-            if (grid && grid.id === "sweet-grid") confettiBurst(card); // Freud → konfetti 🎉
+            if (grid && grid.id === "sweet-grid") confettiBurst(card);
         }
-        // Odśwież sekcję ulubionych, jeśli jest na stronie
+
         if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
     });
 
@@ -156,19 +155,17 @@ function createCatElement(grid, url) {
 }
 
 function refreshCats(gridId = "cat-grid") {
-    // W galerii (z przełącznikiem źródła) odświeżamy z aktywnego źródła
+
     if (document.getElementById("src-toggle")) loadActive(gridId, currentLimit);
     else loadCats(gridId);
 }
 
-/* Ładuje koty z aktualnie wybranego źródła (przełącznik w galerii) */
 function loadActive(gridId = "cat-grid", limit = currentLimit) {
     if (catSource === "community") loadProCats(gridId, limit);
     else if (catSource === "deluxe") loadDeluxeCats(gridId, limit);
     else loadCats(gridId, limit);
 }
 
-/* Ustawia źródło z przełącznika i przeładowuje galerię */
 function setCatSource(src) {
     catSource = src;
     const box = document.getElementById("src-toggle");
@@ -184,7 +181,6 @@ function initSourceToggle() {
         b.addEventListener("click", () => setCatSource(b.getAttribute("data-src"))));
 }
 
-/* ---------- Galeria ulubionych ---------- */
 function renderFavorites(gridId = "fav-grid") {
     const grid = document.getElementById(gridId);
     if (!grid) return;
@@ -198,15 +194,12 @@ function renderFavorites(gridId = "fav-grid") {
     favs.forEach((url) => createCatElement(grid, url));
 }
 
-/* ---------- Ukryty panel admina ---------- */
 let tClicks = 0;
 function triggerAdmin() {
     tClicks++;
     if (tClicks === 8) openSecretMenu();
 }
 
-/* Otwiera sekretne menu (panel admina). Jeśli go nie ma na tej stronie,
-   przechodzi na stronę główną i otwiera je tam. */
 function openSecretMenu() {
     tClicks = 0;
     catClicks = 0;
@@ -221,7 +214,6 @@ function openSecretMenu() {
     }
 }
 
-/* Ukryte wejścia: wpisz „cats" albo kliknij 15 kotów */
 let catClicks = 0;
 let keyBuffer = "";
 function registerCatClick() {
@@ -241,7 +233,6 @@ function saveAdmin() {
     document.getElementById("adm-panel").style.display = "none";
 }
 
-/* ---------- Ciekawostki o kotach ---------- */
 const catFacts = [
     "Koty przesypiają od 12 do 16 godzin na dobę.",
     "Kot potrafi wydać ponad 100 różnych dźwięków, a pies tylko około 10.",
@@ -458,7 +449,6 @@ function getAllFacts() {
     return (LANG === "en" ? catFactsEn : catFacts).slice();
 }
 
-/* „Dozowanie” — worek losujący bez powtórek aż do wyczerpania puli */
 let factBag = [];
 function nextFact() {
     if (factBag.length === 0) {
@@ -482,9 +472,8 @@ function showRandomFact(elId = "cat-fact") {
     }, 120);
 }
 
-/* Najsłodszy kot na świecie — prawdziwy Freud */
 const FREUD_IMG = "freud.jpeg";
-/* Podpina polubienie/konfetti/lightbox pod statyczny (indeksowalny) obrazek Freuda */
+
 function loadSweetCat() {
     const fav = document.querySelector(".freud-fav");
     if (fav) {
@@ -517,10 +506,6 @@ function loadSweetCat() {
     }
 }
 
-/* ===========================================================
-   USTAWIENIA UŻYTKOWNIKA (motywy, tryb, gęstość, liczba kotów)
-   =========================================================== */
-
 const ACCENTS = {
     sunny:  { a: "#ffc22e", b: "#f0a500", grad: "linear-gradient(120deg,#ffd23f,#f0a500)" },
     aurora: { a: "#7c5cff", b: "#ff5ca8", grad: "linear-gradient(120deg,#7c5cff 0%,#5cc8ff 50%,#ff5ca8 100%)" },
@@ -543,9 +528,6 @@ const defaultSettings = {
     lang: "auto"
 };
 
-/* ===========================================================
-   i18n — wersja polska / angielska (auto-wykrywanie)
-   =========================================================== */
 let LANG = "pl";
 
 function detectLang() {
@@ -554,7 +536,7 @@ function detectLang() {
     const langs = (navigator.languages || [navigator.language || "en"]).join(",").toLowerCase();
     let tz = "";
     try { tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "").toLowerCase(); } catch {}
-    // Z Polski → polski, w przeciwnym razie angielski
+
     if (langs.includes("pl") || tz === "europe/warsaw") return "pl";
     return "en";
 }
@@ -914,7 +896,6 @@ function setSetting(key, value) {
     applySettings();
 }
 
-/* Dobiera czytelny kolor tekstu (biały/ciemny) na tle danego koloru akcentu */
 function contrastOn(hex) {
     const h = (hex || "").replace("#", "");
     if (h.length < 6) return "#ffffff";
@@ -939,7 +920,6 @@ function applySettings() {
     syncSettingsUI();
 }
 
-/* ---------- Budowa szuflady ustawień ---------- */
 function buildSettingsDrawer() {
     if (document.getElementById("settings-drawer")) return;
 
@@ -1044,7 +1024,6 @@ function buildSettingsDrawer() {
     document.body.appendChild(overlay);
     document.body.appendChild(drawer);
 
-    // Zdarzenia
     drawer.querySelectorAll("[data-lang]").forEach((b) =>
         b.addEventListener("click", () => setLang(b.dataset.lang))
     );
@@ -1102,7 +1081,7 @@ function syncSettingsUI() {
 }
 
 function openSettings() {
-    syncSettingsUI();   // odśwież stany (m.in. zgodę na analitykę)
+    syncSettingsUI();
     document.getElementById("settings-overlay")?.classList.add("open");
     document.getElementById("settings-drawer")?.classList.add("open");
 }
@@ -1131,7 +1110,7 @@ function clearFavorites() {
         b.classList.remove("is-fav");
         b.innerHTML = "♡";
     });
-    // Zamiast okna „na pewno?" — małe okienko z możliwością cofnięcia
+
     showMiniBar({
         id: "undo-favs",
         icon: "🗑️",
@@ -1148,9 +1127,6 @@ function clearFavorites() {
     });
 }
 
-/* ===========================================================
-   POKAZ SLAJDÓW / AUTO-ODŚWIEŻANIE
-   =========================================================== */
 function startAutoRefresh() {
     stopAutoRefresh();
     if (!document.getElementById("cat-grid")) return;
@@ -1161,9 +1137,6 @@ function stopAutoRefresh() {
     autoRefreshTimer = null;
 }
 
-/* ===========================================================
-   LIGHTBOX (podgląd, pobieranie, udostępnianie)
-   =========================================================== */
 let lightboxUrl = "";
 
 function buildLightbox() {
@@ -1215,7 +1188,7 @@ function lightboxToggleFav() {
     toggleFavorite(lightboxUrl);
     updateLightboxFav();
     if (document.getElementById("fav-grid")) renderFavorites("fav-grid");
-    // odśwież serduszka na widocznych kartach
+
     document.querySelectorAll(".cat-card img").forEach((img) => {
         if (img.src === lightboxUrl) {
             const b = img.parentElement.querySelector(".fav-btn");
@@ -1228,7 +1201,7 @@ function lightboxToggleFav() {
 
 async function downloadImage(url) {
     try {
-        const res = await fetch(url);
+        const res = await safeFetch(url);
         const blob = await res.blob();
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
@@ -1242,7 +1215,7 @@ async function downloadImage(url) {
 }
 
 async function shareImage(url) {
-    // Udostępniamy stronę CatNet, NIE bezpośredni link do CDN ze zdjęciem
+
     const shareUrl = location.origin + location.pathname;
     const text = (LANG === "en"
         ? "🐾 Look at this adorable cat on CatNet!"
@@ -1251,7 +1224,7 @@ async function shareImage(url) {
         try {
             await navigator.share({ title: "CatNet", text, url: shareUrl });
             return;
-        } catch { /* anulowano */ }
+        } catch {  }
     }
     try {
         await navigator.clipboard.writeText(text + " " + shareUrl);
@@ -1264,7 +1237,7 @@ async function shareImage(url) {
 async function surpriseCat() {
     closeSettings();
     try {
-        const res = await fetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
+        const res = await safeFetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
         const data = await res.json();
         openLightbox(data[0].url);
     } catch {
@@ -1272,14 +1245,11 @@ async function surpriseCat() {
     }
 }
 
-/* ===========================================================
-   FILTR RAS
-   =========================================================== */
 async function loadBreeds(selectId = "breed-filter") {
     const sel = document.getElementById(selectId);
     if (!sel) return;
     try {
-        const res = await fetch("https://api.thecatapi.com/v1/breeds");
+        const res = await safeFetch("https://api.thecatapi.com/v1/breeds");
         const breeds = await res.json();
         breeds.forEach((b) => {
             const o = document.createElement("option");
@@ -1292,15 +1262,12 @@ async function loadBreeds(selectId = "breed-filter") {
     }
     sel.addEventListener("change", () => {
         currentBreed = sel.value;
-        // Filtr ras działa na TheCatAPI — wracamy do źródła standardowego
+
         if (document.getElementById("src-toggle")) setCatSource("standard");
         else loadCats("cat-grid", currentLimit);
     });
 }
 
-/* ===========================================================
-   TOAST
-   =========================================================== */
 let toastTimer;
 function showToast(msg) {
     let t = document.getElementById("toast");
@@ -1316,9 +1283,6 @@ function showToast(msg) {
     toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
 }
 
-/* ===========================================================
-   ROZBUDOWANY PANEL ADMINA
-   =========================================================== */
 function admSetLimit() {
     const v = parseInt(document.getElementById("adm-limit").value) || 2;
     currentLimit = v;
@@ -1354,9 +1318,6 @@ function admStats() {
         `kotów/stronę: ${s.perPage} · tryb awaryjny: ${forceFallback ? "WŁ" : "WYŁ"}`;
 }
 
-/* ===========================================================
-   HISTORIA OGLĄDANYCH KOTÓW
-   =========================================================== */
 const HISTORY_KEY = "catnet_history";
 
 function getHistory() {
@@ -1392,9 +1353,6 @@ function clearHistory() {
     });
 }
 
-/* ===========================================================
-   EKSPORT / IMPORT DANYCH (JSON zakodowany w Base64)
-   =========================================================== */
 function toB64(str) {
     return btoa(unescape(encodeURIComponent(str)));
 }
@@ -1466,9 +1424,6 @@ function applyImport(b64) {
     }
 }
 
-/* ===========================================================
-   BLOKADA STRONY / ADBLOCK
-   =========================================================== */
 function showBlockedNotice(grid) {
     if (!grid || grid.querySelector(".blocked-notice")) return;
     const note = document.createElement("div");
@@ -1509,9 +1464,6 @@ function detectAdblock() {
     }, 300);
 }
 
-/* ===========================================================
-   KREATOR STRONY POWITALNEJ (link z imieniem w b64) + Meow Mode
-   =========================================================== */
 function welcomeLinkFor(name) {
     const base = location.origin + location.pathname.replace(/[^/]*$/, "") + "index.html";
     return base + "?hi=" + encodeURIComponent(toB64(name));
@@ -1538,7 +1490,6 @@ function admOpenWelcome() {
     if (out && out.value) window.open(out.value, "_blank");
 }
 
-/* Spersonalizowane powitanie, gdy w adresie jest ?hi=<b64(imię)> */
 function checkWelcomeParam() {
     try {
         const hi = new URLSearchParams(location.search).get("hi");
@@ -1551,7 +1502,6 @@ function checkWelcomeParam() {
     } catch {}
 }
 
-/* Meow Mode — klik w kota odtwarza syntezowane „miau” */
 let audioCtx = null;
 function playMeow() {
     try {
@@ -1587,9 +1537,8 @@ function playMeow() {
     } catch {}
 }
 
-/* ---------- Pasek nawigacji: hamburger (mobile) ---------- */
 function buildNavExtras() {
-    // Przełącznik języka PL / EN u góry (w navbarze, przed kołem zębatym)
+
     document.querySelectorAll(".nav-tools").forEach((tools) => {
         if (tools.querySelector(".lang-toggle")) return;
         const cur = (LANG === "en") ? "en" : "pl";
@@ -1620,7 +1569,7 @@ function buildNavExtras() {
             const open = nav.classList.toggle("open");
             burger.classList.toggle("open", open);
         });
-        // Zamknij menu po kliknięciu w link
+
         nav.querySelectorAll("a").forEach((a) =>
             a.addEventListener("click", () => {
                 nav.classList.remove("open");
@@ -1631,9 +1580,6 @@ function buildNavExtras() {
     });
 }
 
-/* ===========================================================
-   ONBOARDING (prosty samouczek powitalny)
-   =========================================================== */
 const ONB_KEY = "catnet_seen_onb";
 const onbSlides = [
     { m: "🐱", h: "onb.s1t", p: "onb.s1p" },
@@ -1686,9 +1632,6 @@ function maybeShowOnboarding() {
     if (!localStorage.getItem(ONB_KEY)) setTimeout(showOnboarding, 600);
 }
 
-/* ===========================================================
-   NOWOCZESNE DODATKI: szkielety, „do góry”
-   =========================================================== */
 function showSkeletons(grid, n) {
     if (!grid) return;
     for (let i = 0; i < n; i++) {
@@ -1698,7 +1641,6 @@ function showSkeletons(grid, n) {
     }
 }
 
-/* Koty PRO (Cataas) — za darmo dla wszystkich */
 async function loadProCats(gridId = "cat-grid", limit = currentLimit) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
@@ -1706,7 +1648,7 @@ async function loadProCats(gridId = "cat-grid", limit = currentLimit) {
     showSkeletons(grid, limit);
     try {
         const skip = Math.floor(Math.random() * 300);
-        const res = await fetch(`https://cataas.com/api/cats?limit=${limit}&skip=${skip}`);
+        const res = await safeFetch(`https://cataas.com/api/cats?limit=${limit}&skip=${skip}`);
         const data = await res.json();
         if (!data || !data.length) throw new Error("Cataas pusto");
         grid.innerHTML = "";
@@ -1725,7 +1667,6 @@ function showProCats() {
     loadProCats("cat-grid", currentLimit);
 }
 
-/* Małe koty — kocięta (Cataas, tag „kitten") */
 async function loadKittens(gridId = "cat-grid", limit = currentLimit) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
@@ -1733,7 +1674,7 @@ async function loadKittens(gridId = "cat-grid", limit = currentLimit) {
     showSkeletons(grid, limit);
     try {
         const skip = Math.floor(Math.random() * 60);
-        const res = await fetch(`https://cataas.com/api/cats?tags=kitten&limit=${limit}&skip=${skip}`);
+        const res = await safeFetch(`https://cataas.com/api/cats?tags=kitten&limit=${limit}&skip=${skip}`);
         const data = await res.json();
         if (!data || !data.length) throw new Error("Cataas pusto");
         grid.innerHTML = "";
@@ -1745,7 +1686,6 @@ async function loadKittens(gridId = "cat-grid", limit = currentLimit) {
     showToast(t("toast.kittens"));
 }
 
-/* Koty Deluxe — miks z 2 API naraz (TheCatAPI + Cataas) */
 async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
@@ -1755,18 +1695,17 @@ async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
     const fromCat = [];
     const fromCataas = [];
     try {
-        const r = await fetch(`https://api.thecatapi.com/v1/images/search?limit=${half}&api_key=${API_KEY}`);
+        const r = await safeFetch(`https://api.thecatapi.com/v1/images/search?limit=${half}&api_key=${API_KEY}`);
         const d = await r.json();
         (d || []).forEach((c) => fromCat.push(c.url));
-    } catch { /* pomijamy to źródło */ }
+    } catch {  }
     try {
         const skip = Math.floor(Math.random() * 300);
-        const r = await fetch(`https://cataas.com/api/cats?limit=${limit - half}&skip=${skip}`);
+        const r = await safeFetch(`https://cataas.com/api/cats?limit=${limit - half}&skip=${skip}`);
         const d = await r.json();
         (d || []).forEach((c) => fromCataas.push(`https://cataas.com/cat/${c._id || c.id}`));
-    } catch { /* pomijamy to źródło */ }
+    } catch {  }
 
-    // Przeplatamy oba źródła, żeby miks był widoczny
     const mixed = [];
     for (let i = 0; i < Math.max(fromCat.length, fromCataas.length); i++) {
         if (fromCat[i]) mixed.push(fromCat[i]);
@@ -1781,7 +1720,6 @@ async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
     showToast(t("toast.deluxe"));
 }
 
-/* Powitanie zależne od pory dnia — bardziej po ludzku */
 function heroGreeting() {
     const el = document.getElementById("hero-greet");
     if (!el) return;
@@ -1790,7 +1728,6 @@ function heroGreeting() {
     el.innerText = t(key);
 }
 
-/* Serduszko wystrzeliwuje z karty przy polubieniu */
 function heartBurst(card) {
     if (!card) return;
     for (let i = 0; i < 3; i++) {
@@ -1804,10 +1741,13 @@ function heartBurst(card) {
     }
 }
 
-/* Wybuch konfetti (np. przy polubieniu Freuda) */
+function confetti() {
+    try { confettiBurst(document.querySelector(".quiz-result") || document.body); } catch (e) {}
+}
+
 function confettiBurst(anchor) {
     if (!anchor) return;
-    if (isSimpleMode()) return;   // tryb prosty — bez konfetti
+    if (isSimpleMode()) return;
     const rect = anchor.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -1830,7 +1770,6 @@ function confettiBurst(anchor) {
     }
 }
 
-/* Marquee — przewijany pasek haseł (zawartość 2x dla pętli) */
 function fillMarquee() {
     const track = document.getElementById("marquee-track");
     if (!track) return;
@@ -1838,7 +1777,6 @@ function fillMarquee() {
     track.innerHTML = (phrase.repeat(3) + phrase.repeat(3));
 }
 
-/* Scroll reveal usunięty — sekcje są widoczne od razu (bez „odsłaniania”) */
 function initReveal() {
     document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"));
 }
@@ -1855,9 +1793,6 @@ function buildBackToTop() {
     window.addEventListener("scroll", () => b.classList.toggle("show", window.scrollY > 400));
 }
 
-/* ===========================================================
-   QUIZ: „Jakim kotem jesteś?” — prawdziwa, działająca funkcja
-   =========================================================== */
 const QUIZ = {
     pl: {
         title: "Czy jesteś kotem?",
@@ -2057,7 +1992,7 @@ async function loadQuizCat() {
     if (!grid) return;
     let url;
     try {
-        const res = await fetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
+        const res = await safeFetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
         url = (await res.json())[0].url;
     } catch {
         url = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
@@ -2071,7 +2006,6 @@ function quizShareLines(pct) {
         : { l1: `Jestem w ${pct}% kotem!`, l2: "Zobacz czy jesteś kotem!" };
 }
 
-// Ikona Lucide „cat" (viewBox 24×24) — do małego dymka po otwarciu linku
 const LUCIDE_CAT_PATHS = [
     "M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z",
     "M8 14v.5",
@@ -2084,16 +2018,14 @@ function lucideCatSvg() {
         + "</svg>";
 }
 
-// Jeden link z wynikiem w parametrze ?k= (podgląd sam pokaże napis)
 function quizShareUrl(pct) {
-    const base = location.origin + location.pathname;   // …/quiz.html
+    const base = location.origin + location.pathname;
     return base + "?k=" + pct + (LANG === "en" ? "&l=en" : "");
 }
 
 async function shareQuizResult(emoji, name, pct) {
     const url = quizShareUrl(pct);
-    // Udostępniamy TYLKO link — iMessage/WhatsApp/itp. same wczytają napis
-    // z podglądu (meta OG podmieniane na brzegu przez worker Cloudflare).
+
     if (navigator.share) {
         try { await navigator.share({ url }); return; }
         catch (e) { if (e && e.name === "AbortError") return; }
@@ -2106,7 +2038,6 @@ async function shareQuizResult(emoji, name, pct) {
     }
 }
 
-// Po otwarciu linku ze znajomym wynikiem: pokaż miły dymek i wyczyść adres z ?k=
 function handleSharedResultParam() {
     let k = NaN;
     try {
@@ -2115,7 +2046,7 @@ function handleSharedResultParam() {
     } catch {}
     if (!Number.isFinite(k)) return;
     k = Math.max(0, Math.min(100, k));
-    try { history.replaceState(null, "", location.pathname); } catch {}   // usuń ?k= z paska adresu
+    try { history.replaceState(null, "", location.pathname); } catch {}
     const msg = LANG === "en"
         ? `Someone is ${k}% cat. And you?`
         : `Ktoś jest w ${k}% kotem. A Ty?`;
@@ -2124,12 +2055,6 @@ function handleSharedResultParam() {
     }
 }
 
-/* ===========================================================
-   ZGODA NA PLIKI COOKIE (RODO)
-   Microsoft Clarity ładuje się WYŁĄCZNIE po „Akceptuję".
-   „Odrzuć" nie uruchamia analityki i czyści jej pliki cookie.
-   Wybór jest zapamiętywany (localStorage).
-   =========================================================== */
 const COOKIE_KEY = "catnet_cookie_consent";
 const CLARITY_ID = "x3sqx8dp6j";
 
@@ -2138,7 +2063,7 @@ function cookieConsent() {
 }
 
 function loadClarity() {
-    if (cookieConsent() !== "accepted") return;   // bez zgody nie ładujemy
+    if (cookieConsent() !== "accepted") return;
     if (window.__clarityLoaded) return;
     window.__clarityLoaded = true;
     (function (c, l, a, r, i, t, y) {
@@ -2146,8 +2071,7 @@ function loadClarity() {
         t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
         y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
     })(window, document, "clarity", "script", CLARITY_ID);
-    // Sygnał zgody dla Clarity (gdy w projekcie włączona jest zgoda na cookies,
-    // bez tego Clarity nie zapisuje danych). Nieszkodliwy, gdy opcja wyłączona.
+
     try { window.clarity("consent"); } catch {}
 }
 
@@ -2160,7 +2084,7 @@ function clearClarityCookies() {
 }
 
 function lucideCookieSvg() {
-    // Lucide „cookie"
+
     return '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
         + '<path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>'
         + '<path d="M8.5 8.5v.01"/><path d="M16 15.5v.01"/><path d="M12 12v.01"/>'
@@ -2207,7 +2131,7 @@ function rejectCookies() {
 function openCookieSettings() { showCookieBanner(); }
 
 function initCookieConsent() {
-    // Odnośnik „Pliki cookie" w stopce (zmiana/wycofanie zgody — wymóg RODO)
+
     const footP = document.querySelector("footer.footer p:last-child");
     if (footP && !footP.querySelector(".cookie-link")) {
         footP.appendChild(document.createTextNode(" · "));
@@ -2225,11 +2149,6 @@ function initCookieConsent() {
     else if (c !== "rejected") showCookieBanner();
 }
 
-/* ===========================================================
-   MINI-OKIENKA — małe paski na dole (w stylu banera cookie).
-   Uniwersalny komponent do wielu drobnych ułatwień:
-   propozycji, potwierdzeń z „Cofnij", podpowiedzi itp.
-   =========================================================== */
 let __miniSeq = 0;
 
 function ensureMiniStack() {
@@ -2240,7 +2159,7 @@ function ensureMiniStack() {
         s.className = "mini-stack";
         document.body.appendChild(s);
     }
-    // gdy widać baner cookie, podnosimy pasek, żeby się nie nakładały
+
     s.classList.toggle("above-cookie", !!document.querySelector(".cookie-bar.open"));
     return s;
 }
@@ -2252,7 +2171,6 @@ function hideMiniBar(id) {
     setTimeout(() => bar.remove(), 280);
 }
 
-/* opts: { id?, icon?(html), text, actions?[{label, primary?, onClick?, close?}], timeout? } */
 function showMiniBar(opts) {
     opts = opts || {};
     const stack = ensureMiniStack();
@@ -2288,12 +2206,6 @@ function showMiniBar(opts) {
     return id;
 }
 
-/* ===========================================================
-   DZIKI KOT — zabawne odgłosy (rawr!, tk tk tk tk, mrrp…)
-   Małe „okienka" z tekstem odlatują w górę i znikają.
-   Delikatne i nie-wkurzające: tylko po kliknięciu, bez dźwięku,
-   wyłączone w trybie prostym i przy prefers-reduced-motion.
-   =========================================================== */
 const CAT_SOUNDS = ["miau", "mrrp", "prr…", "nyaa~", "mao?", "tk tk tk tk", "ekekeke", "brr-tk-tk", "rawr", "mrrow"];
 const CAT_WILD = ["RAWR!", "MRRRAWR!", "tk-tk-tk-tk-tk!", "NYAAA!"];
 
@@ -2305,7 +2217,7 @@ function catVocalize(x, y, opts) {
     const el = document.createElement("div");
     el.className = "cat-sound" + (opts.wild ? " wild" : "");
     el.textContent = opts.text || pool[Math.floor(Math.random() * pool.length)];
-    // trzymaj dymek w widoku (żeby nie ucinało przy krawędziach)
+
     const cx = Math.max(70, Math.min(window.innerWidth - 70, x));
     const cy = Math.max(60, Math.min(window.innerHeight - 40, y));
     el.style.left = cx + "px";
@@ -2320,34 +2232,29 @@ function catVocalize(x, y, opts) {
 
 function initCatSounds() {
     document.addEventListener("click", (e) => {
-        // Łapka w logo = dziki ryk kota (easter egg, bez przechodzenia na stronę)
+
         const paw = e.target.closest(".brand .paw");
         if (paw) {
             e.preventDefault();
             e.stopPropagation();
             catVocalize(e.clientX, e.clientY, { wild: true });
             paw.classList.remove("paw-wiggle");
-            void paw.offsetWidth;              // reset animacji
+            void paw.offsetWidth;
             paw.classList.add("paw-wiggle");
             return;
         }
-        // Serduszko „polub" = ciche miauknięcie / tk tk
+
         if (e.target.closest(".fav-btn")) {
             catVocalize(e.clientX, e.clientY);
             return;
         }
-        // Klik w zdjęcie kota = odgłos (nie blokuje podglądu)
+
         if (e.target.closest(".cat-card img, .cat-grid img, .marquee img, .freud-img, .sweet-img")) {
             catVocalize(e.clientX, e.clientY);
         }
     });
 }
 
-/* ===========================================================
-   TRYB PROSTY (mniej efektów)
-   Wyłącza tło parallax, matowe szkło i animacje.
-   Zapamiętywany w ustawieniach; pyta o niego raz (okienko).
-   =========================================================== */
 const SIMPLE_PROMPTED_KEY = "catnet_simple_prompted";
 
 function isSimpleMode() {
@@ -2369,7 +2276,7 @@ function markSimplePrompted() {
 const LIGHTNING_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg>';
 
 function showSimplePrompt() {
-    // Małe okienko na dole (jak baner cookie), nie duży modal
+
     showMiniBar({
         id: "simple-bar",
         icon: LIGHTNING_SVG,
@@ -2382,21 +2289,17 @@ function showSimplePrompt() {
 }
 
 function maybeShowSimplePrompt() {
-    // Pytamy tylko raz. Nie nakładamy się na samouczek ani baner cookie —
-    // jeśli któreś ma się pojawić, pokażemy się dopiero przy kolejnej wizycie.
+
     if (simplePrompted()) return;
     if (isSimpleMode()) { markSimplePrompted(); return; }
     try {
-        const onbWillShow = !localStorage.getItem(ONB_KEY);      // samouczek pokaże się na 1. wizycie
-        const cookieUndecided = cookieConsent() === null;        // baner cookie jeszcze widoczny
+        const onbWillShow = !localStorage.getItem(ONB_KEY);
+        const cookieUndecided = cookieConsent() === null;
         if (onbWillShow || cookieUndecided) return;
     } catch {}
     setTimeout(showSimplePrompt, 900);
 }
 
-/* ===========================================================
-   INICJALIZACJA WSPÓLNA
-   =========================================================== */
 document.addEventListener("DOMContentLoaded", function () {
     LANG = detectLang();
     buildSettingsDrawer();
@@ -2421,7 +2324,6 @@ document.addEventListener("DOMContentLoaded", function () {
         toggle.addEventListener("click", openSettings);
     }
 
-    // Sekretne wejście z innej strony
     if (sessionStorage.getItem("catnet_open_secret") === "1") {
         sessionStorage.removeItem("catnet_open_secret");
         setTimeout(openSecretMenu, 400);
@@ -2440,11 +2342,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-/* ===========================================================
-   Delikatny parallax od kursora — ustawia --mx / --my (-1..1)
-   na <html>. Warstwy tła reagują na ruch myszy przy górze strony.
-   Pomijane przy prefers-reduced-motion i na ekranach dotykowych.
-   =========================================================== */
 (function cursorParallax() {
     try {
         var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -2455,7 +2352,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var tx = 0, ty = 0, cx = 0, cy = 0, ticking = false;
 
         function render() {
-            // płynne dochodzenie do celu (łagodny lerp)
+
             cx += (tx - cx) * 0.08;
             cy += (ty - cy) * 0.08;
             root.style.setProperty("--mx", cx.toFixed(3));
@@ -2468,12 +2365,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         window.addEventListener("pointermove", function (e) {
-            tx = (e.clientX / window.innerWidth) * 2 - 1;   // -1..1
-            ty = (e.clientY / window.innerHeight) * 2 - 1;  // -1..1
+            tx = (e.clientX / window.innerWidth) * 2 - 1;
+            ty = (e.clientY / window.innerHeight) * 2 - 1;
             if (!ticking) {
                 ticking = true;
                 requestAnimationFrame(render);
             }
         }, { passive: true });
-    } catch (err) { /* bez parallaxu kursora — nic się nie dzieje */ }
+    } catch (err) {  }
 })();

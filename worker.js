@@ -1,20 +1,9 @@
-/**
- * CatNet — worker Cloudflare do dynamicznego podglądu linku wyniku quizu.
- *
- * Gdy ktoś udostępni link `…/quiz.html?k=73` (opcjonalnie `&l=en`),
- * roboty podglądu (iMessage, WhatsApp, Messenger, Slack, X…) NIE uruchamiają
- * JavaScriptu, więc same nie zobaczą wyniku. Ten worker podmienia znaczniki
- * meta (OG/Twitter + <title>) na brzegu, żeby w podglądzie pojawił się napis
- * „Jestem w 73% kotem! Zobacz czy jesteś kotem!”.
- *
- * Wszystkie pozostałe żądania (i quiz bez ?k=) są serwowane bez zmian
- * z zasobów statycznych (binding ASSETS).
- */
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url);
     const resp = await env.ASSETS.fetch(request);
 
+    try {
+    const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "");
     const isQuiz = path === "/quiz" || path === "/quiz.html";
     const kRaw = url.searchParams.get("k");
@@ -38,6 +27,9 @@ export default {
       .on('meta[name="twitter:title"]', new SetAttr("content", title))
       .on('meta[name="twitter:description"]', new SetAttr("content", desc))
       .transform(resp);
+    } catch (e) {
+      return resp;
+    }
   },
 };
 
