@@ -86,24 +86,20 @@ function catWatermarkEl(big) {
     return w;
 }
 
-function enableHoldReveal(imgEl, holderEl) {
-    if (!imgEl || !holderEl) return;
-    let timer = null;
-    const show = () => { imgEl.__held = true; holderEl.classList.add("wm-show"); };
-    const hide = () => holderEl.classList.remove("wm-show");
-    imgEl.addEventListener("pointerdown", () => {
-        imgEl.__held = false;
-        clearTimeout(timer);
-        timer = setTimeout(show, 300);
-    });
-    const end = () => {
-        clearTimeout(timer);
-        if (holderEl.classList.contains("wm-show")) setTimeout(hide, 700);
-    };
-    imgEl.addEventListener("pointerup", end);
-    imgEl.addEventListener("pointerleave", end);
-    imgEl.addEventListener("pointercancel", end);
-    imgEl.addEventListener("contextmenu", () => { show(); setTimeout(hide, 1800); });
+function hardenImage(imgEl) {
+    if (!imgEl) return;
+    imgEl.draggable = false;
+    imgEl.setAttribute("draggable", "false");
+    imgEl.addEventListener("dragstart", (e) => e.preventDefault());
+    imgEl.addEventListener("contextmenu", (e) => e.preventDefault());
+}
+
+function makeCatShield(onOpen) {
+    const s = document.createElement("div");
+    s.className = "cat-shield";
+    s.addEventListener("contextmenu", (e) => e.preventDefault());
+    if (onOpen) s.addEventListener("click", onOpen);
+    return s;
 }
 
 function createCatElement(grid, url) {
@@ -116,14 +112,13 @@ function createCatElement(grid, url) {
     img.alt = "Losowy kot z CatNet";
     img.loading = "lazy";
     img.decoding = "async";
-    img.style.cursor = "zoom-in";
     img.addEventListener("error", () => {
         if (img.dataset.fb) { img.closest(".cat-card")?.remove(); return; }
         img.dataset.fb = "1";
         img.src = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
     });
-    img.addEventListener("click", () => {
-        if (img.__held) { img.__held = false; return; }
+    hardenImage(img);
+    const shield = makeCatShield(() => {
         if (getSettings().meow) playMeow();
         registerCatClick();
         openLightbox(url);
@@ -148,9 +143,9 @@ function createCatElement(grid, url) {
     });
 
     card.appendChild(img);
-    card.appendChild(fav);
+    card.appendChild(shield);
     card.appendChild(catWatermarkEl());
-    enableHoldReveal(img, card);
+    card.appendChild(fav);
     grid.appendChild(card);
 }
 
@@ -496,13 +491,12 @@ function loadSweetCat() {
         });
     }
     const img = document.querySelector(".freud-img");
-    if (img) {
-        img.style.cursor = "zoom-in";
-        enableHoldReveal(img, img.closest(".freud-media") || img.closest(".freud-figure"));
-        img.addEventListener("click", () => {
-            if (img.__held) { img.__held = false; return; }
-            openLightbox(FREUD_IMG);
-        });
+    const media = document.querySelector(".freud-media");
+    if (img && media) {
+        hardenImage(img);
+        if (!media.querySelector(".cat-shield")) {
+            media.appendChild(makeCatShield(() => openLightbox(FREUD_IMG)));
+        }
     }
 }
 
@@ -1168,9 +1162,11 @@ function openLightbox(url) {
     if (!box) return;
     const lbImg = document.getElementById("lightbox-img");
     lbImg.src = url;
-    if (!lbImg.__holdWired) {
-        enableHoldReveal(lbImg, lbImg.closest(".lightbox-frame"));
-        lbImg.__holdWired = true;
+    if (!lbImg.__hardened) {
+        hardenImage(lbImg);
+        const frame = lbImg.closest(".lightbox-frame");
+        if (frame && !frame.querySelector(".cat-shield")) frame.appendChild(makeCatShield());
+        lbImg.__hardened = true;
     }
     updateLightboxFav();
     box.classList.add("open");
