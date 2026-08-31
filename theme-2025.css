@@ -381,3 +381,40 @@ html.simple-mode .cat-sound { display: none !important; }
 
 /* Ikona (Lucide) w banerze cookie zamiast emotki */
 .cookie-ico { color: var(--accent); display: inline-flex; align-items: center; flex-shrink: 0; line-height: 1; }
+
+/* ===========================================================
+   ZNAK WODNY na zdjęciach kotów (kot ze stojącym ogonem + adres)
+   =========================================================== */
+.cat-card { position: relative; }
+.freud-media { position: relative; display: block; }
+.freud-media .freud-fav { position: absolute; }
+
+.cat-wm {
+    position: absolute;
+    left: 8px; bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: calc(100% - 16px);
+    padding: 3px 9px 3px 6px;
+    border-radius: 999px;
+    background: rgba(10, 10, 12, 0.42);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    line-height: 1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+}
+.cat-wm-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat-wm-ico { width: 14px; height: 14px; flex-shrink: 0; color: var(--accent); }
+
+/* Lightbox: ramka wokół obrazu + większy znak wodny */
+.lightbox-frame { position: relative; display: inline-flex; }
+.cat-wm-lg { left: 12px; bottom: 12px; font-size: 13px; padding: 5px 13px 5px 9px; gap: 7px; }
+.cat-wm-lg .cat-wm-ico { width: 17px; height: 17px; }

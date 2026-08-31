@@ -79,6 +79,22 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     }
 }
 
+// Kot z „stojącym ogonem" (sylwetka) — do znaku wodnego na zdjęciach
+function catTailUpSvg(cls) {
+    return `<svg class="${cls || ""}" viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">`
+        + '<path d="M19 21 L23 10 L30 19 Z"/><path d="M45 21 L41 10 L34 19 Z"/>'
+        + '<path d="M32 16 c9 0 15 7 15 16 v12 c0 5-4 8-9 8 H26 c-5 0-9-3-9-8 V32 c0-9 6-16 15-16 z"/>'
+        + '<path d="M39 49 c9 3 16-2 18-13 2-9-1-18-6-22 -3-2-6 2-3 5 3 4 4 11 3 17 -2 9-7 12-14 10 z"/>'
+        + "</svg>";
+}
+function catWatermarkEl(big) {
+    const w = document.createElement("span");
+    w.className = "cat-wm" + (big ? " cat-wm-lg" : "");
+    w.setAttribute("aria-hidden", "true");
+    w.innerHTML = catTailUpSvg("cat-wm-ico") + '<span class="cat-wm-txt">CatNet.TeodorTeo.com</span>';
+    return w;
+}
+
 function createCatElement(grid, url) {
     addToHistory(url);
     const card = document.createElement("div");
@@ -116,6 +132,7 @@ function createCatElement(grid, url) {
 
     card.appendChild(img);
     card.appendChild(fav);
+    card.appendChild(catWatermarkEl());
     grid.appendChild(card);
 }
 
@@ -1133,7 +1150,10 @@ function buildLightbox() {
     box.id = "lightbox";
     box.innerHTML = `
         <button class="icon-btn lightbox-close" onclick="closeLightbox()">✕</button>
-        <img id="lightbox-img" src="" alt="Kot w powiększeniu">
+        <div class="lightbox-frame">
+            <img id="lightbox-img" src="" alt="Kot w powiększeniu">
+            ${catWatermarkEl(true).outerHTML}
+        </div>
         <div class="lightbox-actions">
             <button class="btn btn-primary" id="lightbox-fav" onclick="lightboxToggleFav()">${t("lightbox.fav")}</button>
             <button class="btn btn-ghost" onclick="downloadImage(lightboxUrl)">${t("lightbox.download")}</button>
