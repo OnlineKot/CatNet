@@ -373,11 +373,12 @@ html.simple-mode .cat-sound { display: none !important; }
     overflow: hidden;
 }
 .cat-wm-txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cat-wm-ico { width: 13px; height: 13px; flex-shrink: 0; border-radius: 3px; object-fit: cover; display: block; opacity: 0.9; }
+.cat-wm .cat-wm-ico { width: 13px; height: 13px; min-width: 13px; max-width: 13px; max-height: 13px; flex: 0 0 auto; border-radius: 3px; object-fit: cover; display: block; opacity: 0.9; }
+.cat-card:hover .cat-wm .cat-wm-ico, .cat-card .cat-wm .cat-wm-ico { transform: none; transition: none; }
 
 .lightbox-frame { position: relative; display: inline-flex; }
 .cat-wm-lg { left: 12px; bottom: 12px; font-size: 11px; padding: 3px 11px 3px 7px; gap: 6px; }
-.cat-wm-lg .cat-wm-ico { width: 17px; height: 17px; border-radius: 4px; }
+.cat-wm.cat-wm-lg .cat-wm-ico { width: 17px; height: 17px; min-width: 17px; max-width: 17px; max-height: 17px; border-radius: 4px; }
 
 .cat-card > img, .freud-img, #lightbox-img {
     -webkit-touch-callout: none;
@@ -416,3 +417,15 @@ html.simple-mode .cat-sound { display: none !important; }
 .cookie-mini-list { margin: 0 0 8px; padding-left: 18px; }
 .cookie-mini-list li { margin-bottom: 5px; }
 .cookie-more-body a { color: var(--accent-2); font-weight: 700; }
+
+.view-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.view-links a {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px; font-weight: 700;
+    padding: 6px 11px; border-radius: 999px;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+    color: var(--text); text-decoration: none;
+}
+.view-links a:hover { background: color-mix(in srgb, var(--text) 16%, transparent); }
+.cookie-use-note { margin: 0 0 8px; color: var(--text); font-weight: 600; }

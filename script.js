@@ -628,6 +628,7 @@ const translations = {
         "cookie.accept": "Zgadzam się",
         "cookie.reject": "Odrzuć",
         "cookie.showMore": "Pokaż więcej",
+        "cookie.useNote": "Korzystając z usługi CatNet zgadzasz się na anonimową analitykę — uruchamiamy ją dopiero po kliknięciu „Zgadzam się” i w każdej chwili możesz ją wyłączyć w Ustawieniach.",
         "cookie.list": "<ul class='cookie-mini-list'><li><strong>Ustawienia, ulubione, historia</strong> — zapisywane w Twojej przeglądarce (localStorage), nigdy na naszym serwerze.</li><li><strong>Zgoda i drobne flagi</strong> — zapamiętanie Twojego wyboru, samouczka i trybu prostego.</li><li><strong>Microsoft Clarity</strong> (_clck, _clsk, CLID, MUID…) — anonimowa analityka, tylko po zgodzie; usługa Microsoftu, dane mogą trafić poza EOG.</li></ul><a href='polityka-prywatnosci.html'>Pełna lista w polityce prywatności</a>",
         "cookie.footer": "Pliki cookie 🍪",
         "cookie.savedYes": "Dzięki! Anonimowa analityka włączona 🍪",
@@ -636,7 +637,7 @@ const translations = {
         "priv.updated": "Ostatnia aktualizacja: 19 sierpnia 2026 r.",
         "priv.intro": "CatNet to prosty, darmowy serwis ze zdjęciami kotów. Traktujemy Twoją prywatność poważnie i celowo zbudowaliśmy stronę tak, aby zbierać jak najmniej danych. Ta polityka wyjaśnia — w pełni i wprost — co dzieje się z danymi podczas korzystania z serwisu.",
         "priv.s1h": "1. Analityka i prywatność",
-        "priv.s1p": "Używamy Microsoft Clarity — narzędzia do anonimowej, zbiorczej analityki (liczba odwiedzin, kliknięcia, ogólne wzorce korzystania), które pomaga nam ulepszać stronę. Nie wyświetlamy reklam, nie sprzedajemy danych i nie budujemy profili marketingowych. Nie mamy kont użytkowników ani logowania.",
+        "priv.s1p": "Używamy Microsoft Clarity — narzędzia do anonimowej, zbiorczej analityki (liczba odwiedzin, kliknięcia, ogólne wzorce korzystania), które pomaga nam ulepszać stronę. Nie wyświetlamy reklam, nie sprzedajemy danych i nie budujemy profili marketingowych. Nie mamy kont użytkowników ani logowania. Korzystając z usługi CatNet zgadzasz się na anonimową analitykę — uruchamiamy ją wyłącznie po wyrażeniu zgody w banerze i możesz ją w każdej chwili wyłączyć w Ustawieniach.",
         "priv.s2h": "2. Dane pozostają w Twojej przeglądarce",
         "priv.s2p": "Twoje ustawienia (motyw, tryb jasny/ciemny, język, gęstość siatki), lista ulubionych kotów oraz historia oglądanych zdjęć są zapisywane wyłącznie w pamięci lokalnej Twojej przeglądarki (localStorage). Te informacje nigdy nie są wysyłane na nasze serwery — pozostają na Twoim urządzeniu i możesz je w każdej chwili usunąć, czyszcząc dane przeglądarki.",
         "priv.s3h": "3. Połączenia zewnętrzne",
@@ -666,6 +667,7 @@ const translations = {
         "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
         "set.slideshow": "Pokaz slajdów (auto)", "set.meow": "Meow Mode", "set.quickActions": "Szybkie akcje",
         "set.simple": "Tryb prosty", "set.simpleHint": "Wyłącza efekty tła i animacje",
+        "set.views": "Linki do widoków", "set.viewsHint": "Gotowe adresy: język i najlepszy widok (wszystkie efekty).",
         "set.analytics": "Anonimowa analityka", "set.analyticsHint": "Pomaga ulepszać CatNet. Możesz zmienić w każdej chwili.",
         "simple.title": "Włączyć tryb prosty?",
         "simple.text": "Wyłącza ruchome tło i animacje — strona działa lżej i szybciej. W każdej chwili zmienisz to w ustawieniach.",
@@ -787,6 +789,7 @@ const translations = {
         "cookie.accept": "I agree",
         "cookie.reject": "Decline",
         "cookie.showMore": "Show more",
+        "cookie.useNote": "By using CatNet you agree to anonymous analytics — it only starts after you click “I agree”, and you can switch it off anytime in Settings.",
         "cookie.list": "<ul class='cookie-mini-list'><li><strong>Settings, favourites, history</strong> — stored in your browser (localStorage), never on our server.</li><li><strong>Consent & small flags</strong> — remembering your choice, the intro tour and simple mode.</li><li><strong>Microsoft Clarity</strong> (_clck, _clsk, CLID, MUID…) — anonymous analytics, only after consent; a Microsoft service, data may leave the EEA.</li></ul><a href='polityka-prywatnosci.html'>Full list in the privacy policy</a>",
         "cookie.footer": "Cookies 🍪",
         "cookie.savedYes": "Thanks! Anonymous analytics on 🍪",
@@ -795,7 +798,7 @@ const translations = {
         "priv.updated": "Last updated: 19 August 2026.",
         "priv.intro": "CatNet is a simple, free website with cat photos. We take your privacy seriously and deliberately built the site to collect as little data as possible. This policy explains — fully and plainly — what happens with data when you use the site.",
         "priv.s1h": "1. Analytics & privacy",
-        "priv.s1p": "We use Microsoft Clarity — a tool for anonymous, aggregated analytics (visit counts, clicks, general usage patterns) that helps us improve the site. We show no ads, don't sell data, and build no marketing profiles. We have no user accounts or login.",
+        "priv.s1p": "We use Microsoft Clarity — a tool for anonymous, aggregated analytics (visit counts, clicks, general usage patterns) that helps us improve the site. We show no ads, don't sell data, and build no marketing profiles. We have no user accounts or login. By using CatNet you agree to anonymous analytics — it runs only after you consent in the banner and you can switch it off anytime in Settings.",
         "priv.s2h": "2. Your data stays in your browser",
         "priv.s2p": "Your settings (theme, light/dark mode, language, grid density), your list of favourite cats and your viewing history are stored only in your browser's local storage (localStorage). This information is never sent to our servers — it stays on your device and you can delete it at any time by clearing your browser data.",
         "priv.s3h": "3. External connections",
@@ -826,6 +829,7 @@ const translations = {
         "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
         "set.slideshow": "Slideshow (auto)", "set.meow": "Meow Mode", "set.quickActions": "Quick actions",
         "set.simple": "Simple mode", "set.simpleHint": "Turns off background effects and animations",
+        "set.views": "View links", "set.viewsHint": "Ready-made URLs: language and the best view (all effects).",
         "set.analytics": "Anonymous analytics", "set.analyticsHint": "Helps improve CatNet. Change anytime.",
         "simple.title": "Enable simple mode?",
         "simple.text": "Turns off the moving background and animations — the site runs lighter and faster. You can change this anytime in settings.",
@@ -1003,6 +1007,17 @@ function buildSettingsDrawer() {
                     <span class="slider"></span>
                 </label>
             </div>
+        </div>
+
+        <div class="setting-group">
+            <label>${t("set.views")}</label>
+            <div class="view-links">
+                <a href="/?pl">/?pl</a>
+                <a href="/?en">/?en</a>
+                <a href="/?tbv">/?tbv</a>
+                <a href="/?en&amp;tbv">/?en&amp;tbv</a>
+            </div>
+            <small class="switch-hint">${t("set.viewsHint")}</small>
         </div>
 
         <div class="setting-group">
@@ -2195,7 +2210,7 @@ function buildCookieBanner() {
             <p class="cookie-text">${t("cookie.text")} <a href="polityka-prywatnosci.html">${t("cookie.more")}</a></p>
             <details class="cookie-more">
                 <summary>${t("cookie.showMore")}</summary>
-                <div class="cookie-more-body">${t("cookie.list")}</div>
+                <div class="cookie-more-body"><p class="cookie-use-note">${t("cookie.useNote")}</p>${t("cookie.list")}</div>
             </details>
             <div class="cookie-btns">
                 <button class="btn btn-ghost cookie-reject" type="button" onclick="rejectCookies()">${t("cookie.reject")}</button>
@@ -2397,7 +2412,26 @@ function maybeShowSimplePrompt() {
     setTimeout(showSimplePrompt, 900);
 }
 
+function applyViewParams() {
+    let sp;
+    try { sp = new URLSearchParams(location.search); } catch (e) { return; }
+    if (!sp.toString()) return;
+    const s = getSettings();
+    let changed = false;
+    if (sp.has("pl")) { s.lang = "pl"; changed = true; }
+    if (sp.has("en")) { s.lang = "en"; changed = true; }
+    if (sp.has("tbv")) {
+        s.simple = false;
+        s.density = "comfortable";
+        s.mode = "dark";
+        s.perPage = Math.max(Number(s.perPage) || 8, 12);
+        changed = true;
+    }
+    if (changed) { try { saveSettings(s); } catch (e) {} }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+    applyViewParams();
     LANG = detectLang();
     buildSettingsDrawer();
     buildLightbox();
