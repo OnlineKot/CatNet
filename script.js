@@ -625,6 +625,8 @@ const translations = {
         "cookie.more": "Dowiedz się więcej",
         "cookie.accept": "Zgadzam się",
         "cookie.reject": "Odrzuć",
+        "cookie.showMore": "Pokaż więcej",
+        "cookie.list": "<ul class='cookie-mini-list'><li><strong>Ustawienia, ulubione, historia</strong> — zapisywane w Twojej przeglądarce (localStorage), nigdy na naszym serwerze.</li><li><strong>Zgoda i drobne flagi</strong> — zapamiętanie Twojego wyboru, samouczka i trybu prostego.</li><li><strong>Microsoft Clarity</strong> (_clck, _clsk, CLID, MUID…) — anonimowa analityka, tylko po zgodzie; usługa Microsoftu, dane mogą trafić poza EOG.</li></ul><a href='polityka-prywatnosci.html'>Pełna lista w polityce prywatności</a>",
         "cookie.footer": "Pliki cookie 🍪",
         "cookie.savedYes": "Dzięki! Anonimowa analityka włączona 🍪",
         "cookie.savedNo": "Zapisano. Analityka wyłączona 🚫",
@@ -637,8 +639,9 @@ const translations = {
         "priv.s2p": "Twoje ustawienia (motyw, tryb jasny/ciemny, język, gęstość siatki), lista ulubionych kotów oraz historia oglądanych zdjęć są zapisywane wyłącznie w pamięci lokalnej Twojej przeglądarki (localStorage). Te informacje nigdy nie są wysyłane na nasze serwery — pozostają na Twoim urządzeniu i możesz je w każdej chwili usunąć, czyszcząc dane przeglądarki.",
         "priv.s3h": "3. Połączenia zewnętrzne",
         "priv.s3p": "Zdjęcia kotów pobieramy z otwartych API: TheCatAPI (api.thecatapi.com, cdn2.thecatapi.com) oraz Cataas (cataas.com). Do anonimowej analityki łączymy się z Microsoft Clarity (clarity.ms). Przy tych połączeniach — jak przy każdej stronie w internecie — może zostać przekazany Twój adres IP, technicznie niezbędny. Są to niezależni dostawcy z własnymi politykami prywatności; poza tym nie przekazujemy im żadnych Twoich danych.",
-        "priv.s4h": "4. Pliki cookie",
+        "priv.s4h": "4. Pliki cookie i pamięć lokalna",
         "priv.s4p": "Do zapamiętania Twoich ustawień i ulubionych używamy pamięci localStorage przeglądarki. Narzędzie Microsoft Clarity może zapisywać własne pliki cookie do celów anonimowej analityki. Nie używamy plików cookie do reklam. Pliki cookie możesz w każdej chwili wyczyścić lub zablokować w ustawieniach przeglądarki.",
+        "priv.cookieTable": "<div class='cookie-table-scroll'><table class='cookie-table'><thead><tr><th>Nazwa</th><th>Rodzaj</th><th>Do czego</th><th>Jak długo</th></tr></thead><tbody><tr><td>catnet_settings</td><td>localStorage</td><td>Twoje ustawienia: motyw, tryb jasny/ciemny, język, liczba kotów, tryb prosty</td><td>do wyczyszczenia</td></tr><tr><td>catnet_favorites</td><td>localStorage</td><td>Lista ulubionych kotów</td><td>do wyczyszczenia</td></tr><tr><td>catnet_history</td><td>localStorage</td><td>Historia ostatnio oglądanych zdjęć</td><td>do wyczyszczenia</td></tr><tr><td>catnet_cookie_consent</td><td>localStorage</td><td>Zapamiętanie Twojej zgody na analitykę</td><td>do wyczyszczenia</td></tr><tr><td>catnet_seen_onb</td><td>localStorage</td><td>Czy pokazano samouczek powitalny</td><td>do wyczyszczenia</td></tr><tr><td>catnet_simple_prompted</td><td>localStorage</td><td>Czy zaproponowano tryb prosty</td><td>do wyczyszczenia</td></tr><tr><td>catnet_open_secret</td><td>sessionStorage</td><td>Techniczna flaga panelu — tylko na czas sesji</td><td>do zamknięcia karty</td></tr><tr><td>_clck, _clsk, CLID, _cltk, MUID, ANONCHK, SM</td><td>pliki cookie · Microsoft Clarity</td><td>Anonimowa analityka (odwiedziny, kliknięcia) — tylko po Twojej zgodzie</td><td>do ok. 1 roku</td></tr></tbody></table></div><p class='cookie-table-note'>Dane z pierwszych siedmiu pozycji pozostają wyłącznie w Twojej przeglądarce i nigdy nie trafiają na nasze serwery. Pliki cookie Microsoft Clarity ładują się dopiero po kliknięciu „Zgadzam się” i możesz je wyłączyć w Ustawieniach albo linkiem „Pliki cookie” w stopce. Clarity to usługa Microsoftu — dane mogą być przetwarzane poza EOG (np. w USA) na podstawie standardowych klauzul umownych. Podstawą prawną analityki jest Twoja zgoda (art. 6 ust. 1 lit. a RODO); pamięć localStorage służy prawidłowemu działaniu strony.</p>",
         "priv.s5h": "5. Twoje prawa (RODO)",
         "priv.s5p": "Ponieważ nie gromadzimy danych osobowych na naszych serwerach, w praktyce nie przechowujemy niczego, co moglibyśmy Ci udostępnić lub usunąć na żądanie — wszystkie Twoje dane są na Twoim urządzeniu i w pełni nimi zarządzasz. Niezależnie od tego, na gruncie RODO przysługuje Ci prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia i sprzeciwu, a także prawo wniesienia skargi do organu nadzorczego (w Polsce: Prezes Urzędu Ochrony Danych Osobowych, PUODO).",
         "priv.s6h": "6. Kontakt",
@@ -779,6 +782,8 @@ const translations = {
         "cookie.more": "Learn more",
         "cookie.accept": "I agree",
         "cookie.reject": "Decline",
+        "cookie.showMore": "Show more",
+        "cookie.list": "<ul class='cookie-mini-list'><li><strong>Settings, favourites, history</strong> — stored in your browser (localStorage), never on our server.</li><li><strong>Consent & small flags</strong> — remembering your choice, the intro tour and simple mode.</li><li><strong>Microsoft Clarity</strong> (_clck, _clsk, CLID, MUID…) — anonymous analytics, only after consent; a Microsoft service, data may leave the EEA.</li></ul><a href='polityka-prywatnosci.html'>Full list in the privacy policy</a>",
         "cookie.footer": "Cookies 🍪",
         "cookie.savedYes": "Thanks! Anonymous analytics on 🍪",
         "cookie.savedNo": "Saved. Analytics turned off 🚫",
@@ -791,8 +796,9 @@ const translations = {
         "priv.s2p": "Your settings (theme, light/dark mode, language, grid density), your list of favourite cats and your viewing history are stored only in your browser's local storage (localStorage). This information is never sent to our servers — it stays on your device and you can delete it at any time by clearing your browser data.",
         "priv.s3h": "3. External connections",
         "priv.s3p": "Cat photos are fetched from open APIs: TheCatAPI (api.thecatapi.com, cdn2.thecatapi.com) and Cataas (cataas.com). For anonymous analytics we connect to Microsoft Clarity (clarity.ms). With these connections — as with any website — your IP address may be shared, which is technically necessary. These are independent providers with their own privacy policies; beyond that we share none of your data with them.",
-        "priv.s4h": "4. Cookies",
+        "priv.s4h": "4. Cookies & local storage",
         "priv.s4p": "To remember your settings and favourites we use the browser's localStorage. Microsoft Clarity may store its own cookies for anonymous analytics. We do not use cookies for advertising. You can clear or block cookies at any time in your browser settings.",
+        "priv.cookieTable": "<div class='cookie-table-scroll'><table class='cookie-table'><thead><tr><th>Name</th><th>Type</th><th>Purpose</th><th>Duration</th></tr></thead><tbody><tr><td>catnet_settings</td><td>localStorage</td><td>Your settings: theme, light/dark mode, language, cats per page, simple mode</td><td>until cleared</td></tr><tr><td>catnet_favorites</td><td>localStorage</td><td>Your list of favourite cats</td><td>until cleared</td></tr><tr><td>catnet_history</td><td>localStorage</td><td>Recently viewed photos</td><td>until cleared</td></tr><tr><td>catnet_cookie_consent</td><td>localStorage</td><td>Remembers your analytics choice</td><td>until cleared</td></tr><tr><td>catnet_seen_onb</td><td>localStorage</td><td>Whether the intro tour was shown</td><td>until cleared</td></tr><tr><td>catnet_simple_prompted</td><td>localStorage</td><td>Whether simple mode was offered</td><td>until cleared</td></tr><tr><td>catnet_open_secret</td><td>sessionStorage</td><td>Technical panel flag — session only</td><td>until tab closes</td></tr><tr><td>_clck, _clsk, CLID, _cltk, MUID, ANONCHK, SM</td><td>cookies · Microsoft Clarity</td><td>Anonymous analytics (visits, clicks) — only after your consent</td><td>up to ~1 year</td></tr></tbody></table></div><p class='cookie-table-note'>The first seven items stay only in your browser and never reach our servers. Microsoft Clarity cookies load only after you click “I agree”, and you can turn them off in Settings or via the “Cookies” link in the footer. Clarity is a Microsoft service — data may be processed outside the EEA (e.g. in the US) under standard contractual clauses. The legal basis for analytics is your consent (Art. 6(1)(a) GDPR); localStorage is used for the site to work.</p>",
         "priv.s5h": "5. Your rights (GDPR)",
         "priv.s5p": "Because we do not collect personal data on our servers, in practice we hold nothing we could give you or delete on request — all your data is on your device and fully under your control. Regardless, under the GDPR you have the right to access, rectify, erase, restrict and object to processing of your data, as well as the right to lodge a complaint with a supervisory authority (in Poland: the President of the Personal Data Protection Office, PUODO).",
         "priv.s6h": "6. Contact",
@@ -2183,6 +2189,10 @@ function buildCookieBanner() {
         <div class="cookie-bar-inner">
             <span class="cookie-ico" aria-hidden="true">${lucideCookieSvg()}</span>
             <p class="cookie-text">${t("cookie.text")} <a href="polityka-prywatnosci.html">${t("cookie.more")}</a></p>
+            <details class="cookie-more">
+                <summary>${t("cookie.showMore")}</summary>
+                <div class="cookie-more-body">${t("cookie.list")}</div>
+            </details>
             <div class="cookie-btns">
                 <button class="btn btn-ghost cookie-reject" type="button" onclick="rejectCookies()">${t("cookie.reject")}</button>
                 <button class="btn btn-primary" type="button" onclick="acceptCookies()">${t("cookie.accept")}</button>

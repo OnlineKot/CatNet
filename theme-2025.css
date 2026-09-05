@@ -396,3 +396,23 @@ html.simple-mode .cat-sound { display: none !important; }
     user-select: none;
 }
 .cat-card .fav-btn, .freud-media .freud-fav { z-index: 4; }
+
+.cookie-table-wrap { margin: 14px 0 6px; }
+.cookie-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 1px solid var(--border); }
+.cookie-table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 540px; }
+.cookie-table th, .cookie-table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent); vertical-align: top; }
+.cookie-table th { color: var(--text); font-weight: 700; background: color-mix(in srgb, var(--text) 6%, transparent); }
+.cookie-table td { color: var(--text-muted); }
+.cookie-table td:first-child { color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.cookie-table tr:last-child td { border-bottom: 0; }
+.cookie-table-note { margin-top: 10px; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+.cookie-more { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; }
+.cookie-more > summary { cursor: pointer; color: var(--accent-2); font-weight: 700; list-style: none; width: max-content; }
+.cookie-more > summary::-webkit-details-marker { display: none; }
+.cookie-more > summary::after { content: " ▾"; }
+.cookie-more[open] > summary::after { content: " ▴"; }
+.cookie-more-body { margin-top: 8px; color: var(--text-muted); line-height: 1.55; }
+.cookie-mini-list { margin: 0 0 8px; padding-left: 18px; }
+.cookie-mini-list li { margin-bottom: 5px; }
+.cookie-more-body a { color: var(--accent-2); font-weight: 700; }
