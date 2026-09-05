@@ -1,0 +1,23 @@
+# CatNet
+
+> Darmowa galeria zdjęć kotów online. Odświeżaj nieskończony strumień uroczych kotów, polub i zapisz ulubione — bez reklam i bez logowania. A free online cat photo gallery: refresh an endless stream of adorable cats, like and save favourites — no ads, no login.
+
+CatNet (https://catnet.teodorteo.com) to prosty, darmowy, niekomercyjny serwis ze zdjęciami kotów. Zdjęcia pochodzą z otwartych API TheCatAPI i Cataas. Ulubione i ustawienia zapisują się wyłącznie w przeglądarce użytkownika (localStorage) — nie na serwerze. Serwis jest dwujęzyczny (polski i angielski). Anonimowa analityka (Microsoft Clarity) działa tylko po wyrażeniu zgody na pliki cookie.
+
+## Strony
+
+- [Start](https://catnet.teodorteo.com/): galeria główna, losowe koty i ciekawostki
+- [Galeria](https://catnet.teodorteo.com/galeria.html): przeglądanie zdjęć kotów, filtrowanie i ulubione
+- [Fakty o kotach](https://catnet.teodorteo.com/fakty.html): ciekawostki o kotach oraz Freud — najsłodszy czarny kot
+- [Quiz: Czy jesteś kotem?](https://catnet.teodorteo.com/quiz.html): krótki quiz z wynikiem w procentach do udostępnienia
+- [O nas](https://catnet.teodorteo.com/o-nas.html): o projekcie CatNet
+- [Polityka prywatności](https://catnet.teodorteo.com/polityka-prywatnosci.html): dane, pliki cookie i prawa (RODO)
+
+## Źródła zdjęć
+
+- TheCatAPI — https://thecatapi.com
+- Cataas (Cat as a Service) — https://cataas.com
+
+## Autor
+
+- TeodorTeo — https://teodorteo.com
