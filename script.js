@@ -43,6 +43,42 @@ function updateFavCounter() {
     if (el) el.innerText = getFavorites().length;
 }
 
+const ICONS = {
+    paw: '<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>',
+    cat: '<path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3-9-7.56c0-1.25.5-2.4 1-3.44 0 0-1.89-6.42-.5-7 1.39-.58 4.72.23 6.5 2.23A9.04 9.04 0 0 1 12 5Z"/><path d="M8 14v.5"/><path d="M16 14v.5"/><path d="M11.25 16.25h1.5L12 17l-.75-.75Z"/>',
+    heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/>',
+    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+    share: '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/>',
+    copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+    refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+    crown: '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/>',
+    gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>',
+    x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    arrowUpRight: '<path d="M7 7h10v10"/><path d="M7 17 17 7"/>',
+    trash: '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+    globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 0 20"/><path d="M12 2a15 15 0 0 0 0 20"/><path d="M2 12h20"/>',
+    save: '<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7H7v7"/><path d="M7 3v5h8"/>',
+    palette: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+    upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>'
+};
+
+function icon(name, size) {
+    const p = ICONS[name];
+    if (!p) return "";
+    const s = size || 18;
+    return '<svg class="ic ic-' + name + '" viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+}
+
+function iconFilled(name, size) {
+    const p = ICONS[name];
+    if (!p) return "";
+    const s = size || 18;
+    return '<svg class="ic ic-' + name + ' is-filled" viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+}
+
 function safeFetch(url, ms = 8000, opts = {}) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), ms);
@@ -128,11 +164,11 @@ function createCatElement(grid, url) {
     fav.className = "fav-btn" + (isFavorite(url) ? " is-fav" : "");
     fav.type = "button";
     fav.title = "Dodaj do ulubionych";
-    fav.innerHTML = isFavorite(url) ? "♥" : "♡";
+    fav.innerHTML = isFavorite(url) ? iconFilled("heart", 16) : icon("heart", 16);
     fav.addEventListener("click", () => {
         const added = toggleFavorite(url);
         fav.classList.toggle("is-fav", added);
-        fav.innerHTML = added ? "♥" : "♡";
+        fav.innerHTML = added ? iconFilled("heart", 16) : icon("heart", 16);
         if (added) {
             heartBurst(card);
             showToast(t("toast.favSaved"));
@@ -328,10 +364,10 @@ const catFacts = [
     "Koty potrafią nauczyć się prostych sztuczek za pomocą nagród.",
     "Przyjaźń z kotem buduje się powoli, ale jest wyjątkowo trwała.",
     "Kot potrafi rozpoznać, kiedy jesteś smutny, i przychodzi się przytulić.",
-    "Freud to oficjalnie najsłodszy kot na świecie — i nikt nie ma odwagi się z tym kłócić. 🐱",
+    "Freud to oficjalnie najsłodszy kot na świecie — i nikt nie ma odwagi się z tym kłócić.",
     "Ulubione zajęcia Freuda: drzemka w plamie słońca i patrzenie przez okno.",
     "Kiedy Freud mruczy, cały dzień od razu robi się lepszy.",
-    "A Freud — kot, którego właśnie oglądasz — jest po prostu najsłodszym kotem na świecie. 🐱💖"
+    "A Freud — kot, którego właśnie oglądasz — jest po prostu najsłodszym kotem na świecie."
 ];
 
 const catFactsEn = [
@@ -434,10 +470,10 @@ const catFactsEn = [
     "Cats can learn simple tricks with the help of rewards.",
     "Friendship with a cat builds slowly, but it's exceptionally lasting.",
     "A cat can sense when you're sad and come over for a cuddle.",
-    "Freud is officially the cutest cat in the world — and nobody dares to argue. 🐱",
+    "Freud is officially the cutest cat in the world — and nobody dares to argue.",
     "Freud's favourite things: napping in a sunbeam and staring out the window.",
     "When Freud purrs, the whole day instantly gets better.",
-    "And Freud — the cat you're looking at right now — is simply the cutest cat in the world. 🐱💖"
+    "And Freud — the cat you're looking at right now — is simply the cutest cat in the world."
 ];
 
 function getAllFacts() {
@@ -475,7 +511,7 @@ function loadSweetCat() {
         const sync = () => {
             const on = isFavorite(FREUD_IMG);
             fav.classList.toggle("is-fav", on);
-            fav.innerHTML = on ? "♥" : "♡";
+            fav.innerHTML = on ? iconFilled("heart", 16) : icon("heart", 16);
         };
         sync();
         fav.addEventListener("click", () => {
@@ -501,13 +537,13 @@ function loadSweetCat() {
 }
 
 const ACCENTS = {
-    sunny:  { a: "#ffc22e", b: "#f0a500", grad: "linear-gradient(120deg,#ffd23f,#f0a500)" },
+    sunny: { a: "#ffc22e", b: "#f0a500", grad: "linear-gradient(120deg,#ffd23f,#f0a500)" },
     aurora: { a: "#7c5cff", b: "#ff5ca8", grad: "linear-gradient(120deg,#7c5cff 0%,#5cc8ff 50%,#ff5ca8 100%)" },
-    ocean:  { a: "#2bb7ff", b: "#5cf0d0", grad: "linear-gradient(120deg,#2bb7ff,#5cf0d0)" },
+    ocean: { a: "#2bb7ff", b: "#5cf0d0", grad: "linear-gradient(120deg,#2bb7ff,#5cf0d0)" },
     sunset: { a: "#ff8a3c", b: "#ff4d6d", grad: "linear-gradient(120deg,#ff8a3c,#ff4d6d)" },
     forest: { a: "#27c46b", b: "#8ef0a0", grad: "linear-gradient(120deg,#27c46b,#8ef0a0)" },
-    candy:  { a: "#ff5ca8", b: "#ffd34d", grad: "linear-gradient(120deg,#ff5ca8,#ffd34d)" },
-    mono:   { a: "#9aa0c0", b: "#cfd4ec", grad: "linear-gradient(120deg,#9aa0c0,#cfd4ec)" }
+    candy: { a: "#ff5ca8", b: "#ffd34d", grad: "linear-gradient(120deg,#ff5ca8,#ffd34d)" },
+    mono: { a: "#9aa0c0", b: "#cfd4ec", grad: "linear-gradient(120deg,#9aa0c0,#cfd4ec)" }
 };
 
 const SETTINGS_KEY = "catnet_settings";
@@ -568,9 +604,9 @@ const translations = {
         "quizcta.sub": "Sześć pytań. Sprawdź, ile masz w sobie kota.",
         "quizcta.btn": "Sprawdź się",
         "footer.made": "Galeria zdjęć kotów",
-        "hero.badge": "🎉 Nowość: Koty od społeczności, Deluxe i małe koty!",
-        "marquee.items": "Tysiące zdjęć kotów  ·  Odświeżaj do woli  ·  Zapisuj ulubione  ·  ",
-        "rm.title": "Co dalej? Mapa mruczeń 🚀",
+        "hero.badge": "Nowość: Koty od społeczności, Deluxe i małe koty!",
+        "marquee.items": "Tysiące zdjęć kotów · Odświeżaj do woli · Zapisuj ulubione · ",
+        "rm.title": "Co dalej? Mapa mruczeń",
         "rm.sub": "CatNet dopiero się rozkręca. Oto, nad czym pracujemy — każda aktualizacja będzie większa od poprzedniej.",
         "rm.soon": "WKRÓTCE",
         "rm1t": "Meow Mode", "rm1d": "Kliknij kota i usłysz prawdziwe miau. Tryb, którego nikt nie potrzebował, a każdy chce.",
@@ -595,17 +631,17 @@ const translations = {
         "btn.newCats": "Nowe koty", "btn.surprise": "Losowy kot", "btn.premium": "Koty premium",
         "btn.pro": "Koty od społeczności", "toast.pro": "Załadowano koty od społeczności (Cataas)",
         "btn.kittens": "Kocięta", "toast.kittens": "Załadowano kocięta",
-        "toast.deluxe": "Załadowano Koty Deluxe — miks z 2 API 💎",
+        "toast.deluxe": "Załadowano Koty Deluxe — miks z 2 API",
         "src.label": "Źródło:", "src.standard": "TheCatAPI", "src.community": "Społeczność", "src.deluxe": "Deluxe",
         "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
-        "gallery.favTitle": "Twoje ulubione ♥", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
+        "gallery.favTitle": "Twoje ulubione", "gallery.favSub": "Koty, które zapisałeś. Zapisują się w Twojej przeglądarce.",
         "facts.title": 'Fakty o <span class="grad">kotach</span>',
         "facts.sub": "Klikaj i odkrywaj — za każdym razem coś nowego o naszych mruczących przyjaciołach.",
         "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt",
         "facts.sweetTitle": "Freud",
         "facts.sweetCaption": "Freud — czarny kocur w swoim ogrodzie",
         "facts.sweetSub": "Freud to starszy czarny kocur. Lubi wygrzewać się w trawie, obchodzić swój ogród i obserwować ptaki. Spokojny i przyjazny.",
-        "btn.anotherSweet": "Pokaż innego uroczego kota 🐾", "loading": "Wczytywanie...",
+        "btn.anotherSweet": "Pokaż innego uroczego kota", "loading": "Wczytywanie...",
         "about.title": "O CatNet",
         "about.p1": "CatNet to prosta galeria zdjęć kotów. Jednym kliknięciem odświeżasz kolejne — bez logowania i bez opłat.",
         "about.p2": "Zdjęcia pochodzą z otwartych API <strong>TheCatAPI</strong> oraz <strong>Cataas</strong>, dzięki czemu za każdym odświeżeniem czeka na Ciebie zupełnie nowa porcja mruczących bohaterów.",
@@ -620,9 +656,9 @@ const translations = {
         "trust.private": "Ulubione w przeglądarce", "trust.openApi": "Otwarte API",
         "trust.openSource": "Projekt niekomercyjny",
         "nav.privacy": "Polityka prywatności",
-        "err404.title": "Tu nie ma kota 🙀",
+        "err404.title": "Tu nie ma kota",
         "err404.text": "Szukasz kotów nie tam, gdzie trzeba. Wróć na stronę główną — tam czeka ich pełno.",
-        "err404.btn": "Wróć na stronę główną 🐾",
+        "err404.btn": "Wróć na stronę główną",
         "cookie.text": "Pomóż nam ulepszać CatNet — zgódź się na anonimową analitykę. Bez reklam, bez sprzedaży danych, bez śledzenia między stronami.",
         "cookie.more": "Dowiedz się więcej",
         "cookie.accept": "Zgadzam się",
@@ -630,9 +666,9 @@ const translations = {
         "cookie.showMore": "Pokaż więcej",
         "cookie.useNote": "Korzystając z usługi CatNet zgadzasz się na anonimową analitykę — uruchamiamy ją dopiero po kliknięciu „Zgadzam się” i w każdej chwili możesz ją wyłączyć w Ustawieniach.",
         "cookie.list": "<ul class='cookie-mini-list'><li><strong>Ustawienia, ulubione, historia</strong> — zapisywane w Twojej przeglądarce (localStorage), nigdy na naszym serwerze.</li><li><strong>Zgoda i drobne flagi</strong> — zapamiętanie Twojego wyboru, samouczka i trybu prostego.</li><li><strong>Microsoft Clarity</strong> (_clck, _clsk, CLID, MUID…) — anonimowa analityka, tylko po zgodzie; usługa Microsoftu, dane mogą trafić poza EOG.</li></ul><a href='polityka-prywatnosci.html'>Pełna lista w polityce prywatności</a>",
-        "cookie.footer": "Pliki cookie 🍪",
-        "cookie.savedYes": "Dzięki! Anonimowa analityka włączona 🍪",
-        "cookie.savedNo": "Zapisano. Analityka wyłączona 🚫",
+        "cookie.footer": "Pliki cookie",
+        "cookie.savedYes": "Dzięki! Anonimowa analityka włączona",
+        "cookie.savedNo": "Zapisano. Analityka wyłączona",
         "priv.title": "Polityka prywatności",
         "priv.updated": "Ostatnia aktualizacja: 19 sierpnia 2026 r.",
         "priv.intro": "CatNet to prosty, darmowy serwis ze zdjęciami kotów. Traktujemy Twoją prywatność poważnie i celowo zbudowaliśmy stronę tak, aby zbierać jak najmniej danych. Ta polityka wyjaśnia — w pełni i wprost — co dzieje się z danymi podczas korzystania z serwisu.",
@@ -654,7 +690,7 @@ const translations = {
         "priv.note": "Dokument ma charakter informacyjny i został przygotowany z należytą starannością, ale nie stanowi porady prawnej. Przy wykorzystaniu serwisu do celów komercyjnych zalecana jest weryfikacja treści przez prawnika.",
         "foss.title": "O projekcie",
         "foss.note": "CatNet to projekt po godzinach — prosta galeria zdjęć kotów. Bez reklam i bez kont. Używamy anonimowej analityki (Microsoft Clarity), żeby ulepszać stronę; nie budujemy profili ani nie sprzedajemy danych. Zdjęcia pochodzą z otwartych API TheCatAPI i Cataas, a ulubione zapisują się w Twojej przeglądarce.",
-        "trusted.title": "Zaufali nam ❤️",
+        "trusted.title": "Zaufali nam",
         "trusted.sub": "Dołącz do tysięcy miłośników kotów, którzy codziennie wracają po uśmiech.",
         "trusted.s1n": "12 000+", "trusted.s1l": "zadowolonych użytkowników",
         "trusted.s2n": "1 000 000+", "trusted.s2l": "pokazanych kotów",
@@ -662,8 +698,8 @@ const translations = {
         "trusted.q1": "„Najlepsze miejsce na chwilę relaksu w ciągu dnia.”", "trusted.q1a": "— Ania",
         "trusted.q2": "„Wracam tu codziennie — koty zawsze poprawiają mi humor!”", "trusted.q2a": "— Marek",
         "trusted.q3": "„Prosto, ładnie i bez reklam. Tak ma być.”", "trusted.q3a": "— Kasia",
-        "set.title": "⚙️ Ustawienia", "set.themeColor": "Kolor motywu", "set.mode": "Tryb",
-        "set.dark": "🌙 Ciemny", "set.light": "☀️ Jasny", "set.density": "Gęstość siatki",
+        "set.title": "Ustawienia", "set.themeColor": "Kolor motywu", "set.mode": "Tryb",
+        "set.dark": "Ciemny", "set.light": "Jasny", "set.density": "Gęstość siatki",
         "set.comfortable": "Komfortowa", "set.dense": "Gęsta", "set.perPage": "Kotów na stronę (galeria)",
         "set.slideshow": "Pokaz slajdów (auto)", "set.meow": "Meow Mode", "set.quickActions": "Szybkie akcje",
         "set.simple": "Tryb prosty", "set.simpleHint": "Wyłącza efekty tła i animacje",
@@ -677,51 +713,51 @@ const translations = {
         "mini.undo": "Cofnij",
         "mini.favsCleared": "Ulubione wyczyszczone.",
         "mini.historyCleared": "Historia wyczyszczona.",
-        "mini.restored": "Przywrócono ✓",
+        "mini.restored": "Przywrócono",
         "set.surprise": "Losowy kot", "set.clearFavs": "Wyczyść ulubione",
         "set.reset": "Przywróć domyślne", "set.backup": "Dane i kopia zapasowa",
         "set.export": "Eksportuj (JSON · Base64)", "set.copyExport": "Kopiuj kod eksportu",
         "set.importFile": "Importuj z pliku", "set.importCode": "Importuj z kodu",
         "set.clearHistory": "Wyczyść historię", "set.language": "Język",
-        "set.premium": "Premium i polecenia", "set.premiumBtn": "👑 Koty premium",
-        "set.referralBtn": "🎁 Kod polecający",
-        "pg.title": "🐾 Twoje postępy", "pg.level": "Poziom", "pg.dailyGoal": "Cel dzienny",
+        "set.premium": "Premium i polecenia", "set.premiumBtn": "Koty premium",
+        "set.referralBtn": "Kod polecający",
+        "pg.title": "Twoje postępy", "pg.level": "Poziom", "pg.dailyGoal": "Cel dzienny",
         "pg.catsToday": "kotów dziś", "pg.streakHint": "Twoja passa — wróć jutro, by ją przedłużyć!",
-        "pg.days": "dni", "pg.showTutorial": "▶️ Pokaż samouczek",
+        "pg.days": "dni", "pg.showTutorial": "▶ Pokaż samouczek",
         "onb.s1t": "Witaj w CatNet!", "onb.s1p": "Najsłodsze koty w sieci już czekają. Pokażemy Ci w kilka sekund, jak to działa.",
         "onb.s2t": "Odkrywaj koty", "onb.s2p": "Odświeżaj galerię i oglądaj nowe koty bez końca — każdy klik to nowa porcja mruczenia.",
         "onb.s3t": "Zbieraj ulubione", "onb.s3p": "Kliknij serduszko na zdjęciu, aby zapisać najsłodsze koty do swojej kolekcji.",
-        "onb.s4t": "Koty premium 👑", "onb.s4p": "Zdobądź kod polecający od znajomego i odblokuj wyjątkowe koty premium z Cataas!",
+        "onb.s4t": "Koty premium", "onb.s4p": "Zdobądź kod polecający od znajomego i odblokuj wyjątkowe koty premium z Cataas!",
         "onb.goalCalm": "Spokojnie", "onb.goalCalmD": "3 koty dziennie",
         "onb.goalStd": "Standard", "onb.goalStdD": "10 kotów dziennie",
         "onb.goalHard": "Hardcore", "onb.goalHardD": "20 kotów dziennie",
-        "onb.next": "Dalej", "onb.back": "Wstecz", "onb.start": "Zaczynamy! 🚀",
+        "onb.next": "Dalej", "onb.back": "Wstecz", "onb.start": "Zaczynamy!",
         "toast.resetSettings": "Przywrócono ustawienia domyślne", "toast.noFavs": "Brak ulubionych do usunięcia",
-        "toast.favSaved": "Zapisano w ulubionych — zostaje u Ciebie 💛",
-        "toast.favsCleared": "Usunięto ulubione koty", "toast.downloaded": "Pobrano zdjęcie 🐾",
-        "toast.shareCopied": "Skopiowano link do zdjęcia 🔗", "toast.exported": "Wyeksportowano dane (JSON w Base64) ⬇️",
-        "toast.copied": "Skopiowano kod eksportu 📋", "toast.imported": "Zaimportowano dane ✅",
-        "toast.importErr": "Nieprawidłowy kod / plik importu ❌", "toast.historyCleared": "Wyczyszczono historię",
-        "toast.ipStart": "🔄 Trwa odblokowywanie adresu IP...", "toast.ipDone": "✅ Twój adres IP został pomyślnie odblokowany!",
-        "toast.goalDone": "🎯 Cel dzienny osiągnięty! +50 XP 🎉", "toast.levelUp": "🎉 Poziom {n}! Tak trzymaj!",
-        "toast.streak1": "🔥 Passa: {n} dzień! +15 XP", "toast.streak": "🔥 Passa: {n} dni! +15 XP",
-        "toast.onbDone": "Miłej zabawy w CatNet! 🐾 +20 XP", "toast.premiumOn": "👑 Tryb premium odblokowany!",
+        "toast.favSaved": "Zapisano w ulubionych — zostaje u Ciebie",
+        "toast.favsCleared": "Usunięto ulubione koty", "toast.downloaded": "Pobrano zdjęcie",
+        "toast.shareCopied": "Skopiowano link do zdjęcia", "toast.exported": "Wyeksportowano dane (JSON w Base64)",
+        "toast.copied": "Skopiowano kod eksportu", "toast.imported": "Zaimportowano dane",
+        "toast.importErr": "Nieprawidłowy kod / plik importu", "toast.historyCleared": "Wyczyszczono historię",
+        "toast.ipStart": "Trwa odblokowywanie adresu IP...", "toast.ipDone": "Twój adres IP został pomyślnie odblokowany!",
+        "toast.goalDone": "Cel dzienny osiągnięty! +50 XP", "toast.levelUp": "Poziom {n}! Tak trzymaj!",
+        "toast.streak1": "Passa: {n} dzień! +15 XP", "toast.streak": "Passa: {n} dni! +15 XP",
+        "toast.onbDone": "Miłej zabawy w CatNet! +20 XP", "toast.premiumOn": "Tryb premium odblokowany!",
         "blocked.title": "Nie można wyświetlić kotów",
         "blocked.text": "Wygląda na to, że Twoja przeglądarka lub <strong>AdBlock</strong> blokuje połączenie. Wyłącz blokowanie reklam i odśwież stronę — w przeciwnym razie koty się nie załadują.",
-        "blocked.retry": "Spróbuj ponownie 🔄",
-        "adblock.banner": "🚫 Wygląda na to, że masz włączony <strong>AdBlock</strong> — przez to koty mogą się nie wyświetlać. Wyłącz blokowanie i odśwież stronę.",
-        "lightbox.fav": "♡ Ulubione", "lightbox.favOn": "♥ W ulubionych", "lightbox.download": "⬇️ Pobierz", "lightbox.share": "🔗 Udostępnij",
+        "blocked.retry": "Spróbuj ponownie",
+        "adblock.banner": "Wygląda na to, że masz włączony <strong>AdBlock</strong> — przez to koty mogą się nie wyświetlać. Wyłącz blokowanie i odśwież stronę.",
+        "lightbox.fav": "Ulubione", "lightbox.favOn": "W ulubionych", "lightbox.download": "Pobierz", "lightbox.share": "Udostępnij",
         "lightbox.dlFail": "Nie udało się pobrać zdjęcia",
-        "empty.favs": "Nie masz jeszcze ulubionych kotów. Kliknij serduszko na zdjęciu, aby je tu zapisać. 🐾",
-        "premium.title": "👑 Koty premium", "premium.locked": "Koty premium z serwisu Cataas są zablokowane. Odblokuj je, wpisując kod polecający od znajomego!",
-        "premium.unlocked": "Masz dostęp do kotów premium! 👑", "premium.show": "Pokaż koty premium 👑",
-        "ref.title": "🎁 Kod polecający", "ref.yourCode": "Twój kod polecający:",
+        "empty.favs": "Nie masz jeszcze ulubionych kotów. Kliknij serduszko na zdjęciu, aby je tu zapisać.",
+        "premium.title": "Koty premium", "premium.locked": "Koty premium z serwisu Cataas są zablokowane. Odblokuj je, wpisując kod polecający od znajomego!",
+        "premium.unlocked": "Masz dostęp do kotów premium!", "premium.show": "Pokaż koty premium",
+        "ref.title": "Kod polecający", "ref.yourCode": "Twój kod polecający:",
         "ref.share": "Udostępnij ten kod znajomym. Gdy ktoś go wpisze, oboje dostajecie bonus!",
         "ref.enterLabel": "Masz kod od znajomego? Wpisz go:", "ref.redeem": "Odbierz bonus",
-        "ref.copy": "📋 Kopiuj mój kod",
-        "toast.refCopied": "Skopiowano Twój kod 📋", "toast.refOwn": "To Twój własny kod 🙂",
+        "ref.copy": "Kopiuj mój kod",
+        "toast.refCopied": "Skopiowano Twój kod", "toast.refOwn": "To Twój własny kod",
         "toast.refUsed": "Ten kod został już wykorzystany", "toast.refInvalid": "Nieprawidłowy kod polecający",
-        "toast.refOk": "🎉 Bonus odebrany! +150 XP i koty premium odblokowane 👑"
+        "toast.refOk": "Bonus odebrany! +150 XP i koty premium odblokowane"
     },
     en: {
         "nav.start": "Home", "nav.gallery": "Gallery", "nav.facts": "Facts", "nav.quiz": "Quiz", "nav.about": "About",
@@ -729,9 +765,9 @@ const translations = {
         "quizcta.sub": "Six questions. See how much cat is in you.",
         "quizcta.btn": "Test yourself",
         "footer.made": "A cat photo gallery",
-        "hero.badge": "🎉 New: Community, Deluxe & kitten cats!",
-        "marquee.items": "Thousands of cat photos  ·  Refresh freely  ·  Save favorites  ·  ",
-        "rm.title": "What's next? The purr roadmap 🚀",
+        "hero.badge": "New: Community, Deluxe & kitten cats!",
+        "marquee.items": "Thousands of cat photos · Refresh freely · Save favorites · ",
+        "rm.title": "What's next? The purr roadmap",
         "rm.sub": "CatNet is just getting started. Here's what we're working on — every update will be bigger than the last.",
         "rm.soon": "SOON",
         "rm1t": "Meow Mode", "rm1d": "Click a cat and hear a real meow. The mode nobody needed and everybody wants.",
@@ -756,17 +792,17 @@ const translations = {
         "btn.newCats": "New cats", "btn.surprise": "Random cat", "btn.premium": "Premium cats",
         "btn.pro": "Community cats", "toast.pro": "Loaded community cats (Cataas)",
         "btn.kittens": "Kittens", "toast.kittens": "Loaded kittens",
-        "toast.deluxe": "Loaded Deluxe cats — a mix of 2 APIs 💎",
+        "toast.deluxe": "Loaded Deluxe cats — a mix of 2 APIs",
         "src.label": "Source:", "src.standard": "TheCatAPI", "src.community": "Community", "src.deluxe": "Deluxe",
         "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
-        "gallery.favTitle": "Your favorites ♥", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
+        "gallery.favTitle": "Your favorites", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
         "facts.title": 'Facts about <span class="grad">cats</span>',
         "facts.sub": "Click and discover — something new about our purring friends every time.",
         "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact",
         "facts.sweetTitle": "Freud",
         "facts.sweetCaption": "Freud — a black cat in his garden",
         "facts.sweetSub": "Freud is an older black cat. He likes basking in the grass, patrolling his garden and watching birds. Calm and friendly.",
-        "btn.anotherSweet": "Show another adorable cat 🐾", "loading": "Loading...",
+        "btn.anotherSweet": "Show another adorable cat", "loading": "Loading...",
         "about.title": "About CatNet",
         "about.p1": "CatNet is a simple cat photo gallery. One click refreshes the next batch — no login, no fees.",
         "about.p2": "The photos come from the open <strong>TheCatAPI</strong> and <strong>Cataas</strong> APIs, so every refresh brings a brand-new batch of purring heroes.",
@@ -781,9 +817,9 @@ const translations = {
         "trust.private": "Favorites in your browser", "trust.openApi": "Open API",
         "trust.openSource": "Non-commercial project",
         "nav.privacy": "Privacy policy",
-        "err404.title": "There's no cat here 🙀",
+        "err404.title": "There's no cat here",
         "err404.text": "You're looking for cats in the wrong place. Head back to the homepage — it's full of them.",
-        "err404.btn": "Back to homepage 🐾",
+        "err404.btn": "Back to homepage",
         "cookie.text": "Help us improve CatNet — allow anonymous analytics. No ads, no data selling, no cross-site tracking.",
         "cookie.more": "Learn more",
         "cookie.accept": "I agree",
@@ -791,9 +827,9 @@ const translations = {
         "cookie.showMore": "Show more",
         "cookie.useNote": "By using CatNet you agree to anonymous analytics — it only starts after you click “I agree”, and you can switch it off anytime in Settings.",
         "cookie.list": "<ul class='cookie-mini-list'><li><strong>Settings, favourites, history</strong> — stored in your browser (localStorage), never on our server.</li><li><strong>Consent & small flags</strong> — remembering your choice, the intro tour and simple mode.</li><li><strong>Microsoft Clarity</strong> (_clck, _clsk, CLID, MUID…) — anonymous analytics, only after consent; a Microsoft service, data may leave the EEA.</li></ul><a href='polityka-prywatnosci.html'>Full list in the privacy policy</a>",
-        "cookie.footer": "Cookies 🍪",
-        "cookie.savedYes": "Thanks! Anonymous analytics on 🍪",
-        "cookie.savedNo": "Saved. Analytics turned off 🚫",
+        "cookie.footer": "Cookies",
+        "cookie.savedYes": "Thanks! Anonymous analytics on",
+        "cookie.savedNo": "Saved. Analytics turned off",
         "priv.title": "Privacy Policy",
         "priv.updated": "Last updated: 19 August 2026.",
         "priv.intro": "CatNet is a simple, free website with cat photos. We take your privacy seriously and deliberately built the site to collect as little data as possible. This policy explains — fully and plainly — what happens with data when you use the site.",
@@ -813,10 +849,10 @@ const translations = {
         "priv.s7h": "7. Changes to this policy",
         "priv.s7p": "If anything changes (for example, we add a new feature), we will update this page and change the date above.",
         "priv.note": "This document is informational, prepared with due care, but does not constitute legal advice. If the site is used commercially, we recommend having the text reviewed by a lawyer.",
-        "foss.title": "Made with passion 💚",
+        "foss.title": "Made with passion",
         "foss.note": "CatNet is an after-hours project — a simple cat photo gallery. No ads and no accounts. We use anonymous analytics (Microsoft Clarity) to improve the site; we don't build profiles or sell data. Photos come from the open TheCatAPI and Cataas APIs, and favorites are saved in your browser.",
         "footer.github": "Code on GitHub",
-        "trusted.title": "Trusted by cat lovers ❤️",
+        "trusted.title": "Trusted by cat lovers",
         "trusted.sub": "Join thousands of cat lovers who come back every day for a smile.",
         "trusted.s1n": "12,000+", "trusted.s1l": "happy users",
         "trusted.s2n": "1,000,000+", "trusted.s2l": "cats shown",
@@ -824,8 +860,8 @@ const translations = {
         "trusted.q1": "“The best place for a little relaxation during the day.”", "trusted.q1a": "— Anna",
         "trusted.q2": "“I come back every day — the cats always cheer me up!”", "trusted.q2a": "— Mark",
         "trusted.q3": "“Simple, pretty and ad-free. Just the way it should be.”", "trusted.q3a": "— Kate",
-        "set.title": "⚙️ Settings", "set.themeColor": "Theme color", "set.mode": "Mode",
-        "set.dark": "🌙 Dark", "set.light": "☀️ Light", "set.density": "Grid density",
+        "set.title": "Settings", "set.themeColor": "Theme color", "set.mode": "Mode",
+        "set.dark": "Dark", "set.light": "Light", "set.density": "Grid density",
         "set.comfortable": "Comfortable", "set.dense": "Dense", "set.perPage": "Cats per page (gallery)",
         "set.slideshow": "Slideshow (auto)", "set.meow": "Meow Mode", "set.quickActions": "Quick actions",
         "set.simple": "Simple mode", "set.simpleHint": "Turns off background effects and animations",
@@ -839,51 +875,51 @@ const translations = {
         "mini.undo": "Undo",
         "mini.favsCleared": "Favorites cleared.",
         "mini.historyCleared": "History cleared.",
-        "mini.restored": "Restored ✓",
+        "mini.restored": "Restored",
         "set.surprise": "Random cat", "set.clearFavs": "Clear favorites",
         "set.reset": "Restore defaults", "set.backup": "Data & backup",
         "set.export": "Export (JSON · Base64)", "set.copyExport": "Copy export code",
         "set.importFile": "Import from file", "set.importCode": "Import from code",
         "set.clearHistory": "Clear history", "set.language": "Language",
-        "set.premium": "Premium & referrals", "set.premiumBtn": "👑 Premium cats",
-        "set.referralBtn": "🎁 Referral code",
-        "pg.title": "🐾 Your progress", "pg.level": "Level", "pg.dailyGoal": "Daily goal",
+        "set.premium": "Premium & referrals", "set.premiumBtn": "Premium cats",
+        "set.referralBtn": "Referral code",
+        "pg.title": "Your progress", "pg.level": "Level", "pg.dailyGoal": "Daily goal",
         "pg.catsToday": "cats today", "pg.streakHint": "Your streak — come back tomorrow to keep it going!",
-        "pg.days": "days", "pg.showTutorial": "▶️ Show tutorial",
+        "pg.days": "days", "pg.showTutorial": "▶ Show tutorial",
         "onb.s1t": "Welcome to CatNet!", "onb.s1p": "The cutest cats on the web are waiting. We'll show you how it works in a few seconds.",
         "onb.s2t": "Discover cats", "onb.s2p": "Refresh the gallery and watch new cats endlessly — every click is a fresh dose of purring.",
         "onb.s3t": "Collect favorites", "onb.s3p": "Click the heart on a photo to save the cutest cats to your collection.",
-        "onb.s4t": "Premium cats 👑", "onb.s4p": "Get a friend's referral code and unlock special premium cats from Cataas!",
+        "onb.s4t": "Premium cats", "onb.s4p": "Get a friend's referral code and unlock special premium cats from Cataas!",
         "onb.goalCalm": "Easy", "onb.goalCalmD": "3 cats a day",
         "onb.goalStd": "Standard", "onb.goalStdD": "10 cats a day",
         "onb.goalHard": "Hardcore", "onb.goalHardD": "20 cats a day",
-        "onb.next": "Next", "onb.back": "Back", "onb.start": "Let's go! 🚀",
+        "onb.next": "Next", "onb.back": "Back", "onb.start": "Let's go!",
         "toast.resetSettings": "Default settings restored", "toast.noFavs": "No favorites to remove",
-        "toast.favSaved": "Saved to favorites — it stays with you 💛",
-        "toast.favsCleared": "Favorite cats removed", "toast.downloaded": "Photo downloaded 🐾",
-        "toast.shareCopied": "Photo link copied 🔗", "toast.exported": "Data exported (JSON in Base64) ⬇️",
-        "toast.copied": "Export code copied 📋", "toast.imported": "Data imported ✅",
-        "toast.importErr": "Invalid code / import file ❌", "toast.historyCleared": "History cleared",
-        "toast.ipStart": "🔄 Unblocking your IP address...", "toast.ipDone": "✅ Your IP address has been successfully unblocked!",
-        "toast.goalDone": "🎯 Daily goal reached! +50 XP 🎉", "toast.levelUp": "🎉 Level {n}! Keep it up!",
-        "toast.streak1": "🔥 Streak: {n} day! +15 XP", "toast.streak": "🔥 Streak: {n} days! +15 XP",
-        "toast.onbDone": "Have fun on CatNet! 🐾 +20 XP", "toast.premiumOn": "👑 Premium mode unlocked!",
+        "toast.favSaved": "Saved to favorites — it stays with you",
+        "toast.favsCleared": "Favorite cats removed", "toast.downloaded": "Photo downloaded",
+        "toast.shareCopied": "Photo link copied", "toast.exported": "Data exported (JSON in Base64)",
+        "toast.copied": "Export code copied", "toast.imported": "Data imported",
+        "toast.importErr": "Invalid code / import file", "toast.historyCleared": "History cleared",
+        "toast.ipStart": "Unblocking your IP address...", "toast.ipDone": "Your IP address has been successfully unblocked!",
+        "toast.goalDone": "Daily goal reached! +50 XP", "toast.levelUp": "Level {n}! Keep it up!",
+        "toast.streak1": "Streak: {n} day! +15 XP", "toast.streak": "Streak: {n} days! +15 XP",
+        "toast.onbDone": "Have fun on CatNet! +20 XP", "toast.premiumOn": "Premium mode unlocked!",
         "blocked.title": "Can't display the cats",
         "blocked.text": "It looks like your browser or <strong>AdBlock</strong> is blocking the connection. Turn off ad blocking and refresh the page — otherwise the cats won't load.",
-        "blocked.retry": "Try again 🔄",
-        "adblock.banner": "🚫 It looks like you have <strong>AdBlock</strong> enabled — the cats may not show up. Disable blocking and refresh the page.",
-        "lightbox.fav": "♡ Favorite", "lightbox.favOn": "♥ In favorites", "lightbox.download": "⬇️ Download", "lightbox.share": "🔗 Share",
+        "blocked.retry": "Try again",
+        "adblock.banner": "It looks like you have <strong>AdBlock</strong> enabled — the cats may not show up. Disable blocking and refresh the page.",
+        "lightbox.fav": "Favorite", "lightbox.favOn": "In favorites", "lightbox.download": "Download", "lightbox.share": "Share",
         "lightbox.dlFail": "Couldn't download the image",
-        "empty.favs": "You don't have any favorite cats yet. Click the heart on a photo to save them here. 🐾",
-        "premium.title": "👑 Premium cats", "premium.locked": "Premium cats from Cataas are locked. Unlock them by entering a friend's referral code!",
-        "premium.unlocked": "You have access to premium cats! 👑", "premium.show": "Show premium cats 👑",
-        "ref.title": "🎁 Referral code", "ref.yourCode": "Your referral code:",
+        "empty.favs": "You don't have any favorite cats yet. Click the heart on a photo to save them here.",
+        "premium.title": "Premium cats", "premium.locked": "Premium cats from Cataas are locked. Unlock them by entering a friend's referral code!",
+        "premium.unlocked": "You have access to premium cats!", "premium.show": "Show premium cats",
+        "ref.title": "Referral code", "ref.yourCode": "Your referral code:",
         "ref.share": "Share this code with friends. When someone enters it, you both get a bonus!",
         "ref.enterLabel": "Got a code from a friend? Enter it:", "ref.redeem": "Claim bonus",
-        "ref.copy": "📋 Copy my code",
-        "toast.refCopied": "Your code copied 📋", "toast.refOwn": "That's your own code 🙂",
+        "ref.copy": "Copy my code",
+        "toast.refCopied": "Your code copied", "toast.refOwn": "That's your own code",
         "toast.refUsed": "This code has already been used", "toast.refInvalid": "Invalid referral code",
-        "toast.refOk": "🎉 Bonus claimed! +150 XP and premium cats unlocked 👑"
+        "toast.refOk": "Bonus claimed! +150 XP and premium cats unlocked"
     }
 };
 
@@ -952,7 +988,7 @@ function buildSettingsDrawer() {
     drawer.innerHTML = `
         <div class="drawer-head">
             <h3>${t("set.title")}</h3>
-            <button class="icon-btn" onclick="closeSettings()">✕</button>
+            <button class="icon-btn" onclick="closeSettings()">${icon("x", 20)}</button>
         </div>
 
         <div class="setting-group">
@@ -972,8 +1008,8 @@ function buildSettingsDrawer() {
         <div class="setting-group">
             <label>${t("set.mode")}</label>
             <div class="seg" id="mode-seg">
-                <button data-mode="dark">${t("set.dark")}</button>
-                <button data-mode="light">${t("set.light")}</button>
+                <button data-mode="dark">${icon("moon", 15)} ${t("set.dark")}</button>
+                <button data-mode="light">${icon("sun", 15)} ${t("set.light")}</button>
             </div>
         </div>
 
@@ -1129,12 +1165,12 @@ function clearFavorites() {
     renderFavorites("fav-grid");
     document.querySelectorAll(".fav-btn.is-fav").forEach((b) => {
         b.classList.remove("is-fav");
-        b.innerHTML = "♡";
+        b.innerHTML = icon("heart", 16);
     });
 
     showMiniBar({
         id: "undo-favs",
-        icon: "🗑️",
+        icon: "",
         text: t("mini.favsCleared"),
         timeout: 8000,
         actions: [{
@@ -1166,15 +1202,15 @@ function buildLightbox() {
     box.className = "lightbox";
     box.id = "lightbox";
     box.innerHTML = `
-        <button class="icon-btn lightbox-close" onclick="closeLightbox()">✕</button>
+        <button class="icon-btn lightbox-close" onclick="closeLightbox()">${icon("x", 20)}</button>
         <div class="lightbox-frame">
             <img id="lightbox-img" src="" alt="Kot w powiększeniu">
             ${catWatermarkEl(true).outerHTML}
         </div>
         <div class="lightbox-actions">
-            <button class="btn btn-primary" id="lightbox-fav" onclick="lightboxToggleFav()">${t("lightbox.fav")}</button>
-            <button class="btn btn-ghost" onclick="downloadImage(lightboxUrl)">${t("lightbox.download")}</button>
-            <button class="btn btn-ghost" onclick="shareImage(lightboxUrl)">${t("lightbox.share")}</button>
+            <button class="btn btn-primary" id="lightbox-fav" onclick="lightboxToggleFav()">${icon("heart", 16)} ${t("lightbox.fav")}</button>
+            <button class="btn btn-ghost" onclick="downloadImage(lightboxUrl)">${icon("download", 16)} ${t("lightbox.download")}</button>
+            <button class="btn btn-ghost" onclick="shareImage(lightboxUrl)">${icon("share", 16)} ${t("lightbox.share")}</button>
         </div>
     `;
     box.addEventListener("click", (e) => {
@@ -1205,7 +1241,7 @@ function updateLightboxFav() {
     const btn = document.getElementById("lightbox-fav");
     if (!btn) return;
     const fav = isFavorite(lightboxUrl);
-    btn.innerHTML = fav ? t("lightbox.favOn") : t("lightbox.fav");
+    btn.innerHTML = (fav ? iconFilled("heart", 16) : icon("heart", 16)) + " " + (fav ? t("lightbox.favOn") : t("lightbox.fav"));
 }
 function lightboxToggleFav() {
     toggleFavorite(lightboxUrl);
@@ -1217,7 +1253,7 @@ function lightboxToggleFav() {
             const b = img.parentElement.querySelector(".fav-btn");
             const fav = isFavorite(lightboxUrl);
             b.classList.toggle("is-fav", fav);
-            b.innerHTML = fav ? "♥" : "♡";
+            b.innerHTML = fav ? "" : "";
         }
     });
 }
@@ -1326,13 +1362,13 @@ async function shareImage(url) {
 
     const shareUrl = location.origin + location.pathname;
     const text = (LANG === "en"
-        ? "🐾 Look at this adorable cat on CatNet!"
-        : "🐾 Zobacz tego uroczego kota na CatNet!");
+        ? "Look at this adorable cat on CatNet!"
+        : "Zobacz tego uroczego kota na CatNet!");
     if (navigator.share) {
         try {
             await navigator.share({ title: "CatNet", text, url: shareUrl });
             return;
-        } catch {  }
+        } catch { }
     }
     try {
         await navigator.clipboard.writeText(text + " " + shareUrl);
@@ -1449,7 +1485,7 @@ function clearHistory() {
     localStorage.removeItem(HISTORY_KEY);
     showMiniBar({
         id: "undo-history",
-        icon: "🧹",
+        icon: "",
         text: t("mini.historyCleared"),
         timeout: 8000,
         actions: [{
@@ -1537,7 +1573,7 @@ function showBlockedNotice(grid) {
     const note = document.createElement("div");
     note.className = "blocked-notice";
     note.innerHTML = `
-        <div class="blocked-emoji">🙀</div>
+        <div class="blocked-emoji">${icon("cat", 40)}</div>
         <h3>${t("blocked.title")}</h3>
         <p>${t("blocked.text")}</p>
         <button class="btn btn-primary" onclick="loadCats('cat-grid', currentLimit)">${t("blocked.retry")}</button>
@@ -1551,7 +1587,7 @@ function showAdblockBanner() {
     b.id = "adblock-banner";
     b.className = "adblock-banner";
     b.innerHTML = `${t("adblock.banner")}
-        <button title="✕" onclick="this.parentElement.remove()">✕</button>`;
+        <button title="Zamknij" onclick="this.parentElement.remove()">${icon("x", 16)}</button>`;
     document.body.prepend(b);
 }
 
@@ -1582,13 +1618,13 @@ function admMakeWelcome() {
     const link = welcomeLinkFor(name);
     const out = document.getElementById("adm-welcome-link");
     if (out) out.value = link;
-    showToast("Link powitalny gotowy 💌");
+    showToast("Link powitalny gotowy");
 }
 function admCopyWelcome() {
     const out = document.getElementById("adm-welcome-link");
     if (!out || !out.value) { admMakeWelcome(); return; }
     navigator.clipboard?.writeText(out.value).then(
-        () => showToast("Skopiowano link 📋"),
+        () => showToast("Skopiowano link"),
         () => { out.select(); }
     );
 }
@@ -1605,8 +1641,8 @@ function checkWelcomeParam() {
         const name = fromB64(decodeURIComponent(hi)).slice(0, 40);
         if (!name) return;
         const el = document.getElementById("hero-greet");
-        if (el) el.innerText = (LANG === "en" ? `Hi ${name}! 👋 Welcome to CatNet` : `Cześć ${name}! 👋 Witaj w CatNet`);
-        setTimeout(() => showToast(LANG === "en" ? `Welcome, ${name}! 🐾` : `Witaj, ${name}! 🐾`), 500);
+        if (el) el.innerText = (LANG === "en" ? `Hi ${name}! Welcome to CatNet` : `Cześć ${name}! Witaj w CatNet`);
+        setTimeout(() => showToast(LANG === "en" ? `Welcome, ${name}! ` : `Witaj, ${name}! `), 500);
     } catch {}
 }
 
@@ -1690,9 +1726,9 @@ function buildNavExtras() {
 
 const ONB_KEY = "catnet_seen_onb";
 const onbSlides = [
-    { m: "🐱", h: "onb.s1t", p: "onb.s1p" },
-    { m: "🔄", h: "onb.s2t", p: "onb.s2p" },
-    { m: "❤️", h: "onb.s3t", p: "onb.s3p" }
+    { m: "", h: "onb.s1t", p: "onb.s1p" },
+    { m: "", h: "onb.s2t", p: "onb.s2p" },
+    { m: "", h: "onb.s3t", p: "onb.s3p" }
 ];
 let onbIndex = 0;
 
@@ -1806,13 +1842,13 @@ async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
         const r = await safeFetch(`https://api.thecatapi.com/v1/images/search?limit=${half}&api_key=${API_KEY}`);
         const d = await r.json();
         (d || []).forEach((c) => fromCat.push(c.url));
-    } catch {  }
+    } catch { }
     try {
         const skip = Math.floor(Math.random() * 300);
         const r = await safeFetch(`https://cataas.com/api/cats?limit=${limit - half}&skip=${skip}`);
         const d = await r.json();
         (d || []).forEach((c) => fromCataas.push(`https://cataas.com/cat/${c._id || c.id}`));
-    } catch {  }
+    } catch { }
 
     const mixed = [];
     for (let i = 0; i < Math.max(fromCat.length, fromCataas.length); i++) {
@@ -1841,7 +1877,7 @@ function heartBurst(card) {
     for (let i = 0; i < 3; i++) {
         const s = document.createElement("span");
         s.className = "heart-burst";
-        s.textContent = "♥";
+        s.textContent = "";
         s.style.left = 35 + Math.random() * 30 + "%";
         s.style.animationDelay = i * 0.08 + "s";
         card.appendChild(s);
@@ -1894,8 +1930,8 @@ function buildBackToTop() {
     const b = document.createElement("button");
     b.id = "to-top";
     b.className = "to-top";
-    b.innerHTML = "↑";
-    b.title = "↑";
+    b.innerHTML = '<svg class="ic" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>';
+    b.title = "Do góry";
     b.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
     document.body.appendChild(b);
     window.addEventListener("scroll", () => b.classList.toggle("show", window.scrollY > 400));
@@ -1908,8 +1944,8 @@ const QUIZ = {
         start: "Sprawdźmy",
         of: "z",
         again: "Rozwiąż jeszcze raz",
-        share: "Udostępnij wynik 🔗",
-        copied: "Skopiowano wynik 🔗",
+        share: "Udostępnij wynik",
+        copied: "Skopiowano wynik",
         linkCopied: "Link skopiowany",
         resultLabel: "Werdykt:",
         scoreLabel: "Jesteś kotem w",
@@ -1946,10 +1982,10 @@ const QUIZ = {
                 { t: "Przyjmuję jak coś zupełnie oczywistego", v: 3 } ] }
         ],
         tiers: [
-            { min: 80, e: "🐱", n: "Zdecydowanie kot", d: "Nie ma żadnych wątpliwości — w środku jesteś kotem w niemal stu procentach. Drzemki, niezależność i ciepłe miejsca to Twój żywioł. Brakuje Ci tylko ogona i wąsów." },
-            { min: 55, e: "😼", n: "Kot w ludzkim ciele", d: "Ludzka powłoka, kocia dusza. Robisz swoje, komfort cenisz ponad wszystko, a uczucia okazujesz wyłącznie na własnych warunkach. Mruczenie masz w zasięgu ręki." },
-            { min: 30, e: "🙂", n: "Pół-kot, pół-człowiek", d: "Piękna równowaga. Lubisz ludzi i odrobinę ruchu, ale dobra drzemka i chwila tylko dla siebie też potrafią Cię uszczęśliwić. Kot w Tobie czasem mruga." },
-            { min: 0,  e: "🧍", n: "Człowiek (na razie)", d: "Energiczny, towarzyski, poukładany — bardzo ludzkie cechy. Ale spokojnie: jeszcze kilka drzemek na słońcu i parę pudełek, a dołączysz do kociego klubu." }
+            { min: 80, e: "", n: "Zdecydowanie kot", d: "Nie ma żadnych wątpliwości — w środku jesteś kotem w niemal stu procentach. Drzemki, niezależność i ciepłe miejsca to Twój żywioł. Brakuje Ci tylko ogona i wąsów." },
+            { min: 55, e: "", n: "Kot w ludzkim ciele", d: "Ludzka powłoka, kocia dusza. Robisz swoje, komfort cenisz ponad wszystko, a uczucia okazujesz wyłącznie na własnych warunkach. Mruczenie masz w zasięgu ręki." },
+            { min: 30, e: "", n: "Pół-kot, pół-człowiek", d: "Piękna równowaga. Lubisz ludzi i odrobinę ruchu, ale dobra drzemka i chwila tylko dla siebie też potrafią Cię uszczęśliwić. Kot w Tobie czasem mruga." },
+            { min: 0, e: "", n: "Człowiek (na razie)", d: "Energiczny, towarzyski, poukładany — bardzo ludzkie cechy. Ale spokojnie: jeszcze kilka drzemek na słońcu i parę pudełek, a dołączysz do kociego klubu." }
         ]
     },
     en: {
@@ -1958,8 +1994,8 @@ const QUIZ = {
         start: "Let's find out",
         of: "of",
         again: "Take it again",
-        share: "Share result 🔗",
-        copied: "Result copied 🔗",
+        share: "Share result",
+        copied: "Result copied",
         linkCopied: "Link copied",
         resultLabel: "The verdict:",
         scoreLabel: "You are",
@@ -1996,10 +2032,10 @@ const QUIZ = {
                 { t: "I take it as completely obvious", v: 3 } ] }
         ],
         tiers: [
-            { min: 80, e: "🐱", n: "Definitely a cat", d: "No doubt about it — inside, you're very nearly one hundred percent cat. Naps, independence and warm spots are your element. You're only missing a tail and whiskers." },
-            { min: 55, e: "😼", n: "A cat in a human body", d: "Human shell, feline soul. You do your own thing, prize comfort above all, and show affection strictly on your own terms. Purring is well within reach." },
-            { min: 30, e: "🙂", n: "Half cat, half human", d: "A lovely balance. You like people and a little activity, but a good nap and a moment to yourself make you just as happy. The cat in you winks now and then." },
-            { min: 0,  e: "🧍", n: "Human (for now)", d: "Energetic, sociable, organised — very human traits. But relax: a few more naps in the sun and a couple of boxes and you'll join the cat club." }
+            { min: 80, e: "", n: "Definitely a cat", d: "No doubt about it — inside, you're very nearly one hundred percent cat. Naps, independence and warm spots are your element. You're only missing a tail and whiskers." },
+            { min: 55, e: "", n: "A cat in a human body", d: "Human shell, feline soul. You do your own thing, prize comfort above all, and show affection strictly on your own terms. Purring is well within reach." },
+            { min: 30, e: "", n: "Half cat, half human", d: "A lovely balance. You like people and a little activity, but a good nap and a moment to yourself make you just as happy. The cat in you winks now and then." },
+            { min: 0, e: "", n: "Human (for now)", d: "Energetic, sociable, organised — very human traits. But relax: a few more naps in the sun and a couple of boxes and you'll join the cat club." }
         ]
     }
 };
@@ -2024,7 +2060,7 @@ function renderQuiz() {
     if (quizState.step === -1) {
         app.innerHTML = `
             <div class="quiz-card quiz-intro">
-                <div class="quiz-emoji">🐱</div>
+                <div class="quiz-emoji">${icon("cat", 44)}</div>
                 <h1>${d.title}</h1>
                 <p>${d.sub}</p>
                 <button class="btn btn-primary btn-shine" onclick="quizNext()">${d.start}</button>
@@ -2080,7 +2116,7 @@ function renderQuizResult() {
     const r = quizTier(pct);
     app.innerHTML = `
         <div class="quiz-card quiz-result">
-            <div class="quiz-result-emoji">${r.e}</div>
+            <div class="quiz-result-emoji">${icon("cat", 46)}</div>
             <div class="quiz-score">${d.scoreLabel} <span class="grad">${pct}%</span></div>
             <div class="quiz-result-label">${d.resultLabel}</div>
             <h1 class="grad">${r.n}</h1>
@@ -2300,7 +2336,7 @@ function showMiniBar(opts) {
     const btns = actions.map((a, i) =>
         `<button class="btn ${a.primary ? "btn-primary" : "btn-ghost"} mini-act" type="button" data-i="${i}">${a.label}</button>`
     ).join("");
-    const close = actions.length ? "" : `<button class="mini-x" type="button" aria-label="Zamknij">✕</button>`;
+    const close = actions.length ? "" : `<button class="mini-x" type="button" aria-label="Zamknij">${icon("x", 15)}</button>`;
 
     bar.innerHTML = `<div class="mini-inner">${icon}<p class="mini-text">${opts.text}</p><div class="mini-btns">${btns}${close}</div></div>`;
     stack.appendChild(bar);
@@ -2503,5 +2539,5 @@ document.addEventListener("DOMContentLoaded", function () {
                 requestAnimationFrame(render);
             }
         }, { passive: true });
-    } catch (err) {  }
+    } catch (err) { }
 })();

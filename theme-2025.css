@@ -429,3 +429,24 @@ html.simple-mode .cat-sound { display: none !important; }
 }
 .view-links a:hover { background: color-mix(in srgb, var(--text) 16%, transparent); }
 .cookie-use-note { margin: 0 0 8px; color: var(--text); font-weight: 600; }
+
+.ic { display: inline-block; vertical-align: -0.18em; flex: 0 0 auto; }
+.brand .paw {
+    display: inline-flex; align-items: center; margin-right: 7px;
+    color: var(--accent); -webkit-text-fill-color: currentColor;
+}
+.brand .paw .ic { vertical-align: middle; }
+.nav-teo .ic-ext, .footer .ic-ext { opacity: 0.75; vertical-align: -0.1em; margin-left: 1px; }
+.btn .ic, .adm-btn .ic { vertical-align: -0.2em; margin-right: 2px; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; }
+.icon-btn .ic { vertical-align: middle; }
+.fav-btn { display: inline-flex !important; align-items: center; justify-content: center; }
+.fav-btn .ic { vertical-align: middle; }
+.fav-btn.is-fav .ic { color: #ff4d6d; }
+.fav-btn .ic.is-filled { color: #ff4d6d; }
+.mini-x .ic, .adm-x .ic { vertical-align: middle; }
+.quiz-cta-emoji, .quiz-emoji, .quiz-result-emoji, .blocked-emoji {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); line-height: 1;
+}
+.seg button .ic { vertical-align: -0.2em; margin-right: 4px; }
