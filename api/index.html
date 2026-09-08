@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="refresh" content="4;url=https://cataas.com/cat">
+<title>Losowy kot…</title>
+<style>
+  :root{color-scheme:dark light}
+  html,body{height:100%;margin:0}
+  body{display:grid;place-items:center;padding:24px;text-align:center;
+       background:#0a0a0c;color:#ededf0;
+       font:500 15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .spin{width:26px;height:26px;margin:0 auto 14px;border-radius:50%;
+        border:3px solid rgba(255,255,255,.18);border-top-color:#ffc22e;
+        animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  a{color:#ffc22e}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none}}
+</style>
+</head>
+<body>
+  <div>
+    <div class="spin" aria-hidden="true"></div>
+    <p>Szukam kota…</p>
+    <p id="manual" hidden><a href="https://cataas.com/cat">Kot się zaciął — kliknij tutaj</a></p>
+    <noscript><p><a href="https://cataas.com/cat">Kliknij po kota</a></p></noscript>
+  </div>
+
+<script>
+(function () {
+  var FALLBACK = "https://cataas.com/cat";
+  var API      = "https://api.thecatapi.com/v1/images/search";
+  var KEY      = "";
+  var TIMEOUT  = 2500;
+  var done     = false;
+
+  function go(url) {
+    if (done) return;
+    done = true;
+    location.replace(url);
+  }
+
+  var timer = setTimeout(function () { go(FALLBACK); }, TIMEOUT);
+
+  try {
+    var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    if (ctrl) setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, TIMEOUT);
+
+    fetch(API + (KEY ? "?api_key=" + encodeURIComponent(KEY) : ""),
+          { cache: "no-store", signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) {
+        clearTimeout(timer);
+        go((d && d[0] && d[0].url) || FALLBACK);
+      })
+      .catch(function () { clearTimeout(timer); go(FALLBACK); });
+  } catch (e) {
+    clearTimeout(timer);
+    go(FALLBACK);
+  }
+
+  setTimeout(function () {
+    var m = document.getElementById("manual");
+    if (m) m.hidden = false;
+  }, 3500);
+})();
+</script>
+</body>
+</html>

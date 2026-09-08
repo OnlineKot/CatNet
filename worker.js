@@ -1,31 +1,3 @@
-const CAT_FALLBACK = "https://cataas.com/cat";
-
-async function randomCatRedirect() {
-  let target = CAT_FALLBACK;
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 2500);
-    const r = await fetch("https://api.thecatapi.com/v1/images/search?_=" + Date.now(), {
-      headers: { accept: "application/json" },
-      signal: ctrl.signal,
-      cf: { cacheTtl: 0, cacheEverything: false }
-    });
-    clearTimeout(t);
-    if (r.ok) {
-      const d = await r.json();
-      if (d && d[0] && d[0].url) target = d[0].url;
-    }
-  } catch (e) {}
-  return new Response(null, {
-    status: 302,
-    headers: {
-      "Location": target,
-      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-      "Referrer-Policy": "no-referrer"
-    }
-  });
-}
-
 function isAllowedImageHost(h) {
   return h === "cataas.com" || h === "thecatapi.com" || h.endsWith(".thecatapi.com");
 }
@@ -55,7 +27,6 @@ export default {
   async fetch(request, env) {
     let earlyUrl;
     try { earlyUrl = new URL(request.url); } catch (e) { return env.ASSETS.fetch(request); }
-    if (earlyUrl.pathname === "/api") return randomCatRedirect();
     if (earlyUrl.pathname === "/img") return proxyImage(earlyUrl);
 
     const resp = await env.ASSETS.fetch(request);
