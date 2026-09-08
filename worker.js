@@ -1,3 +1,50 @@
+const CAT_FALLBACK = "https://cataas.com/cat";
+
+function isShortcuts(request) {
+  const ua = request.headers.get("user-agent") || "";
+  return /shortcuts/i.test(ua);
+}
+
+async function randomCatImage(request) {
+  if (!isShortcuts(request)) {
+    return new Response("Ten adres dziala tylko w Skrotach iOS.\n", {
+      status: 403,
+      headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" }
+    });
+  }
+
+  let target = CAT_FALLBACK;
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 2500);
+    const r = await fetch("https://api.thecatapi.com/v1/images/search?_=" + Date.now(), {
+      headers: { accept: "application/json" },
+      signal: ctrl.signal,
+      cf: { cacheTtl: 0, cacheEverything: false }
+    });
+    clearTimeout(t);
+    if (r.ok) {
+      const d = await r.json();
+      if (d && d[0] && d[0].url) target = d[0].url;
+    }
+  } catch (e) {}
+
+  let up;
+  try {
+    up = await fetch(target, { cf: { cacheTtl: 0, cacheEverything: false } });
+  } catch (e) {
+    return new Response("upstream error", { status: 502, headers: { "cache-control": "no-store" } });
+  }
+  if (!up.ok) return new Response("upstream " + up.status, { status: 502, headers: { "cache-control": "no-store" } });
+
+  const h = new Headers();
+  h.set("Content-Type", up.headers.get("content-type") || "image/jpeg");
+  h.set("Content-Disposition", 'inline; filename="cat.jpg"');
+  h.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  h.set("Referrer-Policy", "no-referrer");
+  return new Response(up.body, { status: 200, headers: h });
+}
+
 function isAllowedImageHost(h) {
   return h === "cataas.com" || h === "thecatapi.com" || h.endsWith(".thecatapi.com");
 }
@@ -27,6 +74,7 @@ export default {
   async fetch(request, env) {
     let earlyUrl;
     try { earlyUrl = new URL(request.url); } catch (e) { return env.ASSETS.fetch(request); }
+    if (earlyUrl.pathname === "/api") return randomCatImage(request);
     if (earlyUrl.pathname === "/img") return proxyImage(earlyUrl);
 
     const resp = await env.ASSETS.fetch(request);
