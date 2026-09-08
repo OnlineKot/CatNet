@@ -5,13 +5,26 @@ function isShortcuts(request) {
   return /shortcuts/i.test(ua);
 }
 
-async function randomCatImage(request) {
-  if (!isShortcuts(request)) {
-    return new Response("Ten adres dziala tylko w Skrotach iOS.\n", {
-      status: 403,
-      headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" }
-    });
-  }
+function safeEqual(a, b) {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  if (a.length !== b.length) return false;
+  let out = 0;
+  for (let i = 0; i < a.length; i++) out |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return out === 0;
+}
+
+function denied() {
+  return new Response("Dostep tylko przez Skrot iOS z poprawnym kluczem.\n", {
+    status: 403,
+    headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" }
+  });
+}
+
+async function randomCatImage(request, env, url) {
+  if (!isShortcuts(request)) return denied();
+
+  const key = env && env.CAT_KEY;
+  if (key && !safeEqual(url.searchParams.get("k") || "", key)) return denied();
 
   let target = CAT_FALLBACK;
   try {
@@ -74,7 +87,7 @@ export default {
   async fetch(request, env) {
     let earlyUrl;
     try { earlyUrl = new URL(request.url); } catch (e) { return env.ASSETS.fetch(request); }
-    if (earlyUrl.pathname === "/api") return randomCatImage(request);
+    if (earlyUrl.pathname === "/api") return randomCatImage(request, env, earlyUrl);
     if (earlyUrl.pathname === "/img") return proxyImage(earlyUrl);
 
     const resp = await env.ASSETS.fetch(request);
