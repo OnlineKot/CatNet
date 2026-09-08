@@ -4,67 +4,136 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<meta http-equiv="refresh" content="4;url=https://cataas.com/cat">
-<title>Losowy kot…</title>
+<title>Losowy kot — TeodorTeo.com</title>
 <style>
-  :root{color-scheme:dark light}
+  :root{color-scheme:dark}
+  *{box-sizing:border-box}
   html,body{height:100%;margin:0}
-  body{display:grid;place-items:center;padding:24px;text-align:center;
-       background:#0a0a0c;color:#ededf0;
-       font:500 15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  .spin{width:26px;height:26px;margin:0 auto 14px;border-radius:50%;
-        border:3px solid rgba(255,255,255,.18);border-top-color:#ffc22e;
-        animation:sp .8s linear infinite}
+  body{display:grid;place-items:center;padding:18px;background:#0a0a0c;color:#ededf0;
+       font:500 15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center}
+  #stage{display:grid;place-items:center;gap:14px;max-width:100%}
+  .shot{position:relative;display:inline-flex;max-width:100%;border-radius:16px;overflow:hidden;
+        box-shadow:0 18px 50px rgba(0,0,0,.55)}
+  .shot img,.shot canvas{display:block;max-width:min(94vw,900px);max-height:78vh;width:auto;height:auto;
+        -webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+  .wm{position:absolute;right:9px;bottom:9px;display:inline-flex;align-items:center;
+      padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.45);
+      -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+      color:rgba(255,255,255,.94);font-size:11px;font-weight:700;letter-spacing:.2px;
+      text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none}
+  .spin{width:26px;height:26px;border-radius:50%;border:3px solid rgba(255,255,255,.18);
+        border-top-color:#ffc22e;animation:sp .8s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
-  a{color:#ffc22e}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  button,a.btn{font:inherit;font-weight:700;font-size:13px;padding:9px 18px;border-radius:999px;
+       border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#ededf0;
+       cursor:pointer;text-decoration:none}
+  button.primary{background:#ffc22e;color:#1a1a1a;border-color:transparent}
+  .credit{font-size:12px;color:#8a8a92}
+  .credit a{color:#ffc22e;text-decoration:none}
   @media (prefers-reduced-motion:reduce){.spin{animation:none}}
 </style>
 </head>
 <body>
-  <div>
-    <div class="spin" aria-hidden="true"></div>
-    <p>Szukam kota…</p>
-    <p id="manual" hidden><a href="https://cataas.com/cat">Kot się zaciął — kliknij tutaj</a></p>
-    <noscript><p><a href="https://cataas.com/cat">Kliknij po kota</a></p></noscript>
-  </div>
+  <main id="stage"><div class="spin" aria-hidden="true"></div></main>
 
 <script>
 (function () {
-  var FALLBACK = "https://cataas.com/cat";
   var API      = "https://api.thecatapi.com/v1/images/search";
   var KEY      = "";
-  var TIMEOUT  = 2500;
-  var done     = false;
+  var FALLBACK = "https://cataas.com/cat";
+  var MARK     = "powered by TeodorTeo.com";
+  var TIMEOUT  = 4000;
+  var stage    = document.getElementById("stage");
 
-  function go(url) {
-    if (done) return;
-    done = true;
-    location.replace(url);
+  function el(t, c) { var e = document.createElement(t); if (c) e.className = c; return e; }
+
+  function shell(node) {
+    stage.innerHTML = "";
+    var wrap = el("div", "shot");
+    wrap.appendChild(node);
+    stage.appendChild(wrap);
+    var bar = el("div", "bar");
+    var again = el("button"); again.className = "primary"; again.textContent = "Nowy kot";
+    again.onclick = function () { load(); };
+    bar.appendChild(again);
+    stage.appendChild(bar);
+    var c = el("p", "credit");
+    c.innerHTML = 'powered by <a href="https://teodorteo.com" target="_blank" rel="noopener">TeodorTeo.com</a>';
+    stage.appendChild(c);
+    return wrap;
   }
 
-  var timer = setTimeout(function () { go(FALLBACK); }, TIMEOUT);
-
-  try {
-    var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
-    if (ctrl) setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, TIMEOUT);
-
-    fetch(API + (KEY ? "?api_key=" + encodeURIComponent(KEY) : ""),
-          { cache: "no-store", signal: ctrl ? ctrl.signal : undefined })
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (d) {
-        clearTimeout(timer);
-        go((d && d[0] && d[0].url) || FALLBACK);
-      })
-      .catch(function () { clearTimeout(timer); go(FALLBACK); });
-  } catch (e) {
-    clearTimeout(timer);
-    go(FALLBACK);
+  // Znak wodny wypalony w pikselach (gdy CORS pozwala) — inaczej nakładka CSS
+  function bake(img) {
+    var W = img.naturalWidth, H = img.naturalHeight;
+    var c = el("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d");
+    x.drawImage(img, 0, 0, W, H);
+    var unit = Math.min(W, H);
+    var fs   = Math.max(12, Math.round(unit * 0.035));
+    var pad  = Math.round(unit * 0.028);
+    x.font = "700 " + fs + 'px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+    var tw = x.measureText(MARK).width;
+    var bw = Math.round(tw + fs * 1.4), bh = Math.round(fs * 1.9);
+    var bx = W - pad - bw, by = H - pad - bh, r = bh / 2;
+    x.fillStyle = "rgba(0,0,0,.45)";
+    x.beginPath();
+    x.moveTo(bx + r, by);
+    x.arcTo(bx + bw, by, bx + bw, by + bh, r);
+    x.arcTo(bx + bw, by + bh, bx, by + bh, r);
+    x.arcTo(bx, by + bh, bx, by, r);
+    x.arcTo(bx, by, bx + bw, by, r);
+    x.closePath(); x.fill();
+    x.fillStyle = "rgba(255,255,255,.95)";
+    x.textBaseline = "middle";
+    x.shadowColor = "rgba(0,0,0,.5)"; x.shadowBlur = Math.round(fs * 0.25);
+    x.fillText(MARK, bx + fs * 0.7, by + bh / 2 + Math.round(fs * 0.05));
+    return c;
   }
 
-  setTimeout(function () {
-    var m = document.getElementById("manual");
-    if (m) m.hidden = false;
-  }, 3500);
+  function show(url) {
+    var img = new Image();
+    img.crossOrigin = "anonymous";
+    img.alt = "Losowy kot";
+    img.draggable = false;
+    img.onload = function () {
+      var node;
+      try { node = bake(img); } catch (e) { node = null; }
+      if (node) { shell(node); return; }
+      plain(url);
+    };
+    img.onerror = function () { plain(url); };
+    img.src = url;
+  }
+
+  // Rezerwa: zwykły <img> + znak wodny jako nakładka
+  function plain(url) {
+    var img = new Image();
+    img.alt = "Losowy kot"; img.draggable = false; img.src = url;
+    var wrap = shell(img);
+    var w = el("span", "wm"); w.textContent = MARK;
+    wrap.appendChild(w);
+  }
+
+  function load() {
+    stage.innerHTML = '<div class="spin" aria-hidden="true"></div>';
+    var done = false;
+    function go(u) { if (done) return; done = true; show(u); }
+    var timer = setTimeout(function () { go(FALLBACK); }, TIMEOUT);
+    try {
+      fetch(API + (KEY ? "?api_key=" + encodeURIComponent(KEY) : ""), { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (d) { clearTimeout(timer); go((d && d[0] && d[0].url) || FALLBACK); })
+        .catch(function () { clearTimeout(timer); go(FALLBACK); });
+    } catch (e) { clearTimeout(timer); go(FALLBACK); }
+  }
+
+  document.addEventListener("contextmenu", function (e) {
+    if (e.target && (e.target.tagName === "IMG" || e.target.tagName === "CANVAS")) e.preventDefault();
+  });
+
+  load();
 })();
 </script>
 </body>
