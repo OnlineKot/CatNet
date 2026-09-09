@@ -1,10 +1,7 @@
 {
   "app": "CatNet Mobile",
   "version": "1.0.0",
-  "released": "2026-09-09",
   "minimumIOS": "16.0",
-  "notes": "Pierwsze wydanie: losowy kot z CatNet w Szybkim podglądzie.",
   "shortcut": "",
-  "routinehub": "",
   "api": "https://catnet.teodorteo.com/api"
 }
