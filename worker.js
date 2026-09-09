@@ -3,50 +3,6 @@ const WM_URL = "https://catnet.teodorteo.com/wm.png";
 const WM_HIDDEN_URL = "https://catnet.teodorteo.com/wm-hidden.png";
 const CAT_KEY = "bS2OVK5ERRACTMTKnt1epj9AnQXU1b2v";
 
-/* ---- /updates : wersja i linki do skrotu ---- */
-const APP_NAME       = "CatNet Mobile";
-const APP_VERSION    = "1.0.0";
-const APP_RELEASED   = "2026-09-09";
-const APP_MIN_IOS    = "16.0";
-const SHORTCUT_URL   = "";   // <- wklej link iCloud do skrotu
-const ROUTINEHUB_URL = "";   // <- wklej link RoutineHub
-const APP_NOTES      = "Pierwsze wydanie: losowy kot z CatNet w Szybkim podgladzie.";
-
-function cmpVer(a, b) {
-  const A = String(a).split(".").map(Number), B = String(b).split(".").map(Number);
-  for (let i = 0; i < Math.max(A.length, B.length); i++) {
-    const x = A[i] || 0, y = B[i] || 0;
-    if (x !== y) return x < y ? -1 : 1;
-  }
-  return 0;
-}
-
-function updatesInfo(url) {
-  const cur = url.searchParams.get("v");
-  const body = {
-    app: APP_NAME,
-    version: APP_VERSION,
-    released: APP_RELEASED,
-    minimumIOS: APP_MIN_IOS,
-    notes: APP_NOTES,
-    shortcut: SHORTCUT_URL,
-    routinehub: ROUTINEHUB_URL,
-    api: "https://catnet.teodorteo.com/api"
-  };
-  if (cur) {
-    body.current = cur;
-    body.updateAvailable = cmpVer(cur, APP_VERSION) < 0;
-  }
-  return new Response(JSON.stringify(body, null, 2) + "\n", {
-    status: 200,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "access-control-allow-origin": "*",
-      "cache-control": "public, max-age=60"
-    }
-  });
-}
-
 function safeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string") return false;
   if (a.length !== b.length) return false;
@@ -168,7 +124,6 @@ export default {
   async fetch(request, env) {
     let earlyUrl;
     try { earlyUrl = new URL(request.url); } catch (e) { return env.ASSETS.fetch(request); }
-    if (earlyUrl.pathname === "/updates") return updatesInfo(earlyUrl);
     if (earlyUrl.pathname === "/api") return randomCatImage(request, env, earlyUrl);
     if (earlyUrl.pathname === "/img") return proxyImage(earlyUrl);
 
