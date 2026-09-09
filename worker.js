@@ -15,7 +15,7 @@ function safeEqual(a, b) {
 }
 
 function denied() {
-  return new Response("Dostep tylko przez Skrot iOS z poprawnym kluczem.\n", {
+  return new Response("NO ACCESS\n", {
     status: 403,
     headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" }
   });
