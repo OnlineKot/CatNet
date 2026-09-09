@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CatNet Mobile — instalacja i aktualizacja</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+  :root{color-scheme:dark}
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 20px 48px;background:#0a0a0c;color:#ededf0;text-align:center;
+       font:500 15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:560px;margin:0 auto}
+  .brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:24px;letter-spacing:-.02em}
+  .brand img{width:34px;height:34px;border-radius:9px}
+  .brand .accent{color:#ffc22e}
+  .ver{display:inline-flex;align-items:center;gap:7px;margin:14px 0 4px;padding:5px 13px;border-radius:999px;
+       background:rgba(255,194,46,.12);border:1px solid rgba(255,194,46,.35);color:#ffc22e;
+       font-weight:700;font-size:13px}
+  .meta{color:#8a8a92;font-size:13px;margin:0 0 24px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;
+       padding:15px 22px;border-radius:16px;background:#ffc22e;color:#1a1a1a;font-weight:800;font-size:16px;
+       text-decoration:none;border:0;cursor:pointer;box-shadow:0 8px 26px rgba(255,194,46,.24)}
+  .btn.off{background:rgba(255,255,255,.09);color:#8a8a92;box-shadow:none;cursor:default}
+  .card{margin-top:24px;padding:20px;border-radius:18px;text-align:left;
+        background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.10)}
+  .card h2{margin:0 0 12px;font-size:15px;letter-spacing:-.01em}
+  ol{margin:0;padding-left:20px}
+  li{margin-bottom:9px;color:#c9c9d1}
+  code{background:rgba(255,255,255,.09);padding:2px 7px;border-radius:6px;
+       font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:#ffd76a;
+       word-break:break-all}
+  .foot{margin-top:26px;font-size:12.5px;color:#7a7a83}
+  .foot a{color:#ffc22e;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><img src="/catnet-icon.png" alt=""><span>Cat<span class="accent">Net</span> Mobile</span></div>
+  <div><span class="ver" id="ver">wczytywanie…</span></div>
+  <p class="meta" id="meta"></p>
+
+  <a class="btn off" id="install" aria-disabled="true">Link wkrótce</a>
+
+  <div class="card">
+    <h2>Automatyczne sprawdzanie wersji</h2>
+    <ol>
+      <li><b>Pobierz zawartość URL-a</b> → <code>https://catnet.teodorteo.com/updates.json</code></li>
+      <li><b>Pobierz wartość słownika</b> dla klucza <code>version</code></li>
+      <li><b>Jeżeli</b> wynik <b>nie jest</b> równy Twojej wersji → <b>Pokaż powiadomienie</b> i <b>Otwórz URL</b> <code>https://catnet.teodorteo.com/update</code></li>
+    </ol>
+  </div>
+
+  <p class="foot">Manifest: <a href="/updates.json">updates.json</a> · <a href="/">CatNet</a></p>
+</div>
+
+<script>
+(function () {
+  fetch("/updates.json", { cache: "no-store" })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      document.getElementById("ver").textContent = "wersja " + (d.version || "?");
+      var m = [];
+      if (d.app) m.push(d.app);
+      if (d.minimumIOS) m.push("wymaga iOS " + d.minimumIOS + " lub nowszego");
+      document.getElementById("meta").textContent = m.join(" · ");
+      var b = document.getElementById("install");
+      if (d.shortcut) {
+        b.href = d.shortcut;
+        b.className = "btn";
+        b.textContent = "Zainstaluj / zaktualizuj skrót";
+        b.removeAttribute("aria-disabled");
+      } else {
+        b.textContent = "Link do skrótu nieustawiony";
+      }
+      document.title = (d.app || "CatNet Mobile") + " " + (d.version || "");
+    })
+    .catch(function () {
+      document.getElementById("ver").textContent = "nie udało się wczytać wersji";
+    });
+})();
+</script>
+</body>
+</html>
