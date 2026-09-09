@@ -1,11 +1,6 @@
 const CAT_FALLBACK = "https://cataas.com/cat";
 const CAT_KEY = "bS2OVK5ERRACTMTKnt1epj9AnQXU1b2v";
 
-function isShortcuts(request) {
-  const ua = request.headers.get("user-agent") || "";
-  return /shortcuts/i.test(ua);
-}
-
 function safeEqual(a, b) {
   if (typeof a !== "string" || typeof b !== "string") return false;
   if (a.length !== b.length) return false;
@@ -14,19 +9,21 @@ function safeEqual(a, b) {
   return out === 0;
 }
 
-function denied() {
+function denied(reason) {
   return new Response("NO ACCESS\n", {
     status: 403,
-    headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" }
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "no-store",
+      "x-deny": reason || "?"
+    }
   });
 }
 
 async function randomCatImage(request, env, url) {
-  if (!isShortcuts(request)) return denied();
-
   const key = (env && env.CAT_KEY) || CAT_KEY;
-  if (key && !safeEqual(url.searchParams.get("k") || "", key)) return denied();
-  if (key && !safeEqual(request.headers.get("x-cat-key") || "", key)) return denied();
+  if (!safeEqual(url.searchParams.get("k") || "", key)) return denied("key");
+  if (!safeEqual(request.headers.get("x-cat-key") || "", key)) return denied("header");
 
   let target = CAT_FALLBACK;
   try {
