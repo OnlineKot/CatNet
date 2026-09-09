@@ -1,4 +1,5 @@
 const CAT_FALLBACK = "https://cataas.com/cat";
+const WM_URL = "https://catnet.teodorteo.com/wm.png";
 const CAT_KEY = "bS2OVK5ERRACTMTKnt1epj9AnQXU1b2v";
 
 function safeEqual(a, b) {
@@ -41,16 +42,40 @@ async function randomCatImage(request, env, url) {
     }
   } catch (e) {}
 
-  let up;
+  let up = null;
   try {
-    up = await fetch(target, { cf: { cacheTtl: 0, cacheEverything: false } });
+    up = await fetch(target, {
+      cf: {
+        cacheTtl: 0,
+        cacheEverything: false,
+        image: {
+          width: 1200,
+          fit: "scale-down",
+          format: "jpeg",
+          quality: 88,
+          draw: [{ url: WM_URL, bottom: 22, right: 22 }]
+        }
+      }
+    });
+    if (!up.ok) up = null;
   } catch (e) {
-    return new Response("upstream error", { status: 502, headers: { "cache-control": "no-store" } });
+    up = null;
+  }
+
+  const watermarked = !!(up && up.headers.get("cf-resized"));
+
+  if (!up) {
+    try {
+      up = await fetch(target, { cf: { cacheTtl: 0, cacheEverything: false } });
+    } catch (e) {
+      return new Response("upstream error", { status: 502, headers: { "cache-control": "no-store" } });
+    }
   }
   if (!up.ok) return new Response("upstream " + up.status, { status: 502, headers: { "cache-control": "no-store" } });
 
   const h = new Headers();
   h.set("Content-Type", up.headers.get("content-type") || "image/jpeg");
+  h.set("X-Watermark", watermarked ? "on" : "off");
   h.set("Content-Disposition", 'inline; filename="cat.jpg"');
   h.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   h.set("Referrer-Policy", "no-referrer");
