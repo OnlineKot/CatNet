@@ -65,7 +65,7 @@ async function randomCatImage(request, env, url) {
           quality: 88,
           draw: [
             { url: WM_HIDDEN_URL },
-            { url: WM_URL, width: 300, bottom: 18, right: 18 }
+            { url: WM_URL, width: 170, bottom: 14, right: 14 }
           ]
         }
       }
