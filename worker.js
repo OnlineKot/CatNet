@@ -1,5 +1,6 @@
 const CAT_FALLBACK = "https://cataas.com/cat";
 const WM_URL = "https://catnet.teodorteo.com/wm.png";
+const WM_TILE_URL = "https://catnet.teodorteo.com/wm-tile.png";
 const CAT_KEY = "bS2OVK5ERRACTMTKnt1epj9AnQXU1b2v";
 
 function safeEqual(a, b) {
@@ -53,7 +54,10 @@ async function randomCatImage(request, env, url) {
           fit: "scale-down",
           format: "jpeg",
           quality: 88,
-          draw: [{ url: WM_URL, bottom: 22, right: 22 }]
+          draw: [
+            { url: WM_TILE_URL },
+            { url: WM_URL, bottom: 22, right: 22 }
+          ]
         }
       }
     });
