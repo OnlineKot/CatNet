@@ -60,12 +60,12 @@ async function randomCatImage(request, env, url) {
         cacheEverything: false,
         image: {
           width: 1200,
-          fit: "scale-down",
+          fit: "contain",
           format: "jpeg",
           quality: 88,
           draw: [
             { url: WM_HIDDEN_URL },
-            { url: WM_URL, bottom: 22, right: 22 }
+            { url: WM_URL, width: 300, bottom: 18, right: 18 }
           ]
         }
       }
