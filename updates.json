@@ -2,6 +2,6 @@
   "app": "CatNet Mobile",
   "version": "1,0",
   "minimumIOS": "16.0",
-  "shortcut": "",
+  "shortcut": "https://www.icloud.com/shortcuts/77251d3cd727413abb13249f6dd3fa2a",
   "api": "https://catnet.teodorteo.com/api"
 }
