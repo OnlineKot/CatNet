@@ -26,6 +26,7 @@ async function randomCatImage(request, env, url) {
 
   const key = (env && env.CAT_KEY) || CAT_KEY;
   if (key && !safeEqual(url.searchParams.get("k") || "", key)) return denied();
+  if (key && !safeEqual(request.headers.get("x-cat-key") || "", key)) return denied();
 
   let target = CAT_FALLBACK;
   try {
