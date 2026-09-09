@@ -43,8 +43,17 @@ async function randomCatImage(request, env, url) {
     }
   } catch (e) {}
 
+  // ?raw=1 -> czysty obrazek bez znaku (tylko dla Ciebie: klucz + naglowek juz sprawdzone)
+  const raw = url.searchParams.get("raw") === "1";
+
   let up = null;
-  try {
+  if (raw) {
+    try {
+      up = await fetch(target, { cf: { cacheTtl: 0, cacheEverything: false } });
+      if (!up.ok) up = null;
+    } catch (e) { up = null; }
+  }
+  if (!up && !raw) try {
     up = await fetch(target, {
       cf: {
         cacheTtl: 0,
