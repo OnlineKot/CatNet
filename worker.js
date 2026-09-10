@@ -147,7 +147,7 @@ export default {
     const desc = en ? "See if you're a cat too!" : "Zobacz czy jesteś kotem!";
 
     return new HTMLRewriter()
-      .on("title", new SetText(`${title} — CatNet`))
+      .on("title", new SetText(`${title} – CatNet`))
       .on('meta[name="description"]', new SetAttr("content", `${title} ${desc}`))
       .on('meta[property="og:title"]', new SetAttr("content", title))
       .on('meta[property="og:description"]', new SetAttr("content", desc))
