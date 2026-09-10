@@ -13,6 +13,10 @@ CatNet (https://catnet.teodorteo.com) to prosty, darmowy, niekomercyjny serwis z
 - [O nas](https://catnet.teodorteo.com/o-nas.html): o projekcie CatNet
 - [Polityka prywatności](https://catnet.teodorteo.com/polityka-prywatnosci.html): dane, pliki cookie i prawa (RODO)
 
+## Znaki wodne i CatID
+
+Zdjęcia pobierane z CatNet są znakowane wodnie napisem `CatNet.TeodorTeo.com` — widoczną plakietką w rogu oraz drugą, dyskretną warstwą rozłożoną po całym kadrze. Strona [CatID](https://catnet.teodorteo.com/catid/) sprawdza, czy dany plik pochodzi z CatNet, także po przycięciu.
+
 ## Źródła zdjęć
 
 - TheCatAPI — https://thecatapi.com

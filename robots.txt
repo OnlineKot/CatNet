@@ -10,4 +10,8 @@ Allow: /*.png$
 Allow: /*.css$
 Allow: /*.js$
 
+# Endpointy techniczne - nie sa trescia
+Disallow: /api
+Disallow: /img
+
 Sitemap: https://catnet.teodorteo.com/sitemap.xml
