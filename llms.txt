@@ -1,6 +1,6 @@
 # CatNet
 
-> Darmowa galeria zdjęć kotów online. Odświeżasz, oglądasz kolejne koty i zapisujesz ulubione w przeglądarce. Bez reklam i bez konta. A free online cat photo gallery: refresh, browse and save favourites in your browser. No ads, no account.
+> Najsłodsze obrazki kotów na świecie. Odświeżasz, oglądasz kolejne koty i zapisujesz ulubione w przeglądarce. Bez reklam i bez konta. The cutest cat pictures in the world: refresh, browse and save favourites in your browser. No ads, no account.
 
 CatNet (https://catnet.teodorteo.com) to prosty, darmowy, niekomercyjny serwis ze zdjęciami kotów. Zdjęcia pochodzą z otwartych API TheCatAPI i Cataas. Ulubione i ustawienia zapisują się wyłącznie w przeglądarce użytkownika (localStorage), nie na serwerze. Serwis jest dwujęzyczny (polski i angielski). Anonimowa analityka (Microsoft Clarity) działa tylko po wyrażeniu zgody na pliki cookie.
 
