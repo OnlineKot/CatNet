@@ -1252,6 +1252,62 @@ function loadCrossImg(src) {
     });
 }
 
+const CATID_PX = 312;
+const CATID_PY = 52;
+const CATID_ROT = 30 * Math.PI / 180;
+const CATID_ALPHA = 16;
+const CATID_REF_W = 1500;
+let catIdTilePromise = null;
+
+function catIdTile() {
+    if (catIdTilePromise) return catIdTilePromise;
+    catIdTilePromise = loadCrossImg("catid-ref.png").then(function (ref) {
+        const t = document.createElement("canvas");
+        t.width = CATID_PX;
+        t.height = CATID_PY;
+        const tx = t.getContext("2d", { willReadFrequently: true });
+        tx.drawImage(ref, 0, 0, CATID_PX, CATID_PY);
+        const im = tx.getImageData(0, 0, CATID_PX, CATID_PY);
+        const d = im.data;
+        const n = d.length / 4;
+        let mid = 0;
+        for (let i = 0; i < d.length; i += 4) mid += (d[i] + d[i + 1] + d[i + 2]) / 3;
+        mid /= n;
+        let peak = 1;
+        for (let i = 0; i < d.length; i += 4) {
+            const v = Math.abs((d[i] + d[i + 1] + d[i + 2]) / 3 - mid);
+            if (v > peak) peak = v;
+        }
+        for (let i = 0; i < d.length; i += 4) {
+            const v = (d[i] + d[i + 1] + d[i + 2]) / 3 - mid;
+            d[i] = d[i + 1] = d[i + 2] = v >= 0 ? 255 : 0;
+            d[i + 3] = Math.round(Math.min(1, Math.abs(v) / peak) * CATID_ALPHA);
+        }
+        tx.putImageData(im, 0, 0);
+        return t;
+    }).catch(function () { return null; });
+    return catIdTilePromise;
+}
+
+async function drawCatId(ctx, W, H) {
+    let tile = null;
+    try { tile = await catIdTile(); } catch (e) { return false; }
+    if (!tile) return false;
+    let pat = null;
+    try { pat = ctx.createPattern(tile, "repeat"); } catch (e) { return false; }
+    if (!pat) return false;
+    const s = W > CATID_REF_W ? W / CATID_REF_W : 1;
+    const span = Math.ceil(Math.sqrt(W * W + H * H) / s) + 2 * CATID_PX;
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.rotate(CATID_ROT);
+    ctx.scale(s, s);
+    ctx.fillStyle = pat;
+    ctx.fillRect(-span / 2, -span / 2, span, span);
+    ctx.restore();
+    return true;
+}
+
 function roundRectPath(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -1272,6 +1328,8 @@ async function makeWatermarkedBlob(src) {
     c.height = H;
     const ctx = c.getContext("2d");
     ctx.drawImage(img, 0, 0, W, H);
+
+    await drawCatId(ctx, W, H);
 
     const unit = Math.min(W, H);
     const fs = Math.max(13, Math.round(unit * 0.038));

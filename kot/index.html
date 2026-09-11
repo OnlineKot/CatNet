@@ -64,11 +64,62 @@
     return wrap;
   }
 
+  var CID_PX = 312, CID_PY = 52, CID_ROT = 30 * Math.PI / 180, CID_A = 16, CID_REF = 1500;
+  var cidTile = null, cidTried = false;
+
+  function cidPrepare() {
+    if (cidTried) return;
+    cidTried = true;
+    var ref = new Image();
+    ref.crossOrigin = "anonymous";
+    ref.onload = function () {
+      try {
+        var t = el("canvas"); t.width = CID_PX; t.height = CID_PY;
+        var tx = t.getContext("2d", { willReadFrequently: true });
+        tx.drawImage(ref, 0, 0, CID_PX, CID_PY);
+        var im = tx.getImageData(0, 0, CID_PX, CID_PY), d = im.data, i, v;
+        var n = d.length / 4, mid = 0, peak = 1;
+        for (i = 0; i < d.length; i += 4) mid += (d[i] + d[i + 1] + d[i + 2]) / 3;
+        mid /= n;
+        for (i = 0; i < d.length; i += 4) {
+          v = Math.abs((d[i] + d[i + 1] + d[i + 2]) / 3 - mid);
+          if (v > peak) peak = v;
+        }
+        for (i = 0; i < d.length; i += 4) {
+          v = (d[i] + d[i + 1] + d[i + 2]) / 3 - mid;
+          d[i] = d[i + 1] = d[i + 2] = v >= 0 ? 255 : 0;
+          d[i + 3] = Math.round(Math.min(1, Math.abs(v) / peak) * CID_A);
+        }
+        tx.putImageData(im, 0, 0);
+        cidTile = t;
+      } catch (e) { cidTile = null; }
+    };
+    ref.src = "/catid-ref.png";
+  }
+
+  function cidDraw(x, W, H) {
+    if (!cidTile) return;
+    try {
+      var pat = x.createPattern(cidTile, "repeat");
+      if (!pat) return;
+      var s = W > CID_REF ? W / CID_REF : 1;
+      var span = Math.ceil(Math.sqrt(W * W + H * H) / s) + 2 * CID_PX;
+      x.save();
+      x.translate(W / 2, H / 2);
+      x.rotate(CID_ROT);
+      x.scale(s, s);
+      x.fillStyle = pat;
+      x.fillRect(-span / 2, -span / 2, span, span);
+      x.restore();
+    } catch (e) {}
+  }
+
     function bake(img) {
     var W = img.naturalWidth, H = img.naturalHeight;
     var c = el("canvas"); c.width = W; c.height = H;
     var x = c.getContext("2d");
     x.drawImage(img, 0, 0, W, H);
+    cidDraw(x, W, H);
     var unit = Math.min(W, H);
     var fs   = Math.max(12, Math.round(unit * 0.035));
     var pad  = Math.round(unit * 0.028);
@@ -132,6 +183,7 @@
     if (e.target && (e.target.tagName === "IMG" || e.target.tagName === "CANVAS")) e.preventDefault();
   });
 
+  cidPrepare();
   load();
 })();
 </script>
