@@ -114,12 +114,14 @@ function jsonResponse(body, maxAge) {
   });
 }
 
-async function getJson(target, ms) {
+async function getJson(target, ms, extraHeaders) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), ms || 4000);
+  const timer = setTimeout(() => ctrl.abort(), ms || 6000);
+  const headers = { accept: "application/json" };
+  if (extraHeaders) for (const k in extraHeaders) headers[k] = extraHeaders[k];
   try {
     const r = await fetch(target, {
-      headers: { accept: "application/json" },
+      headers: headers,
       signal: ctrl.signal,
       cf: { cacheTtl: 0, cacheEverything: false }
     });
@@ -132,6 +134,12 @@ async function getJson(target, ms) {
   }
 }
 
+async function getJsonRetry(target, ms, extraHeaders) {
+  const first = await getJson(target, ms, extraHeaders);
+  if (first) return first;
+  return await getJson(target, ms, extraHeaders);
+}
+
 function proxied(origin, target) {
   return origin + "/img?u=" + encodeURIComponent(target);
 }
@@ -139,8 +147,8 @@ function proxied(origin, target) {
 async function fromTheCatApi(limit, breed) {
   const q = "https://api.thecatapi.com/v1/images/search?limit=" + limit +
             (breed ? "&breed_ids=" + encodeURIComponent(breed) : "") +
-            "&api_key=" + CATAPI_KEY + "&_=" + Date.now();
-  const d = await getJson(q);
+            "&_=" + Date.now();
+  const d = await getJsonRetry(q, 6000, { "x-api-key": CATAPI_KEY });
   if (!Array.isArray(d)) return [];
   return d.map((c) => c && c.url).filter(Boolean);
 }
@@ -170,6 +178,7 @@ async function catList(url) {
   const breed = (url.searchParams.get("breed") || "").slice(0, 40);
 
   let urls = [];
+  let served = src;
   try {
     if (src === "community") {
       urls = await fromCataas(n, false);
@@ -190,21 +199,45 @@ async function catList(url) {
     urls = [];
   }
 
+  // deluxe: jesli jedno ze zrodel oddalo mniej, dopelnij z drugiego
+  if (src === "deluxe" && urls.length && urls.length < n) {
+    try {
+      const more = await fromCataas(n - urls.length, false);
+      urls = urls.concat(more);
+    } catch (e) {}
+  }
+
+  // jedno zrodlo padlo: bierz z drugiego, zamiast pokazywac te same cztery zdjecia
+  if (!urls.length && src !== "community" && src !== "kitten") {
+    try {
+      urls = await fromCataas(n, false);
+      if (urls.length) served = "community";
+    } catch (e) {}
+  }
+  if (!urls.length && (src === "community" || src === "kitten")) {
+    try {
+      urls = await fromTheCatApi(n, "");
+      if (urls.length) served = "standard";
+    } catch (e) {}
+  }
+
   let fallback = false;
   if (!urls.length) {
     fallback = true;
+    served = "builtin";
     for (let i = 0; i < n; i++) urls.push(FALLBACK_IMAGES[i % FALLBACK_IMAGES.length]);
   }
 
   return jsonResponse({
-    source: src,
+    requested: src,
+    source: served,
     fallback: fallback,
     images: urls.slice(0, n).map((u) => proxied(origin, u))
   });
 }
 
 async function catBreeds() {
-  const d = await getJson("https://api.thecatapi.com/v1/breeds?api_key=" + CATAPI_KEY, 5000);
+  const d = await getJsonRetry("https://api.thecatapi.com/v1/breeds", 6000, { "x-api-key": CATAPI_KEY });
   if (!Array.isArray(d)) return jsonResponse({ breeds: [] });
   return jsonResponse({
     breeds: d.map((b) => ({ id: b && b.id, name: b && b.name })).filter((b) => b.id && b.name)

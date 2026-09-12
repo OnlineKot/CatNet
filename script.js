@@ -637,14 +637,16 @@ const translations = {
         "seo.h": "Czym jest CatNet",
         "seo.p": "CatNet to darmowa galeria zdjęć kotów. Klikasz i pojawiają się kolejne koty, a te, które Ci się spodobały, zapisujesz w przeglądarce. Nie ma reklam, nie trzeba zakładać konta, nie ma opłat. Zdjęcia pochodzą z otwartych API TheCatAPI i Cataas, więc zbiór ciągle się zmienia. Ze strony korzystają ludzie na całym świecie, a wszystko działa po polsku i po angielsku.",
         "gallery.title": "Galeria kotów",
-        "gallery.sub": "Odświeżaj, ile chcesz. Kliknij serduszko, żeby zapisać kota w ulubionych.",
+        "gallery.sub": "Nowe koty po każdym kliknięciu. Serduszko zapisuje kota w przeglądarce.",
         "btn.newCats": "Nowe koty", "btn.surprise": "Losowy kot", "btn.premium": "Koty premium",
-        "btn.pro": "Koty od społeczności", "toast.pro": "Załadowano koty od społeczności (Cataas)",
-        "btn.kittens": "Kocięta", "toast.kittens": "Załadowano kocięta",
-        "toast.deluxe": "Załadowano Koty Deluxe (miks dwóch API)",
-        "src.label": "Źródło:", "src.standard": "TheCatAPI", "src.community": "Społeczność", "src.deluxe": "Deluxe",
+        "btn.pro": "Classic",
+        "btn.kittens": "Kocięta",
+        "src.label": "Źródło:", "src.standard": "Pro", "src.community": "Classic", "src.deluxe": "Deluxe",
+        "src.standardHint": "Pro: zdjęcia z TheCatAPI, z rasami",
+        "src.communityHint": "Classic: zdjęcia z Cataas",
+        "src.deluxeHint": "Deluxe: miks obu źródeł",
         "gallery.allBreeds": "Wszystkie rasy", "gallery.favCount": "Twoje ulubione:",
-        "gallery.favTitle": "Twoje ulubione", "gallery.favSub": "Koty, które zapisałeś. Zostają w Twojej przeglądarce.",
+        "gallery.favTitle": "Twoje ulubione", "gallery.favSub": "Zostają w Twojej przeglądarce, nie na serwerze.",
         "facts.title": 'Fakty o <span class="grad">kotach</span>',
         "facts.sub": "Klikaj i odkrywaj. Za każdym razem coś nowego o kotach.",
         "facts.didYouKnow": "Czy wiesz, że...", "btn.nextFact": "Następny fakt",
@@ -750,7 +752,7 @@ const translations = {
         "adblock.banner": "Wygląda na to, że masz włączony <strong>AdBlock</strong>, przez co koty mogą się nie wyświetlać. Wyłącz blokowanie i odśwież stronę.",
         "lightbox.fav": "Ulubione", "lightbox.favOn": "W ulubionych", "lightbox.download": "Pobierz", "lightbox.share": "Udostępnij",
         "lightbox.dlFail": "Nie udało się pobrać zdjęcia",
-        "empty.favs": "Nie masz jeszcze ulubionych kotów. Kliknij serduszko na zdjęciu, aby je tu zapisać.",
+        "empty.favs": "Nic tu jeszcze nie ma. Kliknij serduszko na zdjęciu.",
         "premium.title": "Koty premium", "premium.locked": "Koty premium z serwisu Cataas są zablokowane. Odblokuj je, wpisując kod polecający od znajomego!",
         "premium.unlocked": "Masz dostęp do kotów premium!", "premium.show": "Pokaż koty premium",
         "ref.title": "Kod polecający", "ref.yourCode": "Twój kod polecający:",
@@ -790,14 +792,16 @@ const translations = {
         "seo.h": "What CatNet is",
         "seo.p": "CatNet is a free cat photo gallery. You click, new cats appear, and the ones you like are saved in your browser. No ads, no account, no fees. The photos come from the open TheCatAPI and Cataas APIs, so the set keeps changing. People use it all over the world, and everything works in Polish and English.",
         "gallery.title": "Cat gallery",
-        "gallery.sub": "Refresh as much as you like. Click the heart to save a cat to your favourites.",
+        "gallery.sub": "New cats on every click. The heart saves a cat in your browser.",
         "btn.newCats": "New cats", "btn.surprise": "Random cat", "btn.premium": "Premium cats",
-        "btn.pro": "Community cats", "toast.pro": "Loaded community cats (Cataas)",
-        "btn.kittens": "Kittens", "toast.kittens": "Loaded kittens",
-        "toast.deluxe": "Loaded Deluxe cats (a mix of two APIs)",
-        "src.label": "Source:", "src.standard": "TheCatAPI", "src.community": "Community", "src.deluxe": "Deluxe",
+        "btn.pro": "Classic",
+        "btn.kittens": "Kittens",
+        "src.label": "Source:", "src.standard": "Pro", "src.community": "Classic", "src.deluxe": "Deluxe",
+        "src.standardHint": "Pro: photos from TheCatAPI, with breeds",
+        "src.communityHint": "Classic: photos from Cataas",
+        "src.deluxeHint": "Deluxe: a mix of both sources",
         "gallery.allBreeds": "All breeds", "gallery.favCount": "Your favorites:",
-        "gallery.favTitle": "Your favorites", "gallery.favSub": "Cats you've saved. They're stored in your browser.",
+        "gallery.favTitle": "Your favorites", "gallery.favSub": "They stay in your browser, not on a server.",
         "facts.title": 'Facts about <span class="grad">cats</span>',
         "facts.sub": "Click and discover. Something new about cats every time.",
         "facts.didYouKnow": "Did you know...", "btn.nextFact": "Next fact",
@@ -904,7 +908,7 @@ const translations = {
         "adblock.banner": "It looks like you have <strong>AdBlock</strong> enabled, so the cats may not show up. Disable blocking and refresh the page.",
         "lightbox.fav": "Favorite", "lightbox.favOn": "In favorites", "lightbox.download": "Download", "lightbox.share": "Share",
         "lightbox.dlFail": "Couldn't download the image",
-        "empty.favs": "You don't have any favorite cats yet. Click the heart on a photo to save them here.",
+        "empty.favs": "Nothing here yet. Click the heart on a photo.",
         "premium.title": "Premium cats", "premium.locked": "Premium cats from Cataas are locked. Unlock them by entering a friend's referral code!",
         "premium.unlocked": "You have access to premium cats!", "premium.show": "Show premium cats",
         "ref.title": "Referral code", "ref.yourCode": "Your referral code:",
@@ -1907,7 +1911,6 @@ async function loadProCats(gridId = "cat-grid", limit = currentLimit) {
         grid.innerHTML = "";
         for (let i = 0; i < limit; i++) createCatElement(grid, fallbackImages[i % fallbackImages.length]);
     }
-    showToast(t("toast.pro"));
 }
 function showProCats() {
     if (!document.getElementById("cat-grid")) {
@@ -1930,7 +1933,6 @@ async function loadKittens(gridId = "cat-grid", limit = currentLimit) {
         grid.innerHTML = "";
         for (let i = 0; i < limit; i++) createCatElement(grid, fallbackImages[i % fallbackImages.length]);
     }
-    showToast(t("toast.kittens"));
 }
 
 async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
@@ -1946,7 +1948,6 @@ async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
     } else {
         mixed.slice(0, limit).forEach((u) => createCatElement(grid, u));
     }
-    showToast(t("toast.deluxe"));
 }
 
 function heroGreeting() {
