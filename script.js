@@ -2396,55 +2396,6 @@ function showMiniBar(opts) {
     return id;
 }
 
-const CAT_SOUNDS = ["miau", "mrrp", "prr…", "nyaa~", "mao?", "tk tk tk tk", "ekekeke", "brr-tk-tk", "rawr", "mrrow"];
-const CAT_WILD = ["RAWR!", "MRRRAWR!", "tk-tk-tk-tk-tk!", "NYAAA!"];
-
-function catVocalize(x, y, opts) {
-    opts = opts || {};
-    if (isSimpleMode()) return;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const pool = opts.wild ? CAT_WILD : CAT_SOUNDS;
-    const el = document.createElement("div");
-    el.className = "cat-sound" + (opts.wild ? " wild" : "");
-    el.textContent = opts.text || pool[Math.floor(Math.random() * pool.length)];
-
-    const cx = Math.max(70, Math.min(window.innerWidth - 70, x));
-    const cy = Math.max(60, Math.min(window.innerHeight - 40, y));
-    el.style.left = cx + "px";
-    el.style.top = cy + "px";
-    el.style.setProperty("--drift", ((Math.random() * 60 - 30) | 0) + "px");
-    el.style.setProperty("--rot", ((Math.random() * 18 - 9) | 0) + "deg");
-    document.body.appendChild(el);
-    const kill = () => el.remove();
-    el.addEventListener("animationend", kill);
-    setTimeout(kill, 1700);
-}
-
-function initCatSounds() {
-    document.addEventListener("click", (e) => {
-
-        const paw = e.target.closest(".brand .paw");
-        if (paw) {
-            e.preventDefault();
-            e.stopPropagation();
-            catVocalize(e.clientX, e.clientY, { wild: true });
-            paw.classList.remove("paw-wiggle");
-            void paw.offsetWidth;
-            paw.classList.add("paw-wiggle");
-            return;
-        }
-
-        if (e.target.closest(".fav-btn")) {
-            catVocalize(e.clientX, e.clientY);
-            return;
-        }
-
-        if (e.target.closest(".cat-card img, .cat-grid img, .marquee img, .freud-img, .sweet-img")) {
-            catVocalize(e.clientX, e.clientY);
-        }
-    });
-}
-
 const SIMPLE_PROMPTED_KEY = "catnet_simple_prompted";
 
 function isSimpleMode() {
@@ -2540,7 +2491,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     maybeShowOnboarding();
     maybeShowSimplePrompt();
-    initCatSounds();
 
     document.addEventListener("keydown", (e) => {
         handleSecretKey(e);
