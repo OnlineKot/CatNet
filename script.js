@@ -1886,7 +1886,23 @@ function finishOnboarding() {
     document.getElementById("onboarding").classList.remove("open");
 }
 function maybeShowOnboarding() {
-    if (!localStorage.getItem(ONB_KEY)) setTimeout(showOnboarding, 600);
+    if (localStorage.getItem(ONB_KEY)) return;
+    // nie nakladaj samouczka na baner zgody: poczekaj, az zniknie
+    const c = typeof cookieConsent === "function" ? cookieConsent() : null;
+    if (c !== "accepted" && c !== "rejected") {
+        let waited = 0;
+        const iv = setInterval(function () {
+            waited += 500;
+            const now = typeof cookieConsent === "function" ? cookieConsent() : null;
+            const barGone = !document.querySelector(".cookie-bar.show, .cookie-bar");
+            if (now === "accepted" || now === "rejected" || barGone || waited > 120000) {
+                clearInterval(iv);
+                if (!localStorage.getItem(ONB_KEY)) setTimeout(showOnboarding, 500);
+            }
+        }, 500);
+        return;
+    }
+    setTimeout(showOnboarding, 600);
 }
 
 function showSkeletons(grid, n) {

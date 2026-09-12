@@ -109,7 +109,7 @@ body.light {
     width: 100%;
     max-width: 1100px;
     margin: 0 auto;
-    padding: clamp(28px, 5vw, 60px) clamp(20px, 5vw, 40px) 80px;
+    padding: clamp(20px, 2.5vw, 32px) clamp(20px, 5vw, 40px) 80px;
 }
 
 .section-title {
@@ -1908,7 +1908,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.022em; }
 }
 .icon-btn:hover { background: var(--surface); transform: none; }
 
-.page > section { margin-top: clamp(64px, 9vw, 120px); }
+.page > section { margin-top: clamp(48px, 6vw, 84px); }
 .section-title {
     text-align: center;
     font-size: clamp(30px, 4.6vw, 48px);
@@ -1925,7 +1925,7 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -0.022em; }
     margin-bottom: clamp(36px, 5vw, 54px);
 }
 
-.hero { margin-top: 0; padding: clamp(64px, 12vw, 128px) 0 clamp(40px, 7vw, 72px); }
+.hero { margin-top: 0; padding: clamp(40px, 6vw, 72px) 0 clamp(32px, 5vw, 56px); }
 .hero-floats { display: none; }
 .hero h1 {
     font-size: clamp(40px, 7.5vw, 76px);
