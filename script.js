@@ -1,4 +1,3 @@
-const API_KEY = "Live_p2Iw0CPRFAh8EIYZqvt3CMJMOqQQFjRdUND82x6c0kHVB5proE1aCebeSRcvJvrT";
 let currentLimit = 2;
 let currentBreed = "";
 let catSource = "standard";
@@ -85,6 +84,24 @@ function safeFetch(url, ms = 8000, opts = {}) {
     return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(timer));
 }
 
+const CATNET_API = "/api";
+
+async function catnetApi(params, ms = 9000) {
+    const q = new URLSearchParams(params).toString();
+    const res = await safeFetch(CATNET_API + (q ? "?" + q : ""), ms);
+    if (!res.ok) throw new Error("CatNet API " + res.status);
+    return await res.json();
+}
+
+async function catnetImages(limit, src, breed) {
+    const p = { n: limit };
+    if (src && src !== "standard") p.src = src;
+    if (breed) p.breed = breed;
+    const d = await catnetApi(p);
+    if (!d || !Array.isArray(d.images) || !d.images.length) throw new Error("Pusta odpowiedz CatNet API");
+    return d.images;
+}
+
 async function loadCats(gridId = "cat-grid", limit = currentLimit) {
     const grid = document.getElementById(gridId);
     if (!grid) return;
@@ -93,18 +110,11 @@ async function loadCats(gridId = "cat-grid", limit = currentLimit) {
 
     try {
         if (forceFallback) throw new Error("Wymuszony tryb awaryjny");
-        const breedParam = currentBreed ? `&breed_ids=${currentBreed}` : "";
-        const response = await safeFetch(
-            `https://api.thecatapi.com/v1/images/search?limit=${limit}${breedParam}&api_key=${API_KEY}`
-        );
-        if (!response.ok) throw new Error("API Błąd");
-        const data = await response.json();
-        if (!data || data.length === 0) throw new Error("Pusta odpowiedź API");
-
+        const images = await catnetImages(limit, "standard", currentBreed);
         grid.innerHTML = "";
-        data.forEach((cat) => createCatElement(grid, cat.url));
+        images.forEach((u) => createCatElement(grid, u));
     } catch (err) {
-        console.warn("Zabezpieczenie aktywne: TheCatAPI nie odpowiada, ładuję rezerwę.", err);
+        console.warn("Zabezpieczenie aktywne: CatNet API nie odpowiada, ładuję rezerwę.", err);
         grid.innerHTML = "";
         if (!forceFallback) showBlockedNotice(grid);
         for (let i = 0; i < limit; i++) {
@@ -677,7 +687,7 @@ const translations = {
         "priv.s2h": "2. Dane pozostają w Twojej przeglądarce",
         "priv.s2p": "Twoje ustawienia (motyw, tryb jasny/ciemny, język, gęstość siatki), lista ulubionych kotów oraz historia oglądanych zdjęć są zapisywane wyłącznie w pamięci lokalnej Twojej przeglądarki (localStorage). Te informacje nigdy nie są wysyłane na nasze serwery. Pozostają na Twoim urządzeniu i możesz je w każdej chwili usunąć, czyszcząc dane przeglądarki.",
         "priv.s3h": "3. Połączenia zewnętrzne",
-        "priv.s3p": "Zdjęcia kotów pobieramy z otwartych API: TheCatAPI (api.thecatapi.com, cdn2.thecatapi.com) oraz Cataas (cataas.com). Do anonimowej analityki łączymy się z Microsoft Clarity (clarity.ms). Przy tych połączeniach, jak przy każdej stronie w internecie, może zostać przekazany Twój adres IP, technicznie niezbędny. Są to niezależni dostawcy z własnymi politykami prywatności; poza tym nie przekazujemy im żadnych Twoich danych.",
+        "priv.s3p": "Zdjęcia kotów pobiera nasz własny serwer (catnet.teodorteo.com/api) z otwartych API TheCatAPI i Cataas. Twoja przeglądarka łączy się po zdjęcia wyłącznie z naszą domeną, więc Twój adres IP nie trafia do tych dostawców. Do anonimowej analityki łączymy się z Microsoft Clarity (clarity.ms) i przy tym połączeniu, jak przy każdej stronie w internecie, może zostać przekazany Twój adres IP, technicznie niezbędny. Clarity to niezależny dostawca z własną polityką prywatności; poza tym nie przekazujemy mu żadnych Twoich danych.",
         "priv.s4h": "4. Pliki cookie i pamięć lokalna",
         "priv.s4p": "Do zapamiętania Twoich ustawień i ulubionych używamy pamięci localStorage przeglądarki. Narzędzie Microsoft Clarity może zapisywać własne pliki cookie do celów anonimowej analityki. Nie używamy plików cookie do reklam. Pliki cookie możesz w każdej chwili wyczyścić lub zablokować w ustawieniach przeglądarki.",
         "priv.cookieTable": "<div class='cookie-table-scroll'><table class='cookie-table'><thead><tr><th>Nazwa</th><th>Rodzaj</th><th>Do czego</th><th>Jak długo</th></tr></thead><tbody><tr><td>catnet_settings</td><td>localStorage</td><td>Twoje ustawienia: motyw, tryb jasny/ciemny, język, liczba kotów, tryb prosty</td><td>do wyczyszczenia</td></tr><tr><td>catnet_favorites</td><td>localStorage</td><td>Lista ulubionych kotów</td><td>do wyczyszczenia</td></tr><tr><td>catnet_history</td><td>localStorage</td><td>Historia ostatnio oglądanych zdjęć</td><td>do wyczyszczenia</td></tr><tr><td>catnet_cookie_consent</td><td>localStorage</td><td>Zapamiętanie Twojej zgody na analitykę</td><td>do wyczyszczenia</td></tr><tr><td>catnet_seen_onb</td><td>localStorage</td><td>Czy pokazano samouczek powitalny</td><td>do wyczyszczenia</td></tr><tr><td>catnet_simple_prompted</td><td>localStorage</td><td>Czy zaproponowano tryb prosty</td><td>do wyczyszczenia</td></tr><tr><td>catnet_open_secret</td><td>sessionStorage</td><td>Techniczna flaga panelu, tylko na czas sesji</td><td>do zamknięcia karty</td></tr><tr><td>_clck, _clsk, CLID, _cltk, MUID, ANONCHK, SM</td><td>pliki cookie · Microsoft Clarity</td><td>Anonimowa analityka (odwiedziny, kliknięcia), tylko po Twojej zgodzie</td><td>do ok. 1 roku</td></tr></tbody></table></div><p class='cookie-table-note'>Dane z pierwszych siedmiu pozycji pozostają wyłącznie w Twojej przeglądarce i nigdy nie trafiają na nasze serwery. Pliki cookie Microsoft Clarity ładują się dopiero po kliknięciu „Zgadzam się” i możesz je wyłączyć w Ustawieniach albo linkiem „Pliki cookie” w stopce. Clarity to usługa Microsoftu, więc dane mogą być przetwarzane poza EOG (np. w USA) na podstawie standardowych klauzul umownych. Podstawą prawną analityki jest Twoja zgoda (art. 6 ust. 1 lit. a RODO); pamięć localStorage służy prawidłowemu działaniu strony.</p>",
@@ -830,7 +840,7 @@ const translations = {
         "priv.s2h": "2. Your data stays in your browser",
         "priv.s2p": "Your settings (theme, light/dark mode, language, grid density), your list of favourite cats and your viewing history are stored only in your browser's local storage (localStorage). This information is never sent to our servers. It stays on your device and you can delete it at any time by clearing your browser data.",
         "priv.s3h": "3. External connections",
-        "priv.s3p": "Cat photos are fetched from open APIs: TheCatAPI (api.thecatapi.com, cdn2.thecatapi.com) and Cataas (cataas.com). For anonymous analytics we connect to Microsoft Clarity (clarity.ms). With these connections, as with any website, your IP address may be shared, which is technically necessary. These are independent providers with their own privacy policies; beyond that we share none of your data with them.",
+        "priv.s3p": "Cat photos are fetched by our own server (catnet.teodorteo.com/api) from the open TheCatAPI and Cataas APIs. For photos your browser only connects to our domain, so your IP address never reaches those providers. For anonymous analytics we connect to Microsoft Clarity (clarity.ms), and with that connection, as with any website, your IP address may be shared, which is technically necessary. Clarity is an independent provider with its own privacy policy; beyond that we share none of your data with it.",
         "priv.s4h": "4. Cookies & local storage",
         "priv.s4p": "To remember your settings and favourites we use the browser's localStorage. Microsoft Clarity may store its own cookies for anonymous analytics. We do not use cookies for advertising. You can clear or block cookies at any time in your browser settings.",
         "priv.cookieTable": "<div class='cookie-table-scroll'><table class='cookie-table'><thead><tr><th>Name</th><th>Type</th><th>Purpose</th><th>Duration</th></tr></thead><tbody><tr><td>catnet_settings</td><td>localStorage</td><td>Your settings: theme, light/dark mode, language, cats per page, simple mode</td><td>until cleared</td></tr><tr><td>catnet_favorites</td><td>localStorage</td><td>Your list of favourite cats</td><td>until cleared</td></tr><tr><td>catnet_history</td><td>localStorage</td><td>Recently viewed photos</td><td>until cleared</td></tr><tr><td>catnet_cookie_consent</td><td>localStorage</td><td>Remembers your analytics choice</td><td>until cleared</td></tr><tr><td>catnet_seen_onb</td><td>localStorage</td><td>Whether the intro tour was shown</td><td>until cleared</td></tr><tr><td>catnet_simple_prompted</td><td>localStorage</td><td>Whether simple mode was offered</td><td>until cleared</td></tr><tr><td>catnet_open_secret</td><td>sessionStorage</td><td>Technical panel flag, session only</td><td>until tab closes</td></tr><tr><td>_clck, _clsk, CLID, _cltk, MUID, ANONCHK, SM</td><td>cookies · Microsoft Clarity</td><td>Anonymous analytics (visits, clicks), only after your consent</td><td>up to ~1 year</td></tr></tbody></table></div><p class='cookie-table-note'>The first seven items stay only in your browser and never reach our servers. Microsoft Clarity cookies load only after you click “I agree”, and you can turn them off in Settings or via the “Cookies” link in the footer. Clarity is a Microsoft service, so data may be processed outside the EEA (e.g. in the US) under standard contractual clauses. The legal basis for analytics is your consent (Art. 6(1)(a) GDPR); localStorage is used for the site to work.</p>",
@@ -1375,7 +1385,11 @@ async function makeWatermarkedBlob(src) {
 
 async function downloadImage(url) {
     let blob = null;
-    const sources = ["/img?u=" + encodeURIComponent(url), url];
+    let sameOrigin = false;
+    try { sameOrigin = new URL(url, location.href).origin === location.origin; } catch (e) {}
+    const sources = sameOrigin
+        ? [url, "/img?u=" + encodeURIComponent(url)]
+        : ["/img?u=" + encodeURIComponent(url), url];
     for (const src of sources) {
         try { blob = await makeWatermarkedBlob(src); if (blob) break; } catch (e) {}
     }
@@ -1400,32 +1414,84 @@ async function downloadImage(url) {
     }
 }
 
-async function shareImage(url) {
+function b64UrlEncode(str) {
+    return btoa(unescape(encodeURIComponent(str)))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+}
 
-    const shareUrl = location.origin + location.pathname;
+function b64UrlDecode(v) {
+    let b = String(v).replace(/-/g, "+").replace(/_/g, "/");
+    while (b.length % 4) b += "=";
+    return decodeURIComponent(escape(atob(b)));
+}
+
+function upstreamOf(url) {
+    let abs;
+    try { abs = new URL(url, location.href); } catch (e) { return null; }
+    if (abs.origin === location.origin && abs.pathname === "/img") {
+        const u = abs.searchParams.get("u");
+        if (u) {
+            try { return new URL(u).toString(); } catch (e) { return null; }
+        }
+        return null;
+    }
+    return abs.toString();
+}
+
+function photoShareUrl(url) {
+    const raw = upstreamOf(url);
+    const home = location.origin + "/";
+    if (!raw) return home;
+    let b64;
+    try { b64 = b64UrlEncode(raw); } catch (e) { return home; }
+    if (!b64 || b64.length > 1800) return home;
+    return home + "?base64photos=" + b64 + (LANG === "en" ? "&l=en" : "");
+}
+
+async function shareImage(url) {
+    const link = photoShareUrl(url);
     const text = (LANG === "en"
-        ? "Look at this adorable cat on CatNet!"
-        : "Zobacz tego uroczego kota na CatNet!");
+        ? "Look at this cat on CatNet!"
+        : "Zobacz tego kota na CatNet!");
     if (navigator.share) {
         try {
-            await navigator.share({ title: "CatNet", text, url: shareUrl });
+            await navigator.share({ title: "CatNet", text, url: link });
             return;
-        } catch { }
+        } catch (e) {
+            if (e && e.name === "AbortError") return;
+        }
     }
     try {
-        await navigator.clipboard.writeText(text + " " + shareUrl);
+        await navigator.clipboard.writeText(link);
         showToast(t("toast.shareCopied"));
     } catch {
-        window.open(shareUrl, "_blank");
+        window.open(link, "_blank");
     }
+}
+
+function handleSharedPhotoParam() {
+    let v = null;
+    try { v = new URLSearchParams(location.search).get("base64photos"); } catch (e) { return; }
+    if (!v) return;
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    let raw;
+    try { raw = b64UrlDecode(v); } catch (e) { return; }
+    let target;
+    try { target = new URL(raw); } catch (e) { return; }
+    if (target.protocol !== "https:") return;
+    const src = location.origin + "/img?u=" + encodeURIComponent(target.toString());
+    setTimeout(function () {
+        if (typeof openLightbox === "function") openLightbox(src);
+    }, 250);
 }
 
 async function surpriseCat() {
     closeSettings();
     try {
-        const res = await safeFetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
-        const data = await res.json();
-        openLightbox(data[0].url);
+        const images = await catnetImages(1, "standard", "");
+        openLightbox(images[0]);
     } catch {
         openLightbox(fallbackImages[Math.floor(Math.random() * fallbackImages.length)]);
     }
@@ -1435,8 +1501,9 @@ async function loadBreeds(selectId = "breed-filter") {
     const sel = document.getElementById(selectId);
     if (!sel) return;
     try {
-        const res = await safeFetch("https://api.thecatapi.com/v1/breeds");
-        const breeds = await res.json();
+        const d = await catnetApi({ breeds: 1 });
+        const breeds = (d && d.breeds) || [];
+        if (!breeds.length) throw new Error("Brak listy ras");
         breeds.forEach((b) => {
             const o = document.createElement("option");
             o.value = b.id;
@@ -1833,15 +1900,12 @@ async function loadProCats(gridId = "cat-grid", limit = currentLimit) {
     grid.innerHTML = "";
     showSkeletons(grid, limit);
     try {
-        const skip = Math.floor(Math.random() * 300);
-        const res = await safeFetch(`https://cataas.com/api/cats?limit=${limit}&skip=${skip}`);
-        const data = await res.json();
-        if (!data || !data.length) throw new Error("Cataas pusto");
+        const images = await catnetImages(limit, "community", "");
         grid.innerHTML = "";
-        data.forEach((c) => createCatElement(grid, `https://cataas.com/cat/${c._id || c.id}`));
+        images.forEach((u) => createCatElement(grid, u));
     } catch {
         grid.innerHTML = "";
-        for (let i = 0; i < limit; i++) createCatElement(grid, `https://cataas.com/cat?ts=${Date.now() + i}`);
+        for (let i = 0; i < limit; i++) createCatElement(grid, fallbackImages[i % fallbackImages.length]);
     }
     showToast(t("toast.pro"));
 }
@@ -1859,15 +1923,12 @@ async function loadKittens(gridId = "cat-grid", limit = currentLimit) {
     grid.innerHTML = "";
     showSkeletons(grid, limit);
     try {
-        const skip = Math.floor(Math.random() * 60);
-        const res = await safeFetch(`https://cataas.com/api/cats?tags=kitten&limit=${limit}&skip=${skip}`);
-        const data = await res.json();
-        if (!data || !data.length) throw new Error("Cataas pusto");
+        const images = await catnetImages(limit, "kitten", "");
         grid.innerHTML = "";
-        data.forEach((c) => createCatElement(grid, `https://cataas.com/cat/${c._id || c.id}`));
+        images.forEach((u) => createCatElement(grid, u));
     } catch {
         grid.innerHTML = "";
-        for (let i = 0; i < limit; i++) createCatElement(grid, `https://cataas.com/cat/kitten?ts=${Date.now() + i}`);
+        for (let i = 0; i < limit; i++) createCatElement(grid, fallbackImages[i % fallbackImages.length]);
     }
     showToast(t("toast.kittens"));
 }
@@ -1877,26 +1938,8 @@ async function loadDeluxeCats(gridId = "cat-grid", limit = currentLimit) {
     if (!grid) return;
     grid.innerHTML = "";
     showSkeletons(grid, limit);
-    const half = Math.ceil(limit / 2);
-    const fromCat = [];
-    const fromCataas = [];
-    try {
-        const r = await safeFetch(`https://api.thecatapi.com/v1/images/search?limit=${half}&api_key=${API_KEY}`);
-        const d = await r.json();
-        (d || []).forEach((c) => fromCat.push(c.url));
-    } catch { }
-    try {
-        const skip = Math.floor(Math.random() * 300);
-        const r = await safeFetch(`https://cataas.com/api/cats?limit=${limit - half}&skip=${skip}`);
-        const d = await r.json();
-        (d || []).forEach((c) => fromCataas.push(`https://cataas.com/cat/${c._id || c.id}`));
-    } catch { }
-
-    const mixed = [];
-    for (let i = 0; i < Math.max(fromCat.length, fromCataas.length); i++) {
-        if (fromCat[i]) mixed.push(fromCat[i]);
-        if (fromCataas[i]) mixed.push(fromCataas[i]);
-    }
+    let mixed = [];
+    try { mixed = await catnetImages(limit, "deluxe", ""); } catch { mixed = []; }
     grid.innerHTML = "";
     if (!mixed.length) {
         for (let i = 0; i < limit; i++) createCatElement(grid, fallbackImages[i % fallbackImages.length]);
@@ -2178,8 +2221,7 @@ async function loadQuizCat() {
     if (!grid) return;
     let url;
     try {
-        const res = await safeFetch(`https://api.thecatapi.com/v1/images/search?limit=1&api_key=${API_KEY}`);
-        url = (await res.json())[0].url;
+        url = (await catnetImages(1, "standard", ""))[0];
     } catch {
         url = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
     }
@@ -2489,6 +2531,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(openSecretMenu, 400);
     }
 
+    handleSharedPhotoParam();
     maybeShowOnboarding();
     maybeShowSimplePrompt();
 
